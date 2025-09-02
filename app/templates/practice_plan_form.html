@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-calendar-event"></i> {{ title }}
+                        </h4>
+                        <div>
+                            <span class="badge bg-primary">{{ team.name }}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="row">
+                            <!-- Basic Information -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Basic Information</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">{{ form.title.label }}</label>
+                                    {{ form.title(class="form-control", placeholder="e.g., Skating Fundamentals") }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.title.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="date" class="form-label">{{ form.date.label }}</label>
+                                    {{ form.date(class="form-control", type="date") }}
+                                    {% if form.date.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.date.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">{{ form.duration.label }}</label>
+                                    {{ form.duration(class="form-control", placeholder="e.g., 60 minutes") }}
+                                    {% if form.duration.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.duration.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Focus Areas -->
+                            <div class="col-md-6">
+                                <h5 class="mb-3">Focus Areas</h5>
+                                
+                                <div class="mb-3">
+                                    <label for="primary_focus" class="form-label">{{ form.primary_focus.label }}</label>
+                                    {{ form.primary_focus(class="form-select") }}
+                                    {% if form.primary_focus.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.primary_focus.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="secondary_focus" class="form-label">{{ form.secondary_focus.label }}</label>
+                                    {{ form.secondary_focus(class="form-select") }}
+                                    {% if form.secondary_focus.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.secondary_focus.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="review_status" class="form-label">{{ form.review_status.label }}</label>
+                                    {{ form.review_status(class="form-select") }}
+                                    {% if form.review_status.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.review_status.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Practice Structure -->
+                        <h5 class="mb-3">Practice Structure</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="warm_up" class="form-label">
+                                        <i class="bi bi-clock"></i> {{ form.warm_up.label }}
+                                    </label>
+                                    {{ form.warm_up(class="form-control", rows="4", placeholder="Warm-up activities...") }}
+                                    {% if form.warm_up.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.warm_up.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="main_content" class="form-label">
+                                        <i class="bi bi-list-ul"></i> {{ form.main_content.label }}
+                                    </label>
+                                    {{ form.main_content(class="form-control", rows="4", placeholder="Main practice content...") }}
+                                    {% if form.main_content.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.main_content.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="cool_down" class="form-label">
+                                        <i class="bi bi-snow"></i> {{ form.cool_down.label }}
+                                    </label>
+                                    {{ form.cool_down(class="form-control", rows="4", placeholder="Cool-down activities...") }}
+                                    {% if form.cool_down.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.cool_down.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        
+                        <!-- Additional Information -->
+                        <h5 class="mb-3">Additional Information</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="equipment_needed" class="form-label">{{ form.equipment_needed.label }}</label>
+                                    {{ form.equipment_needed(class="form-control", rows="3", placeholder="e.g., Cones, Pucks, Sticks") }}
+                                    {% if form.equipment_needed.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.equipment_needed.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="external_links" class="form-label">{{ form.external_links.label }}</label>
+                                    {{ form.external_links(class="form-control", rows="3", placeholder="One link per line...") }}
+                                    {% if form.external_links.errors %}
+                                        <div class="text-danger">
+                                            {% for error in form.external_links.errors %}
+                                                <small>{{ error }}</small>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    <small class="form-text text-muted">Enter one external link per line</small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="additional_notes" class="form-label">{{ form.additional_notes.label }}</label>
+                            {{ form.additional_notes(class="form-control", rows="3", placeholder="Any additional notes or instructions...") }}
+                            {% if form.additional_notes.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.additional_notes.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                {% if practice_plan %}Update Practice Plan{% else %}Create Practice Plan{% endif %}
+                            </button>
+                            <a href="{{ url_for('main.team_practice_plans', team_id=team.id) }}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

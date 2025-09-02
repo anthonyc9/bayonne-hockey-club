@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, make_response, send_file
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument
+from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan
 from app.player_forms import PlayerForm
 
 from app.email_utils import send_password_reset_email
@@ -708,29 +708,6 @@ def upload_file():
             print("ERROR: Empty filename")
             return jsonify({'error': 'No file selected'}), 400
         
-        # Get folder_id from form data
-        folder_id = request.form.get('folder_id')
-        print(f"Folder ID received: {folder_id}")
-        
-        # Validate folder_id if provided
-        folder = None
-        if folder_id and folder_id != '' and folder_id != 'null' and folder_id != 'None':
-            try:
-                folder_id = int(folder_id)
-                folder = Folder.query.get(folder_id)
-                if not folder:
-                    print(f"WARNING: Folder {folder_id} not found, uploading to root")
-                    folder_id = None
-                else:
-                    print(f"Uploading to folder: {folder.name}")
-            except (ValueError, TypeError):
-                print(f"WARNING: Invalid folder_id {folder_id}, uploading to root")
-                folder_id = None
-        else:
-            # Convert empty string or 'null' to None
-            print(f"Converting empty folder_id '{folder_id}' to None")
-            folder_id = None
-        
         # Simplified - just save to a simple location for now
         original_name = secure_filename(file.filename)
         unique_name = f"{uuid.uuid4().hex}_{original_name}"
@@ -747,18 +724,14 @@ def upload_file():
         
         print(f"File saved successfully: {file_size} bytes")
         
-        # Store relative path for better Heroku compatibility
-        relative_path = os.path.join('instance', 'uploads', unique_name)
-        print(f"Storing relative path: {relative_path}")
-        
-        # Create database record with proper folder_id
+        # Create database record (simplified)
         db_file = File(
             name=unique_name,
             original_name=original_name,
-            file_path=relative_path,  # Store relative path instead of absolute
+            file_path=file_path,
             file_size=file_size,
             mime_type=file.content_type or 'application/octet-stream',
-            folder_id=folder_id,  # Use the folder_id from form
+            folder_id=None,  # No folder for now
             user_id=current_user.id
         )
         
@@ -773,8 +746,7 @@ def upload_file():
                 'id': db_file.id,
                 'name': db_file.original_name,
                 'size': f"{file_size} bytes",
-                'type': db_file.mime_type,
-                'folder_id': folder_id
+                'type': db_file.mime_type
             }
         })
         
@@ -861,50 +833,10 @@ def download_file(file_id):
     try:
         file = File.query.filter_by(id=file_id).first_or_404()
         
-        print(f"=== DOWNLOAD DEBUG ===")
-        print(f"File: {file.original_name}")
-        print(f"Stored path: {file.file_path}")
-        print(f"File exists: {os.path.exists(file.file_path)}")
-        
-        # Check if file exists at the stored path
-        if not os.path.exists(file.file_path):
-            print(f"ERROR: File not found at {file.file_path}")
-            # Try to construct the correct path for Heroku
-            if 'instance' in file.file_path:
-                # Extract just the filename from the path
-                filename = os.path.basename(file.file_path)
-                # Try to find it in the uploads directory
-                upload_dir = os.path.join(current_app.root_path, 'instance', 'uploads')
-                corrected_path = os.path.join(upload_dir, filename)
-                print(f"Trying corrected path: {corrected_path}")
-                if os.path.exists(corrected_path):
-                    file.file_path = corrected_path
-                    print(f"Found file at corrected path: {corrected_path}")
-                else:
-                    print(f"ERROR: File not found at corrected path either")
-                    flash('File not found on server.', 'danger')
-                    return redirect(url_for('main.files'))
-            else:
-                flash('File not found on server.', 'danger')
-                return redirect(url_for('main.files'))
-        
-        # For relative paths, construct the full path
-        if not os.path.isabs(file.file_path):
-            full_path = os.path.join(current_app.root_path, file.file_path)
-            print(f"Constructing full path from relative: {full_path}")
-            if os.path.exists(full_path):
-                file.file_path = full_path
-                print(f"Using full path: {full_path}")
-            else:
-                print(f"ERROR: Full path does not exist: {full_path}")
-                flash('File not found on server.', 'danger')
-                return redirect(url_for('main.files'))
-        
         # Update download count
         file.download_count += 1
         db.session.commit()
         
-        print(f"SUCCESS: Sending file {file.original_name}")
         return send_file(
             file.file_path,
             as_attachment=True,
@@ -914,8 +846,6 @@ def download_file(file_id):
         
     except Exception as e:
         print(f"Error downloading file: {str(e)}")
-        import traceback
-        traceback.print_exc()
         flash('Error downloading file.', 'danger')
         return redirect(url_for('main.files'))
 
@@ -1210,3 +1140,246 @@ def bulk_action():
         flash(f'Error performing bulk action: {str(e)}', 'danger')
     
     return redirect(url_for('main.roster'))
+
+### Practice Plans Routes ###
+
+@main.route("/practice-plans")
+@login_required
+def practice_plans():
+    """Main practice plans landing page - list all teams."""
+    teams = Team.query.order_by(Team.name).all()
+    return render_template("practice_plans.html", teams=teams, title="Practice Plans")
+
+
+@main.route("/practice-plans/team/<int:team_id>")
+@login_required
+def team_practice_plans(team_id):
+    """View practice plans for a specific team."""
+    team = Team.query.get_or_404(team_id)
+    practice_plans = PracticePlan.query.filter_by(team_id=team_id).order_by(PracticePlan.date.desc()).all()
+    return render_template("team_practice_plans.html", team=team, practice_plans=practice_plans, title=f"{team.name} Practice Plans")
+
+
+@main.route("/practice-plans/team/add", methods=["GET", "POST"])
+@login_required
+def add_team():
+    """Add a new team."""
+    from app.practice_forms import TeamForm
+    
+    form = TeamForm()
+    if form.validate_on_submit():
+        try:
+            team = Team(
+                name=form.name.data,
+                description=form.description.data,
+                user_id=current_user.id
+            )
+            db.session.add(team)
+            db.session.commit()
+            flash('Team added successfully!', 'success')
+            return redirect(url_for('main.practice_plans'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding team. Please try again.', 'danger')
+            print(f"Error adding team: {str(e)}")
+    
+    return render_template("team_form.html", form=form, title="Add New Team")
+
+
+@main.route("/practice-plans/team/<int:team_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_team(team_id):
+    """Edit an existing team."""
+    from app.practice_forms import TeamForm
+    
+    team = Team.query.get_or_404(team_id)
+    form = TeamForm(obj=team)
+    
+    if form.validate_on_submit():
+        try:
+            team.name = form.name.data
+            team.description = form.description.data
+            db.session.commit()
+            flash('Team updated successfully!', 'success')
+            return redirect(url_for('main.practice_plans'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating team. Please try again.', 'danger')
+            print(f"Error updating team: {str(e)}")
+    
+    return render_template("team_form.html", form=form, team=team, title="Edit Team")
+
+
+@main.route("/practice-plans/team/<int:team_id>/delete", methods=["POST"])
+@login_required
+def delete_team(team_id):
+    """Delete a team and all its practice plans."""
+    team = Team.query.get_or_404(team_id)
+    try:
+        db.session.delete(team)
+        db.session.commit()
+        flash('Team deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting team. Please try again.', 'danger')
+        print(f"Error deleting team: {str(e)}")
+    
+    return redirect(url_for('main.practice_plans'))
+
+
+@main.route("/practice-plans/add/<int:team_id>", methods=["GET", "POST"])
+@login_required
+def add_practice_plan(team_id):
+    """Add a new practice plan for a specific team."""
+    from app.practice_forms import PracticePlanForm
+    
+    team = Team.query.get_or_404(team_id)
+    form = PracticePlanForm()
+    
+    if form.validate_on_submit():
+        try:
+            # Parse external links (one per line)
+            external_links = []
+            if form.external_links.data:
+                links = form.external_links.data.strip().split('\n')
+                external_links = [link.strip() for link in links if link.strip()]
+            
+            practice_plan = PracticePlan(
+                title=form.title.data,
+                date=form.date.data,
+                duration=form.duration.data,
+                primary_focus=form.primary_focus.data,
+                secondary_focus=form.secondary_focus.data,
+                warm_up=form.warm_up.data,
+                main_content=form.main_content.data,
+                cool_down=form.cool_down.data,
+                equipment_needed=form.equipment_needed.data,
+                additional_notes=form.additional_notes.data,
+                review_status=form.review_status.data,
+                external_links=','.join(external_links) if external_links else None,
+                team_id=team_id,
+                user_id=current_user.id
+            )
+            
+            db.session.add(practice_plan)
+            db.session.commit()
+            flash('Practice plan added successfully!', 'success')
+            return redirect(url_for('main.team_practice_plans', team_id=team_id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding practice plan. Please try again.', 'danger')
+            print(f"Error adding practice plan: {str(e)}")
+    
+    return render_template("practice_plan_form.html", form=form, team=team, title="Add Practice Plan")
+
+
+@main.route("/practice-plans/<int:plan_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_practice_plan(plan_id):
+    """Edit an existing practice plan."""
+    from app.practice_forms import PracticePlanForm
+    
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    form = PracticePlanForm(obj=practice_plan)
+    
+    if form.validate_on_submit():
+        try:
+            # Parse external links (one per line)
+            external_links = []
+            if form.external_links.data:
+                links = form.external_links.data.strip().split('\n')
+                external_links = [link.strip() for link in links if link.strip()]
+            
+            practice_plan.title = form.title.data
+            practice_plan.date = form.date.data
+            practice_plan.duration = form.duration.data
+            practice_plan.primary_focus = form.primary_focus.data
+            practice_plan.secondary_focus = form.secondary_focus.data
+            practice_plan.warm_up = form.warm_up.data
+            practice_plan.main_content = form.main_content.data
+            practice_plan.cool_down = form.cool_down.data
+            practice_plan.equipment_needed = form.equipment_needed.data
+            practice_plan.additional_notes = form.additional_notes.data
+            practice_plan.review_status = form.review_status.data
+            practice_plan.external_links = ','.join(external_links) if external_links else None
+            
+            db.session.commit()
+            flash('Practice plan updated successfully!', 'success')
+            return redirect(url_for('main.team_practice_plans', team_id=practice_plan.team_id))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating practice plan. Please try again.', 'danger')
+            print(f"Error updating practice plan: {str(e)}")
+    
+    return render_template("practice_plan_form.html", form=form, practice_plan=practice_plan, team=practice_plan.team, title="Edit Practice Plan")
+
+
+@main.route("/practice-plans/<int:plan_id>/delete", methods=["POST"])
+@login_required
+def delete_practice_plan(plan_id):
+    """Delete a practice plan."""
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    team_id = practice_plan.team_id
+    
+    try:
+        db.session.delete(practice_plan)
+        db.session.commit()
+        flash('Practice plan deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting practice plan. Please try again.', 'danger')
+        print(f"Error deleting practice plan: {str(e)}")
+    
+    return redirect(url_for('main.team_practice_plans', team_id=team_id))
+
+
+@main.route("/practice-plans/<int:plan_id>/view")
+@login_required
+def view_practice_plan(plan_id):
+    """View a practice plan in detail."""
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    return render_template("practice_plan_detail.html", practice_plan=practice_plan, title=practice_plan.title)
+
+
+@main.route("/practice-plans/<int:plan_id>/add-attachment", methods=["POST"])
+@login_required
+def add_practice_plan_attachment(plan_id):
+    """Add a file attachment to a practice plan."""
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    file_id = request.form.get('file_id')
+    
+    if file_id:
+        try:
+            file = File.query.get(file_id)
+            if file:
+                practice_plan.attachments.append(file)
+                db.session.commit()
+                flash('Attachment added successfully!', 'success')
+            else:
+                flash('File not found.', 'danger')
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding attachment. Please try again.', 'danger')
+            print(f"Error adding attachment: {str(e)}")
+    
+    return redirect(url_for('main.view_practice_plan', plan_id=plan_id))
+
+
+@main.route("/practice-plans/<int:plan_id>/remove-attachment/<int:file_id>", methods=["POST"])
+@login_required
+def remove_practice_plan_attachment(plan_id, file_id):
+    """Remove a file attachment from a practice plan."""
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    file = File.query.get(file_id)
+    
+    if file and file in practice_plan.attachments:
+        try:
+            practice_plan.attachments.remove(file)
+            db.session.commit()
+            flash('Attachment removed successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            flash('Error removing attachment. Please try again.', 'danger')
+            print(f"Error removing attachment: {str(e)}")
+    
+    return redirect(url_for('main.view_practice_plan', plan_id=plan_id))

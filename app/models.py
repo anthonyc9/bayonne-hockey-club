@@ -278,3 +278,73 @@ class PlayerDocument(db.Model):
 
     def __repr__(self):
         return f"PlayerDocument('{self.document_type}' for Player: {self.player_id})"
+
+
+class PracticePlan(db.Model):
+    """Model for storing practice plan information."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Basic Information
+    title = db.Column(db.String(200), nullable=False)
+    date = db.Column(db.Date, nullable=False)
+    duration = db.Column(db.String(50))  # e.g., "60 minutes"
+    
+    # Focus Areas
+    primary_focus = db.Column(db.String(100), nullable=False)
+    secondary_focus = db.Column(db.String(100))
+    
+    # Practice Structure
+    warm_up = db.Column(db.Text)
+    main_content = db.Column(db.Text)
+    cool_down = db.Column(db.Text)
+    
+    # Equipment and Notes
+    equipment_needed = db.Column(db.Text)
+    additional_notes = db.Column(db.Text)
+    
+    # Review Status
+    review_status = db.Column(db.String(50), default='Not Reviewed')  # Not Reviewed, Reviewed, Needs Changes
+    
+    # External Links
+    external_links = db.Column(db.Text)  # JSON string of links
+    
+    # Relationships
+    team_id = db.Column(db.Integer, db.ForeignKey('team.id'), nullable=False)
+    team = db.relationship('Team', backref=db.backref('practice_plans', lazy=True, cascade='all, delete-orphan'))
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('practice_plans', lazy=True))
+    
+    # Attachments (many-to-many with File model)
+    attachments = db.relationship('File', secondary='practice_plan_attachments', lazy='subquery',
+                                backref=db.backref('practice_plans', lazy=True))
+
+    def __repr__(self):
+        return f"PracticePlan('{self.title}', Team: {self.team.name}, Date: {self.date})"
+
+
+class Team(db.Model):
+    """Model for organizing practice plans by team."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Team Details
+    name = db.Column(db.String(50), nullable=False)  # e.g., "8U", "10U", "12U"
+    description = db.Column(db.Text)
+    
+    # User who created this team
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User', backref=db.backref('teams', lazy=True))
+
+    def __repr__(self):
+        return f"Team('{self.name}')"
+
+
+# Association table for practice plan attachments
+practice_plan_attachments = db.Table('practice_plan_attachments',
+    db.Column('practice_plan_id', db.Integer, db.ForeignKey('practice_plan.id'), primary_key=True),
+    db.Column('file_id', db.Integer, db.ForeignKey('file.id'), primary_key=True)
+)

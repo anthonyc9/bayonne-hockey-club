@@ -1,0 +1,356 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header with Breadcrumbs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.practice_plans') }}">Practice Plans</a></li>
+                    <li class="breadcrumb-item"><a href="{{ url_for('main.team_practice_plans', team_id=practice_plan.team.id) }}">{{ practice_plan.team.name }}</a></li>
+                    <li class="breadcrumb-item active">{{ practice_plan.title }}</li>
+                </ol>
+            </nav>
+            
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div>
+                    <h1 class="h3 mb-0">{{ practice_plan.title }}</h1>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-calendar"></i> {{ practice_plan.date.strftime('%A, %B %d, %Y') }}
+                        {% if practice_plan.duration %}
+                            • <i class="bi bi-clock"></i> {{ practice_plan.duration }}
+                        {% endif %}
+                        • <span class="badge bg-primary">{{ practice_plan.team.name }}</span>
+                    </p>
+                </div>
+                <div class="btn-group">
+                    <a href="{{ url_for('main.edit_practice_plan', plan_id=practice_plan.id) }}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Edit
+                    </a>
+                    <button class="btn btn-danger" onclick="deletePracticePlan({{ practice_plan.id }}, '{{ practice_plan.title }}')">
+                        <i class="bi bi-trash"></i> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Practice Plan Details -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-info-circle"></i> Practice Plan Details</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Primary Focus</label>
+                                <p class="mb-0">
+                                    <span class="badge bg-primary">{{ practice_plan.primary_focus }}</span>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Secondary Focus</label>
+                                <p class="mb-0">
+                                    {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
+                                        <span class="badge bg-secondary">{{ practice_plan.secondary_focus }}</span>
+                                    {% else %}
+                                        <span class="text-muted">N/A</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Review Status</label>
+                        <p class="mb-0">
+                            {% if practice_plan.review_status == 'Reviewed' %}
+                                <span class="badge bg-success">{{ practice_plan.review_status }}</span>
+                            {% elif practice_plan.review_status == 'Needs Changes' %}
+                                <span class="badge bg-warning">{{ practice_plan.review_status }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ practice_plan.review_status }}</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice Structure -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-list-ul"></i> Practice Structure</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-clock text-warning"></i> Warm Up
+                                </label>
+                                <p class="mb-0">
+                                    {% if practice_plan.warm_up %}
+                                        {{ practice_plan.warm_up }}
+                                    {% else %}
+                                        <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-list-ul text-primary"></i> Main Content
+                                </label>
+                                <p class="mb-0">
+                                    {% if practice_plan.main_content %}
+                                        {{ practice_plan.main_content }}
+                                    {% else %}
+                                        <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-snow text-info"></i> Cool Down
+                                </label>
+                                <p class="mb-0">
+                                    {% if practice_plan.cool_down %}
+                                        {{ practice_plan.cool_down }}
+                                    {% else %}
+                                        <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-gear"></i> Additional Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Equipment Needed</label>
+                                <p class="mb-0">
+                                    {% if practice_plan.equipment_needed %}
+                                        {{ practice_plan.equipment_needed }}
+                                    {% else %}
+                                        <span class="text-muted">Not specified</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Additional Notes</label>
+                                <p class="mb-0">
+                                    {% if practice_plan.additional_notes %}
+                                        {{ practice_plan.additional_notes }}
+                                    {% else %}
+                                        <span class="text-muted">None</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Attachments -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-paperclip"></i> Attachments</h6>
+                </div>
+                <div class="card-body">
+                    {% if practice_plan.attachments %}
+                        <div class="list-group list-group-flush">
+                            {% for attachment in practice_plan.attachments %}
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <i class="bi bi-file-earmark"></i>
+                                        <a href="{{ url_for('main.download_file', file_id=attachment.id) }}" class="text-decoration-none">
+                                            {{ attachment.original_name }}
+                                        </a>
+                                    </div>
+                                    <form method="POST" action="{{ url_for('main.remove_practice_plan_attachment', plan_id=practice_plan.id, file_id=attachment.id) }}" 
+                                          style="display: inline;" onsubmit="return confirm('Remove this attachment?')">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">No attachments</p>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <!-- Add Attachment Button -->
+                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
+                        <i class="bi bi-plus"></i> Add Attachment
+                    </button>
+                </div>
+            </div>
+
+            <!-- External Links -->
+            {% if practice_plan.external_links %}
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-link-45deg"></i> External Links</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group list-group-flush">
+                            {% for link in practice_plan.external_links.split(',') %}
+                                <a href="{{ link.strip() }}" target="_blank" class="list-group-item list-group-item-action">
+                                    <i class="bi bi-box-arrow-up-right"></i> {{ link.strip() }}
+                                </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('main.edit_practice_plan', plan_id=practice_plan.id) }}" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Edit Plan
+                        </a>
+                        <a href="{{ url_for('main.team_practice_plans', team_id=practice_plan.team.id) }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to Team
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Attachment Modal -->
+<div class="modal fade" id="addAttachmentModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Attachment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p class="text-muted">Select a file from your file library to attach to this practice plan.</p>
+                
+                <!-- File Selection -->
+                <div class="mb-3">
+                    <label for="fileSelect" class="form-label">Select File</label>
+                    <select class="form-select" id="fileSelect">
+                        <option value="">Choose a file...</option>
+                        <!-- This would be populated with available files -->
+                    </select>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Note:</strong> You can also upload new files in the Files section and then attach them here.
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="addAttachment()">Add Attachment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deletePracticePlanModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Practice Plan</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deletePracticePlanTitle"></strong>?</p>
+                <p class="text-danger"><small>This action cannot be undone.</small></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="POST" id="deletePracticePlanForm" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete Practice Plan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function deletePracticePlan(planId, planTitle) {
+    document.getElementById('deletePracticePlanTitle').textContent = planTitle;
+    document.getElementById('deletePracticePlanForm').action = "{{ url_for('main.delete_practice_plan', plan_id=0) }}".replace('0', planId);
+    new bootstrap.Modal(document.getElementById('deletePracticePlanModal')).show();
+}
+
+function addAttachment() {
+    const fileSelect = document.getElementById('fileSelect');
+    const fileId = fileSelect.value;
+    
+    if (fileId) {
+        // Create a form and submit it
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{ url_for('main.add_practice_plan_attachment', plan_id=practice_plan.id) }}";
+        
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'file_id';
+        input.value = fileId;
+        
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
+    } else {
+        alert('Please select a file to attach.');
+    }
+}
+</script>
+{% endblock %}
