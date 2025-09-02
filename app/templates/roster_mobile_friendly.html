@@ -372,37 +372,13 @@
                                 <th class="text-center">
                                     <input type="checkbox" id="selectAll" onchange="toggleAllPlayers()">
                                 </th>
-                                <!-- Basic Info -->
                                 <th class="basic-col">Season</th>
                                 <th class="basic-col">Player</th>
                                 <th class="basic-col">Birth Year</th>
                                 <th class="basic-col">Team</th>
                                 <th class="basic-col">Position</th>
-                                
-                                <!-- Equipment Info -->
-                                <th class="equipment-col">Jersey #</th>
-                                <th class="basic-col">Jersey Size</th>
-                                <th class="basic-col">USA Hockey #</th>
-                                
-                                <!-- Contact Info -->
-                                <th class="contact-col">Father</th>
-                                <th class="contact-col">Father Contact</th>
-                                <th class="contact-col">Mother</th>
-                                <th class="contact-col">Mother Contact</th>
-                                <th class="contact-col">Address</th>
-                                
-                                <!-- Financial Info -->
-                                <th class="financial-col">Tuition</th>
-                                <th class="financial-col">Amount Paid</th>
-                                <th class="financial-col">Balance</th>
-                                
-                                <!-- Status Columns -->
                                 <th class="basic-col">Payment Status</th>
-                                
-                                <!-- Documentation Column -->
                                 <th class="basic-col">Documentation</th>
-                                
-                                <!-- Actions Column -->
                                 <th class="basic-col">Actions</th>
                             </tr>
                         </thead>
@@ -413,8 +389,6 @@
                                         <td class="text-center">
                                             <input type="checkbox" class="player-checkbox" value="{{ player.id }}">
                                         </td>
-                                        
-                                        <!-- Basic Info -->
                                         <td class="basic-col">
                                             <span class="badge bg-secondary">{{ player.season or 'N/A' }}</span>
                                         </td>
@@ -434,100 +408,6 @@
                                             <span class="badge bg-info">{{ player.team or 'No Team' }}</span>
                                         </td>
                                         <td class="basic-col">{{ player.position or '-' }}</td>
-                                        
-                                        <!-- Equipment Info -->
-                                        <td class="equipment-col">
-                                            {% if player.jersey_number %}
-                                                <span class="badge bg-success">#{{ player.jersey_number }}</span>
-                                            {% else %}
-                                                <span class="text-muted">-</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="equipment-col">{{ player.jersey_size or '-' }}</td>
-                                        <td class="equipment-col">
-                                            <small>{{ player.usa_hockey_number or '-' }}</small>
-                                        </td>
-                                        
-                                        <!-- Contact Info -->
-                                        <td class="contact-col">
-                                            <div class="small">
-                                                <div class="fw-semibold">{{ player.dad_first_name or '' }} {{ player.dad_last_name or '' }}</div>
-                                            </div>
-                                        </td>
-                                        <td class="contact-col">
-                                            <div class="small">
-                                                {% if player.dad_phone %}
-                                                    <div><i class="bi bi-phone"></i> {{ player.dad_phone }}</div>
-                                                {% endif %}
-                                                {% if player.dad_email %}
-                                                    <div><i class="bi bi-envelope"></i> {{ player.dad_email }}</div>
-                                                {% endif %}
-                                                {% if not player.dad_phone and not player.dad_email %}
-                                                    <span class="text-muted">-</span>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                        <td class="contact-col">
-                                            <div class="small">
-                                                <div class="fw-semibold">{{ player.mom_first_name or '' }} {{ player.mom_last_name or '' }}</div>
-                                            </div>
-                                        </td>
-                                        <td class="contact-col">
-                                            <div class="small">
-                                                {% if player.mom_phone %}
-                                                    <div><i class="bi bi-phone"></i> {{ player.mom_phone }}</div>
-                                                {% endif %}
-                                                {% if player.mom_email %}
-                                                    <div><i class="bi bi-envelope"></i> {{ player.mom_email }}</div>
-                                                {% endif %}
-                                                {% if not player.mom_phone and not player.mom_email %}
-                                                    <span class="text-muted">-</span>
-                                                {% endif %}
-                                            </div>
-                                        </td>
-                                        <td class="contact-col">
-                                            <div class="small">
-                                                <div>{{ player.address or '' }}</div>
-                                                <div>{{ player.city or '' }}, {{ player.state or '' }} {{ player.zip_code or '' }}</div>
-                                            </div>
-                                        </td>
-                                        
-                                        <!-- Financial Info -->
-                                        <td class="financial-col">
-                                            {% if player.total_tuition_amount %}
-                                                <div class="small">
-                                                    <div class="fw-bold">${{ "%.2f"|format(player.total_tuition_amount) }}</div>
-                                                    <small class="text-muted">Total</small>
-                                                </div>
-                                            {% else %}
-                                                <span class="text-muted">-</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="financial-col">
-                                            {% if player.amount_paid %}
-                                                <div class="small">
-                                                    <div class="fw-bold text-success">${{ "%.2f"|format(player.amount_paid) }}</div>
-                                                    <small class="text-muted">Paid</small>
-                                                </div>
-                                            {% else %}
-                                                <span class="text-muted">$0.00</span>
-                                            {% endif %}
-                                        </td>
-                                        <td class="financial-col">
-                                            {% if player.total_tuition_amount and player.amount_paid %}
-                                                {% set balance = player.total_tuition_amount - player.amount_paid %}
-                                                <div class="small">
-                                                    <div class="fw-bold {{ 'text-danger' if balance > 0 else 'text-success' }}">
-                                                        ${{ "%.2f"|format(balance) }}
-                                                    </div>
-                                                    <small class="text-muted">Balance</small>
-                                                </div>
-                                            {% else %}
-                                                <span class="text-muted">-</span>
-                                            {% endif %}
-                                        </td>
-                                        
-                                        <!-- Payment Status -->
                                         <td class="basic-col">
                                             {% if player.paid_tuition %}
                                                 <span class="badge bg-success">Paid in Full</span>
@@ -535,8 +415,6 @@
                                                 <span class="badge bg-danger">Outstanding</span>
                                             {% endif %}
                                         </td>
-                                        
-                                        <!-- Documentation Column -->
                                         <td class="basic-col">
                                             <div class="d-flex gap-1">
                                                 {% if player.signed_waiver %}
@@ -556,8 +434,6 @@
                                                 {% endif %}
                                             </div>
                                         </td>
-                                        
-                                        <!-- Actions Column -->
                                         <td class="basic-col">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="{{ url_for('main.view_player', id=player.id) }}" 
@@ -578,12 +454,11 @@
                                                 </form>
                                             </div>
                                         </td>
-
                                     </tr>
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="19" class="text-center py-5">
+                                    <td colspan="9" class="text-center py-5">
                                         <div class="text-muted">
                                             <i class="bi bi-people display-4"></i>
                                             <div class="mt-2">No players found</div>
