@@ -206,12 +206,13 @@
                                             {{ attachment.original_name }}
                                         </a>
                                     </div>
-                                    <form method="POST" action="{{ url_for('main.remove_practice_plan_attachment', plan_id=practice_plan.id, file_id=attachment.id) }}" 
-                                          style="display: inline;" onsubmit="return confirm('Remove this attachment?')">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                                            <i class="bi bi-x"></i>
-                                        </button>
-                                    </form>
+                                                                            <form method="POST" action="{{ url_for('main.remove_practice_plan_attachment', plan_id=practice_plan.id, file_id=attachment.id) }}" 
+                                              style="display: inline;" onsubmit="return confirm('Remove this attachment?')">
+                                            {{ csrf_token() }}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        </form>
                                 </div>
                             {% endfor %}
                         </div>
@@ -314,6 +315,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 <form method="POST" id="deletePracticePlanForm" style="display: inline;">
+                    {{ csrf_token() }}
                     <button type="submit" class="btn btn-danger">Delete Practice Plan</button>
                 </form>
             </div>

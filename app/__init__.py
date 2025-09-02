@@ -53,8 +53,7 @@ def create_app():
     migrate.init_app(app, db)
     bcrypt.init_app(app)
     login_manager.init_app(app)
-    # Temporarily disable CSRF for testing
-    # csrf.init_app(app)
+    csrf.init_app(app)
     mail.init_app(app)
 
     # Flask-Login settings
