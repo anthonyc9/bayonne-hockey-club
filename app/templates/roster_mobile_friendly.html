@@ -361,7 +361,7 @@
             </div>
 
             <!-- Mobile Simplified Table View -->
-            <div id="mobileTableView" class="d-md-none" style="display: none;">
+            <div id="mobileTableView" class="d-md-none" style="display: none !important;">
                 <div class="table-responsive">
                     <table class="table table-sm mb-0">
                         <thead class="table-header-custom">
@@ -682,6 +682,13 @@
 </div>
 
 <style>
+/* Ensure mobile table view is hidden on desktop */
+@media (min-width: 768px) {
+    #mobileTableView {
+        display: none !important;
+    }
+}
+
 .avatar-sm {
     width: 32px;
     height: 32px;
