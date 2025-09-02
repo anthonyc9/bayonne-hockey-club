@@ -743,11 +743,15 @@ def upload_file():
         
         print(f"File saved successfully: {file_size} bytes")
         
+        # Store relative path for better Heroku compatibility
+        relative_path = os.path.join('instance', 'uploads', unique_name)
+        print(f"Storing relative path: {relative_path}")
+        
         # Create database record with proper folder_id
         db_file = File(
             name=unique_name,
             original_name=original_name,
-            file_path=file_path,
+            file_path=relative_path,  # Store relative path instead of absolute
             file_size=file_size,
             mime_type=file.content_type or 'application/octet-stream',
             folder_id=folder_id,  # Use the folder_id from form
@@ -853,10 +857,50 @@ def download_file(file_id):
     try:
         file = File.query.filter_by(id=file_id).first_or_404()
         
+        print(f"=== DOWNLOAD DEBUG ===")
+        print(f"File: {file.original_name}")
+        print(f"Stored path: {file.file_path}")
+        print(f"File exists: {os.path.exists(file.file_path)}")
+        
+        # Check if file exists at the stored path
+        if not os.path.exists(file.file_path):
+            print(f"ERROR: File not found at {file.file_path}")
+            # Try to construct the correct path for Heroku
+            if 'instance' in file.file_path:
+                # Extract just the filename from the path
+                filename = os.path.basename(file.file_path)
+                # Try to find it in the uploads directory
+                upload_dir = os.path.join(current_app.root_path, 'instance', 'uploads')
+                corrected_path = os.path.join(upload_dir, filename)
+                print(f"Trying corrected path: {corrected_path}")
+                if os.path.exists(corrected_path):
+                    file.file_path = corrected_path
+                    print(f"Found file at corrected path: {corrected_path}")
+                else:
+                    print(f"ERROR: File not found at corrected path either")
+                    flash('File not found on server.', 'danger')
+                    return redirect(url_for('main.files'))
+            else:
+                flash('File not found on server.', 'danger')
+                return redirect(url_for('main.files'))
+        
+        # For relative paths, construct the full path
+        if not os.path.isabs(file.file_path):
+            full_path = os.path.join(current_app.root_path, file.file_path)
+            print(f"Constructing full path from relative: {full_path}")
+            if os.path.exists(full_path):
+                file.file_path = full_path
+                print(f"Using full path: {full_path}")
+            else:
+                print(f"ERROR: Full path does not exist: {full_path}")
+                flash('File not found on server.', 'danger')
+                return redirect(url_for('main.files'))
+        
         # Update download count
         file.download_count += 1
         db.session.commit()
         
+        print(f"SUCCESS: Sending file {file.original_name}")
         return send_file(
             file.file_path,
             as_attachment=True,
@@ -866,6 +910,8 @@ def download_file(file_id):
         
     except Exception as e:
         print(f"Error downloading file: {str(e)}")
+        import traceback
+        traceback.print_exc()
         flash('Error downloading file.', 'danger')
         return redirect(url_for('main.files'))
 
