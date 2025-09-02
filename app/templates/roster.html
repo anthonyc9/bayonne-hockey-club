@@ -216,8 +216,6 @@
                             
                             <!-- Status Columns -->
                             <th class="basic-col">Payment Status</th>
-                            <th class="basic-col">Documentation</th>
-                            <th class="basic-col">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -350,54 +348,7 @@
                                         {% endif %}
                                     </td>
                                     
-                                    <!-- Documentation Status -->
-                                    <td class="basic-col">
-                                        <div class="d-flex flex-column gap-1">
-                                            {% if player.signed_waiver %}
-                                                <span class="badge bg-success">Waiver ✓</span>
-                                            {% else %}
-                                                <span class="badge bg-warning">No Waiver</span>
-                                            {% endif %}
-                                            {% if player.birth_certificate %}
-                                                <span class="badge bg-info">Birth Cert ✓</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary">No Birth Cert</span>
-                                            {% endif %}
-                                            {% if player.usa_hockey_number %}
-                                                <span class="badge bg-primary">USA Hockey ✓</span>
-                                            {% else %}
-                                                <span class="badge bg-light text-dark">No USA Hockey #</span>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                    
-                                    <!-- Actions -->
-                                    <td class="basic-col">
-                                        <div class="btn-group d-none d-md-flex" role="group">
-                                            <a href="{{ url_for('main.view_player', id=player.id) }}" 
-                                               class="btn btn-sm btn-outline-info" title="View Details">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                            <a href="{{ url_for('main.edit_player', id=player.id) }}" 
-                                               class="btn btn-sm btn-outline-primary" title="Edit">
-                                                <i class="bi bi-pencil"></i>
-                                            </a>
-                                            <form action="{{ url_for('main.delete_player', id=player.id) }}" 
-                                                  method="POST" class="d-inline">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <button type="submit" 
-                                                        class="btn btn-sm btn-outline-danger" 
-                                                        title="Delete"
-                                                        onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <!-- Mobile action buttons - stacked vertically -->
-                                        <div class="btn-group-mobile-stack d-md-none">
-                                            <a href="{{ url_for('main.view_player', id=player.id) }}" 
-                                               class="btn btn-sm btn-outline-info">
-                                                <i class="bi bi-eye"></i> View
+
                                             </a>
                                             <a href="{{ url_for('main.edit_player', id=player.id) }}" 
                                                class="btn btn-sm btn-outline-primary">
