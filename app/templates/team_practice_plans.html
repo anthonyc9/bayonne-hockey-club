@@ -44,13 +44,13 @@
 
     <!-- Practice Plans Table -->
     {% if practice_plans %}
-        <div class="card">
+        <div class="card practice-plans-card">
             <div class="card-header">
                 <h6 class="mb-0"><i class="bi bi-list-ul"></i> Practice Plans</h6>
             </div>
             <div class="card-body p-0">
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="table table-hover mb-0 practice-plans-table">
                         <thead class="table-header-custom">
                             <tr>
                                 <th>Date</th>
@@ -63,24 +63,24 @@
                         </thead>
                         <tbody>
                             {% for plan in practice_plans %}
-                                <tr>
-                                    <td>{{ plan.date.strftime('%m/%d/%Y') }}</td>
-                                    <td>
-                                        <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" class="text-decoration-none">
+                                <tr class="practice-plan-row">
+                                    <td class="date-cell">{{ plan.date.strftime('%m/%d/%Y') }}</td>
+                                    <td class="title-cell">
+                                        <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" class="text-decoration-none practice-plan-link">
                                             {{ plan.title }}
                                         </a>
                                     </td>
-                                    <td>
+                                    <td class="focus-cell">
                                         <span class="badge bg-primary">{{ plan.primary_focus }}</span>
                                     </td>
-                                    <td>
+                                    <td class="focus-cell">
                                         {% if plan.secondary_focus and plan.secondary_focus != 'N/A' %}
                                             <span class="badge bg-secondary">{{ plan.secondary_focus }}</span>
                                         {% else %}
                                             <span class="text-muted">N/A</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="review-cell">
                                         {% if plan.review_status == 'Reviewed' %}
                                             <span class="badge bg-success">{{ plan.review_status }}</span>
                                         {% elif plan.review_status == 'Needs Changes' %}
@@ -89,7 +89,7 @@
                                             <span class="badge bg-secondary">{{ plan.review_status }}</span>
                                         {% endif %}
                                     </td>
-                                    <td>
+                                    <td class="actions-cell">
                                         <div class="btn-group btn-group-sm">
                                             <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" 
                                                class="btn btn-outline-info" title="View">
