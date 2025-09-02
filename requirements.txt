@@ -16,5 +16,5 @@ WTForms==3.2.1
 Flask-Migrate==4.0.5
 Flask-Mail==0.9.1
 python-dotenv==1.1.1
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 gunicorn==21.2.0
