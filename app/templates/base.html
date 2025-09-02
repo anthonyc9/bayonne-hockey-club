@@ -100,6 +100,7 @@
             margin-left: 250px;
             padding: 20px;
             min-height: 100vh;
+            text-align: center;
         }
 
         /* Mobile Responsive */
@@ -124,6 +125,7 @@
             .main-content {
                 margin-left: 0;
                 padding-top: 150px;
+                text-align: center;
             }
 
             .container-fluid {
@@ -165,6 +167,7 @@
             border: none;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             border-radius: 10px;
+            margin: 0 auto;
         }
 
         .card-header {
@@ -214,18 +217,30 @@
 
         /* Custom Table Styles */
         .table-header-custom {
-            background: #1a0000;
-            color: white;
+            background: #1a0000 !important;
+            color: white !important;
         }
 
         .table-header-custom th {
-            border: none;
-            padding: 15px 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 0.8px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+            border: none !important;
+            padding: 15px 12px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            font-size: 0.9rem !important;
+            letter-spacing: 0.8px !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3) !important;
+            background: #1a0000 !important;
+            color: white !important;
+            text-align: center !important;
+        }
+
+        /* Additional specificity for table headers */
+        table thead.table-header-custom th,
+        .table thead.table-header-custom th,
+        .table-header-custom thead th {
+            background: #1a0000 !important;
+            color: white !important;
+            border: none !important;
         }
 
         .table-hover tbody tr:hover {
@@ -239,12 +254,14 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 0 auto;
         }
 
         .table td {
             padding: 12px;
             vertical-align: middle;
             border-color: #f8f9fa;
+            text-align: center;
         }
 
         .table tbody tr {
@@ -329,6 +346,7 @@
         .practice-plans-card {
             border: none;
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            margin: 0 auto;
         }
 
         .practice-plans-table {
