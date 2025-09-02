@@ -200,6 +200,26 @@
                                             <span class="badge bg-danger">Outstanding</span>
                                         {% endif %}
                                     </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Documentation</small>
+                                        <div class="d-flex gap-1">
+                                            {% if player.signed_waiver %}
+                                                <span class="badge bg-success" title="Waiver Signed">W</span>
+                                            {% else %}
+                                                <span class="badge bg-warning" title="No Waiver">W</span>
+                                            {% endif %}
+                                            {% if player.birth_certificate %}
+                                                <span class="badge bg-success" title="Birth Certificate">B</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary" title="No Birth Certificate">B</span>
+                                            {% endif %}
+                                            {% if player.usa_hockey_number %}
+                                                <span class="badge bg-primary" title="USA Hockey">U</span>
+                                            {% else %}
+                                                <span class="badge bg-light text-dark" title="No USA Hockey">U</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
 
                                 </div>
 
@@ -378,6 +398,12 @@
                                 
                                 <!-- Status Columns -->
                                 <th class="basic-col">Payment Status</th>
+                                
+                                <!-- Documentation Column -->
+                                <th class="basic-col">Documentation</th>
+                                
+                                <!-- Actions Column -->
+                                <th class="basic-col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -510,12 +536,54 @@
                                             {% endif %}
                                         </td>
                                         
+                                        <!-- Documentation Column -->
+                                        <td class="basic-col">
+                                            <div class="d-flex gap-1">
+                                                {% if player.signed_waiver %}
+                                                    <span class="badge bg-success" title="Waiver Signed">Waiver ✓</span>
+                                                {% else %}
+                                                    <span class="badge bg-warning" title="No Waiver">No Waiver</span>
+                                                {% endif %}
+                                                {% if player.birth_certificate %}
+                                                    <span class="badge bg-success" title="Birth Certificate">Birth Cert ✓</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary" title="No Birth Certificate">No Birth Cert</span>
+                                                {% endif %}
+                                                {% if player.usa_hockey_number %}
+                                                    <span class="badge bg-success" title="USA Hockey">USA Hockey ✓</span>
+                                                {% else %}
+                                                    <span class="badge bg-light text-dark" title="No USA Hockey">No USA Hockey #</span>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                        
+                                        <!-- Actions Column -->
+                                        <td class="basic-col">
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="{{ url_for('main.view_player', id=player.id) }}" 
+                                                   class="btn btn-outline-info btn-sm" title="View">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                                <a href="{{ url_for('main.edit_player', id=player.id) }}" 
+                                                   class="btn btn-outline-primary btn-sm" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <form action="{{ url_for('main.delete_player', id=player.id) }}" 
+                                                      method="POST" class="d-inline">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                            onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')"
+                                                            title="Delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
 
                                     </tr>
                                 {% endfor %}
                             {% else %}
                                 <tr>
-                                    <td colspan="17" class="text-center py-5">
+                                    <td colspan="19" class="text-center py-5">
                                         <div class="text-muted">
                                             <i class="bi bi-people display-4"></i>
                                             <div class="mt-2">No players found</div>
