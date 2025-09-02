@@ -40,39 +40,11 @@ class PlayerForm(FlaskForm):
     
     # Jersey and Equipment
     jersey_number = StringField('Jersey Number', validators=[Optional(), Length(max=10)])
-    jersey_size = SelectField('Jersey Size', choices=[
-        ('', 'Select Size'),
-        ('XS', 'Extra Small'),
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'Extra Large'),
-        ('XXL', 'XXL'),
-        ('Youth S', 'Youth Small'),
-        ('Youth M', 'Youth Medium'),
-        ('Youth L', 'Youth Large')
-    ], validators=[Optional()])
+    jersey_size = StringField('Jersey Size', validators=[Optional(), Length(max=10)])
     
-    socks = SelectField('Socks Size', choices=[
-        ('', 'Select Size'),
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'Extra Large')
-    ], validators=[Optional()])
+    socks = StringField('Socks Size', validators=[Optional(), Length(max=10)])
     
-    jacket = SelectField('Jacket Size', choices=[
-        ('', 'Select Size'),
-        ('XS', 'Extra Small'),
-        ('S', 'Small'),
-        ('M', 'Medium'),
-        ('L', 'Large'),
-        ('XL', 'Extra Large'),
-        ('XXL', 'XXL'),
-        ('Youth S', 'Youth Small'),
-        ('Youth M', 'Youth Medium'),
-        ('Youth L', 'Youth Large')
-    ], validators=[Optional()])
+    jacket = StringField('Jacket Size', validators=[Optional(), Length(max=10)])
     
     usa_hockey_number = StringField('USA Hockey Number', validators=[Optional(), Length(max=20)])
     
