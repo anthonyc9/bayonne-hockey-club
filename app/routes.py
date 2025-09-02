@@ -708,6 +708,25 @@ def upload_file():
             print("ERROR: Empty filename")
             return jsonify({'error': 'No file selected'}), 400
         
+        # Get folder_id from form data
+        folder_id = request.form.get('folder_id')
+        print(f"Folder ID received: {folder_id}")
+        
+        # Validate folder_id if provided
+        folder = None
+        if folder_id and folder_id != '' and folder_id != 'null':
+            try:
+                folder_id = int(folder_id)
+                folder = Folder.query.get(folder_id)
+                if not folder:
+                    print(f"WARNING: Folder {folder_id} not found, uploading to root")
+                    folder_id = None
+                else:
+                    print(f"Uploading to folder: {folder.name}")
+            except (ValueError, TypeError):
+                print(f"WARNING: Invalid folder_id {folder_id}, uploading to root")
+                folder_id = None
+        
         # Simplified - just save to a simple location for now
         original_name = secure_filename(file.filename)
         unique_name = f"{uuid.uuid4().hex}_{original_name}"
@@ -724,14 +743,14 @@ def upload_file():
         
         print(f"File saved successfully: {file_size} bytes")
         
-        # Create database record (simplified)
+        # Create database record with proper folder_id
         db_file = File(
             name=unique_name,
             original_name=original_name,
             file_path=file_path,
             file_size=file_size,
             mime_type=file.content_type or 'application/octet-stream',
-            folder_id=None,  # No folder for now
+            folder_id=folder_id,  # Use the folder_id from form
             user_id=current_user.id
         )
         
@@ -746,7 +765,8 @@ def upload_file():
                 'id': db_file.id,
                 'name': db_file.original_name,
                 'size': f"{file_size} bytes",
-                'type': db_file.mime_type
+                'type': db_file.mime_type,
+                'folder_id': folder_id
             }
         })
         
