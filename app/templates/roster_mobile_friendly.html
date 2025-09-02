@@ -200,26 +200,7 @@
                                             <span class="badge bg-danger">Outstanding</span>
                                         {% endif %}
                                     </div>
-                                    <div class="col-6">
-                                        <small class="text-muted d-block">Documentation</small>
-                                        <div class="d-flex gap-1">
-                                            {% if player.signed_waiver %}
-                                                <span class="badge bg-success" title="Waiver Signed">W</span>
-                                            {% else %}
-                                                <span class="badge bg-warning" title="No Waiver">W</span>
-                                            {% endif %}
-                                            {% if player.birth_certificate %}
-                                                <span class="badge bg-success" title="Birth Certificate">B</span>
-                                            {% else %}
-                                                <span class="badge bg-secondary" title="No Birth Certificate">B</span>
-                                            {% endif %}
-                                            {% if player.usa_hockey_number %}
-                                                <span class="badge bg-primary" title="USA Hockey">U</span>
-                                            {% else %}
-                                                <span class="badge bg-light text-dark" title="No USA Hockey">U</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <!-- Action Buttons -->
@@ -360,72 +341,7 @@
                 {% endif %}
             </div>
 
-            <!-- Mobile Simplified Table View -->
-            <div id="mobileTableView" class="d-md-none" style="display: none !important;">
-                <div class="table-responsive">
-                    <table class="table table-sm mb-0">
-                        <thead class="table-header-custom">
-                            <tr>
-                                <th>
-                                    <input type="checkbox" id="selectAllMobile" onchange="toggleAllPlayers()">
-                                </th>
-                                <th>Player</th>
-                                <th>Team</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% if players %}
-                                {% for player in players %}
-                                    <tr>
-                                        <td>
-                                            <input type="checkbox" class="player-checkbox" value="{{ player.id }}">
-                                        </td>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="avatar-xs bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
-                                                    {{ player.first_name[0] if player.first_name else 'P' }}{{ player.last_name[0] if player.last_name else 'L' }}
-                                                </div>
-                                                <div>
-                                                    <div class="fw-bold">{{ player.first_name }} {{ player.last_name }}</div>
-                                                    <small class="text-muted">{{ player.birth_year or 'N/A' }}</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span class="badge bg-info">{{ player.team or 'No Team' }}</span>
-                                        </td>
-                                        <td>
-                                            {% if player.paid_tuition %}
-                                                <span class="badge bg-success">Paid</span>
-                                            {% else %}
-                                                <span class="badge bg-danger">Unpaid</span>
-                                            {% endif %}
-                                        </td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <a href="{{ url_for('main.view_player', id=player.id) }}" 
-                                                   class="btn btn-outline-info btn-sm" title="View">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a href="{{ url_for('main.edit_player', id=player.id) }}" 
-                                                   class="btn btn-outline-primary btn-sm" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr>
-                                    <td colspan="5" class="text-center py-3">No players found</td>
-                                </tr>
-                            {% endif %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+
 
             <!-- Desktop Table View -->
             <div class="d-none d-md-block">
