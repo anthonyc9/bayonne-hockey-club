@@ -648,7 +648,12 @@ function uploadFile(file, progressItem, isLast) {
     
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('folder_id', currentFolderId || '');
+    // Send null instead of empty string for root folder
+    if (currentFolderId && currentFolderId !== 'null' && currentFolderId !== '') {
+        formData.append('folder_id', currentFolderId);
+    } else {
+        formData.append('folder_id', 'null');
+    }
     
     console.log('FormData created, about to fetch...');
     

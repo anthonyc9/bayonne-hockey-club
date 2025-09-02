@@ -714,7 +714,7 @@ def upload_file():
         
         # Validate folder_id if provided
         folder = None
-        if folder_id and folder_id != '' and folder_id != 'null':
+        if folder_id and folder_id != '' and folder_id != 'null' and folder_id != 'None':
             try:
                 folder_id = int(folder_id)
                 folder = Folder.query.get(folder_id)
@@ -726,6 +726,10 @@ def upload_file():
             except (ValueError, TypeError):
                 print(f"WARNING: Invalid folder_id {folder_id}, uploading to root")
                 folder_id = None
+        else:
+            # Convert empty string or 'null' to None
+            print(f"Converting empty folder_id '{folder_id}' to None")
+            folder_id = None
         
         # Simplified - just save to a simple location for now
         original_name = secure_filename(file.filename)
