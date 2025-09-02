@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="h3 mb-0">{{ title }}</h2>
+                <a href="{{ url_for('main.roster') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Roster
+                </a>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="card">
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Player Information -->
+                        <div class="mb-4">
+                            <h4 class="card-title mb-3">Player Information</h4>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">{{ form.first_name.label }}</label>
+                                    {{ form.first_name(class="form-control") }}
+                                    {% if form.first_name.errors %}
+                                        {% for error in form.first_name.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">{{ form.last_name.label }}</label>
+                                    {{ form.last_name(class="form-control") }}
+                                    {% if form.last_name.errors %}
+                                        {% for error in form.last_name.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-2">
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">{{ form.season.label }}</label>
+                                    {{ form.season(class="form-control") }}
+                                    {% if form.season.errors %}
+                                        {% for error in form.season.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">{{ form.date_of_birth.label }}</label>
+                                    {{ form.date_of_birth(class="form-control", type="date") }}
+                                    {% if form.date_of_birth.errors %}
+                                        {% for error in form.date_of_birth.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">{{ form.team.label }}</label>
+                                    {{ form.team(class="form-control") }}
+                                    {% if form.team.errors %}
+                                        {% for error in form.team.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guardian Information -->
+                        <div class="mb-4">
+                            <h4 class="card-title mb-3">Guardian Information</h4>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">{{ form.guardian_first_name.label }}</label>
+                                    {{ form.guardian_first_name(class="form-control") }}
+                                    {% if form.guardian_first_name.errors %}
+                                        {% for error in form.guardian_first_name.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">{{ form.guardian_last_name.label }}</label>
+                                    {{ form.guardian_last_name(class="form-control") }}
+                                    {% if form.guardian_last_name.errors %}
+                                        {% for error in form.guardian_last_name.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="mb-4">
+                            <h4 class="card-title mb-3">Contact Information</h4>
+                            <div class="mb-3">
+                                <label class="form-label">{{ form.address.label }}</label>
+                                {{ form.address(class="form-control") }}
+                                {% if form.address.errors %}
+                                    {% for error in form.address.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label">{{ form.city.label }}</label>
+                                    {{ form.city(class="form-control") }}
+                                    {% if form.city.errors %}
+                                        {% for error in form.city.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <label class="form-label">{{ form.state.label }}</label>
+                                    {{ form.state(class="form-control") }}
+                                    {% if form.state.errors %}
+                                        {% for error in form.state.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-12 col-sm-6 col-md-3">
+                                    <label class="form-label">{{ form.zip_code.label }}</label>
+                                    {{ form.zip_code(class="form-control") }}
+                                    {% if form.zip_code.errors %}
+                                        {% for error in form.zip_code.errors %}
+                                            <div class="text-danger small">{{ error }}</div>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payment Status -->
+                        <div class="mb-4">
+                            <h4 class="card-title mb-3">Payment Status</h4>
+                            <div class="form-check">
+                                {{ form.paid(class="form-check-input") }}
+                                <label class="form-check-label">{{ form.paid.label }}</label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex flex-wrap gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-save"></i> Save Player
+                            </button>
+                            <a href="{{ url_for('main.roster') }}" class="btn btn-secondary px-4">
+                                <i class="bi bi-x"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

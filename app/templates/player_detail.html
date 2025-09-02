@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+
+{% block title %}{{ player.first_name }} {{ player.last_name }} - Player Profile{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <!-- Header -->
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+                <div class="d-flex align-items-center mb-3 mb-md-0">
+                    <div class="avatar-lg bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3">
+                        <h3 class="mb-0">{{ player.first_name[0] if player.first_name else 'P' }}{{ player.last_name[0] if player.last_name else 'L' }}</h3>
+                    </div>
+                    <div>
+                        <h1 class="h3 mb-0">{{ player.first_name }} {{ player.last_name }}</h1>
+                        <p class="text-muted mb-0 small">
+                            Player ID: {{ player.id }}<br class="d-md-none">
+                            <span class="d-none d-md-inline"> | </span>
+                            {% if player.team %}Team: {{ player.team }}{% endif %}
+                            {% if player.position %}<br class="d-md-none"><span class="d-none d-md-inline"> | </span>Position: {{ player.position }}{% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 w-100 w-md-auto">
+                    <a href="{{ url_for('main.roster') }}" class="btn btn-outline-secondary flex-fill flex-md-grow-0">
+                        <i class="bi bi-arrow-left"></i> <span class="d-none d-sm-inline">Back to Roster</span>
+                    </a>
+                    <a href="{{ url_for('main.edit_player', id=player.id) }}" class="btn btn-primary flex-fill flex-md-grow-0">
+                        <i class="bi bi-pencil"></i> <span class="d-none d-sm-inline">Edit Player</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Status Overview -->
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-md-3">
+                    <div class="card {{ 'bg-success' if player.paid_tuition else 'bg-danger' }} text-white stats-card-mobile">
+                        <div class="card-body text-center">
+                            <i class="bi {{ 'bi-check-circle' if player.paid_tuition else 'bi-exclamation-circle' }} fa-2x mb-2 d-none d-md-block"></i>
+                            <h6 class="mb-1">Tuition Status</h6>
+                            <strong>{{ 'PAID' if player.paid_tuition else 'UNPAID' }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card {{ 'bg-success' if player.signed_waiver else 'bg-warning' }} text-white stats-card-mobile">
+                        <div class="card-body text-center">
+                            <i class="bi {{ 'bi-check-circle' if player.signed_waiver else 'bi-exclamation-triangle' }} fa-2x mb-2 d-none d-md-block"></i>
+                            <h6 class="mb-1">Waiver</h6>
+                            <strong>{{ 'SIGNED' if player.signed_waiver else 'MISSING' }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card {{ 'bg-success' if player.birth_certificate else 'bg-info' }} text-white stats-card-mobile">
+                        <div class="card-body text-center">
+                            <i class="bi {{ 'bi-check-circle' if player.birth_certificate else 'bi-file-earmark' }} fa-2x mb-2 d-none d-md-block"></i>
+                            <h6 class="mb-1">Birth Certificate</h6>
+                            <strong>{{ 'ON FILE' if player.birth_certificate else 'MISSING' }}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="card {{ 'bg-success' if player.usa_hockey_number else 'bg-secondary' }} text-white stats-card-mobile">
+                        <div class="card-body text-center">
+                            <i class="bi {{ 'bi-check-circle' if player.usa_hockey_number else 'bi-hash' }} fa-2x mb-2 d-none d-md-block"></i>
+                            <h6 class="mb-1">USA Hockey #</h6>
+                            <strong>{{ 'REGISTERED' if player.usa_hockey_number else 'MISSING' }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Basic Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-person"></i> Basic Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Season:</strong></div>
+                                <div class="col-sm-8">{{ player.season or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Birth Year:</strong></div>
+                                <div class="col-sm-8">{{ player.birth_year or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Team:</strong></div>
+                                <div class="col-sm-8">
+                                    {% if player.team %}
+                                        <span class="badge bg-info">{{ player.team }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Not assigned</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Position:</strong></div>
+                                <div class="col-sm-8">{{ player.position or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Jersey Number:</strong></div>
+                                <div class="col-sm-8">
+                                    {% if player.jersey_number %}
+                                        <span class="badge bg-success">#{{ player.jersey_number }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Not assigned</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>USA Hockey #:</strong></div>
+                                <div class="col-sm-8">{{ player.usa_hockey_number or 'Not registered' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Equipment Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-shield"></i> Equipment & Sizing</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Jersey Size:</strong></div>
+                                <div class="col-sm-8">{{ player.jersey_size or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Socks Size:</strong></div>
+                                <div class="col-sm-8">{{ player.socks or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Jacket Size:</strong></div>
+                                <div class="col-sm-8">{{ player.jacket or 'Not specified' }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Created:</strong></div>
+                                <div class="col-sm-8">{{ player.created_at.strftime('%B %d, %Y at %I:%M %p') if player.created_at }}</div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-4"><strong>Last Updated:</strong></div>
+                                <div class="col-sm-8">{{ player.updated_at.strftime('%B %d, %Y at %I:%M %p') if player.updated_at }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Parent Information -->
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-people"></i> Parent Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <!-- Father Information -->
+                                <div class="col-md-6">
+                                    <h6 class="text-primary"><i class="bi bi-person"></i> Father</h6>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><strong>Name:</strong></div>
+                                        <div class="col-sm-9">{{ player.dad_first_name or '' }} {{ player.dad_last_name or '' or 'Not provided' }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><strong>Phone:</strong></div>
+                                        <div class="col-sm-9">
+                                            {% if player.dad_phone %}
+                                                <a href="tel:{{ player.dad_phone }}" class="text-decoration-none">
+                                                    <i class="bi bi-phone"></i> {{ player.dad_phone }}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Not provided</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><strong>Email:</strong></div>
+                                        <div class="col-sm-9">
+                                            {% if player.dad_email %}
+                                                <a href="mailto:{{ player.dad_email }}" class="text-decoration-none">
+                                                    <i class="bi bi-envelope"></i> {{ player.dad_email }}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Not provided</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Mother Information -->
+                                <div class="col-md-6">
+                                    <h6 class="text-primary"><i class="bi bi-person"></i> Mother</h6>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><strong>Name:</strong></div>
+                                        <div class="col-sm-9">{{ player.mom_first_name or '' }} {{ player.mom_last_name or '' or 'Not provided' }}</div>
+                                    </div>
+                                    <div class="row mb-2">
+                                        <div class="col-sm-3"><strong>Phone:</strong></div>
+                                        <div class="col-sm-9">
+                                            {% if player.mom_phone %}
+                                                <a href="tel:{{ player.mom_phone }}" class="text-decoration-none">
+                                                    <i class="bi bi-phone"></i> {{ player.mom_phone }}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Not provided</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3"><strong>Email:</strong></div>
+                                        <div class="col-sm-9">
+                                            {% if player.mom_email %}
+                                                <a href="mailto:{{ player.mom_email }}" class="text-decoration-none">
+                                                    <i class="bi bi-envelope"></i> {{ player.mom_email }}
+                                                </a>
+                                            {% else %}
+                                                <span class="text-muted">Not provided</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-geo-alt"></i> Address</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <strong>Street Address:</strong><br>
+                                {{ player.address or 'Not provided' }}
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <strong>City:</strong><br>
+                                    {{ player.city or 'Not provided' }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <strong>State:</strong><br>
+                                    {{ player.state or 'Not provided' }}
+                                </div>
+                                <div class="col-sm-3">
+                                    <strong>Zip Code:</strong><br>
+                                    {{ player.zip_code or 'Not provided' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information -->
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-currency-dollar"></i> Financial Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-6"><strong>Total Tuition:</strong></div>
+                                <div class="col-sm-6">
+                                    {% if player.total_tuition_amount %}
+                                        <span class="h6">${{ "%.2f"|format(player.total_tuition_amount) }}</span>
+                                    {% else %}
+                                        <span class="text-muted">Not set</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6"><strong>Amount Paid:</strong></div>
+                                <div class="col-sm-6">
+                                    {% if player.amount_paid %}
+                                        <span class="h6 text-success">${{ "%.2f"|format(player.amount_paid) }}</span>
+                                    {% else %}
+                                        <span class="text-muted">$0.00</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-sm-6"><strong>Balance:</strong></div>
+                                <div class="col-sm-6">
+                                    {% if player.total_tuition_amount and player.amount_paid %}
+                                        {% set balance = player.total_tuition_amount - player.amount_paid %}
+                                        <span class="h6 {{ 'text-danger' if balance > 0 else 'text-success' }}">
+                                            ${{ "%.2f"|format(balance) }}
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted">-</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6"><strong>Payment Status:</strong></div>
+                                <div class="col-sm-6">
+                                    {% if player.paid_tuition %}
+                                        <span class="badge bg-success">Paid in Full</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Outstanding Balance</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Documents -->
+                {% if player.documents %}
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0"><i class="bi bi-file-earmark-check"></i> Documents</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                {% for document in player.documents %}
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border">
+                                            <div class="card-body">
+                                                <h6 class="card-title">
+                                                    <i class="bi bi-file-earmark"></i> {{ document.document_type.title() }}
+                                                </h6>
+                                                <p class="card-text small">
+                                                    <strong>File:</strong> {{ document.original_filename }}<br>
+                                                    <strong>Uploaded:</strong> {{ document.created_at.strftime('%m/%d/%Y') }}<br>
+                                                    <strong>Size:</strong> {{ (document.file_size / 1024)|round(1) }} KB
+                                                </p>
+                                                                                <a href="{{ url_for('main.download_document', player_id=player.id, document_id=document.id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i> Download
+                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 1.5rem;
+}
+
+.card-title {
+    color: #b01e43;
+}
+
+.text-primary {
+    color: #b01e43 !important;
+}
+</style>
+
+{% endblock %}

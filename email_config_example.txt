@@ -1,0 +1,32 @@
+# Email Configuration Instructions
+# Copy these environment variables to your shell or create a .env file
+
+# For Gmail, you'll need to create an App Password (not your regular password)
+# Go to: Google Account > Security > 2-Step Verification > App passwords
+
+export MAIL_SERVER=smtp.gmail.com
+export MAIL_PORT=587
+export MAIL_USE_TLS=true
+export MAIL_USERNAME=your-email@gmail.com
+export MAIL_PASSWORD=your-app-password
+export MAIL_DEFAULT_SENDER=noreply@bayonnehockeyclub.com
+
+# Alternative Email Providers:
+# For Outlook/Hotmail:
+# export MAIL_SERVER=smtp-mail.outlook.com
+# export MAIL_PORT=587
+
+# For Yahoo:
+# export MAIL_SERVER=smtp.mail.yahoo.com
+# export MAIL_PORT=587
+
+# To use these settings, run these commands in your terminal before starting the app:
+# export MAIL_SERVER=smtp.gmail.com
+# export MAIL_PORT=587
+# export MAIL_USE_TLS=true
+# export MAIL_USERNAME=your-email@gmail.com
+# export MAIL_PASSWORD=your-app-password
+# export MAIL_DEFAULT_SENDER=noreply@bayonnehockeyclub.com
+
+# Then start your app:
+# source .venv/bin/activate && python run.py

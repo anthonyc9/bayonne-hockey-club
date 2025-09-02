@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-2">Team Roster</h1>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('main.add_player') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Add Player
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Filters -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-3">
+                <form method="GET" class="row g-3 flex-grow-1">
+                    <div class="col-12 col-md-3">
+                        <select name="season" class="form-select">
+                            <option value="">All Seasons</option>
+                            {% for season in seasons %}
+                                <option value="{{ season }}" {% if season|string == current_season|string %}selected{% endif %}>{{ season }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <input type="text" name="search" class="form-control" placeholder="Search players..." value="{{ search }}">
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <select name="team" class="form-select">
+                            <option value="">All Teams</option>
+                            {% for team in teams %}
+                                <option value="{{ team }}" {% if team == current_team %}selected{% endif %}>{{ team }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <select name="paid" class="form-select">
+                            <option value="">All Payment Status</option>
+                            <option value="true" {% if current_paid == 'true' %}selected{% endif %}>Paid</option>
+                            <option value="false" {% if current_paid == 'false' %}selected{% endif %}>Unpaid</option>
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Filter</button>
+                    </div>
+                </form>
+                <a href="{{ url_for('main.export_roster', team=current_team, season=current_season, paid=current_paid, search=search) }}" 
+                class="btn btn-success">
+                    <i class="bi bi-download"></i> Export to CSV
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Players Table -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Season</th>
+                            <th>Name</th>
+                            <th>Date of Birth</th>
+                            <th>Team</th>
+                            <th>Guardian</th>
+                            <th>Address</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Zip</th>
+                            <th>Payment Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if players %}
+                            {% for player in players %}
+                                <tr>
+                                    <td>{{ player.season }}</td>
+                                    <td>{{ player.first_name }} {{ player.last_name }}</td>
+                                    <td>{{ player.date_of_birth.strftime('%m/%d/%Y') if player.date_of_birth }}</td>
+                                    <td>{{ player.team }}</td>
+                                    <td>{{ player.guardian_first_name }} {{ player.guardian_last_name }}</td>
+                                    <td>{{ player.address }}</td>
+                                    <td>{{ player.city }}</td>
+                                    <td>{{ player.state }}</td>
+                                    <td>{{ player.zip_code }}</td>
+                                    <td>
+                                        {% if player.paid %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Unpaid</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ url_for('main.edit_player', id=player.id) }}" 
+                                               class="btn btn-sm btn-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ url_for('main.delete_player', id=player.id) }}" 
+                                                  method="POST" 
+                                                  class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" 
+                                                        class="btn btn-sm btn-danger" 
+                                                        onclick="return confirm('Are you sure you want to delete this player?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="11" class="text-center">No players found.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

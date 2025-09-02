@@ -1,0 +1,425 @@
+{% extends "base.html" %}
+
+{% block title %}Team Roster - Bayonne Hockey Club{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header with Stats -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <h1 class="h3 mb-0">Team Roster Management</h1>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
+                        <i class="bi bi-upload"></i> Bulk Import
+                    </button>
+                    <a href="{{ url_for('main.add_player') }}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add Player
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Total Players</h6>
+                                    <h3 class="mb-0">{{ players|length }}</h3>
+                                </div>
+                                <i class="bi bi-people-fill fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Paid Players</h6>
+                                    <h3 class="mb-0">{{ players|selectattr('paid')|list|length }}</h3>
+                                </div>
+                                <i class="bi bi-check-circle-fill fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Unpaid Players</h6>
+                                    <h3 class="mb-0">{{ players|rejectattr('paid')|list|length }}</h3>
+                                </div>
+                                <i class="bi bi-exclamation-circle-fill fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <h6 class="card-title">Teams</h6>
+                                    <h3 class="mb-0">{{ teams|length }}</h3>
+                                </div>
+                                <i class="bi bi-flag-fill fa-2x"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <!-- Advanced Filters -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="bi bi-funnel"></i> Advanced Filters & Actions</h6>
+        </div>
+        <div class="card-body">
+            <form method="GET" class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label">Season</label>
+                    <select name="season" class="form-select">
+                        <option value="">All Seasons</option>
+                        {% for season in seasons %}
+                            <option value="{{ season }}" {% if season|string == current_season|string %}selected{% endif %}>
+                                {{ season }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Team</label>
+                    <select name="team" class="form-select">
+                        <option value="">All Teams</option>
+                        {% for team in teams %}
+                            <option value="{{ team }}" {% if team == current_team %}selected{% endif %}>
+                                {{ team }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Payment Status</label>
+                    <select name="paid" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="true" {% if current_paid == 'true' %}selected{% endif %}>Paid</option>
+                        <option value="false" {% if current_paid == 'false' %}selected{% endif %}>Unpaid</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Search</label>
+                    <input type="text" name="search" class="form-control" placeholder="Search players, guardians..." value="{{ search }}">
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search"></i> Filter
+                    </button>
+                    <a href="{{ url_for('main.roster') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Clear
+                    </a>
+                    <a href="{{ url_for('main.export_roster', team=current_team, season=current_season, paid=current_paid, search=search) }}" 
+                       class="btn btn-success">
+                        <i class="bi bi-download"></i> Export CSV
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Players Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0"><i class="bi bi-table"></i> Player Roster</h6>
+            <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-primary" onclick="toggleView('card')">
+                    <i class="bi bi-grid-3x3-gap"></i> Cards
+                </button>
+                <button class="btn btn-primary" onclick="toggleView('table')">
+                    <i class="bi bi-table"></i> Table
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <!-- Table View -->
+            <div id="tableView" class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="selectAll" onchange="toggleAllPlayers()">
+                            </th>
+                            <th>Season</th>
+                            <th>Player Name</th>
+                            <th>DOB</th>
+                            <th>Age</th>
+                            <th>Team</th>
+                            <th>Guardian</th>
+                            <th>Contact</th>
+                            <th>Payment</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if players %}
+                            {% for player in players %}
+                                <tr class="player-row">
+                                    <td>
+                                        <input type="checkbox" class="player-checkbox" value="{{ player.id }}">
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ player.season }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                {{ player.first_name[0] }}{{ player.last_name[0] }}
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold">{{ player.first_name }} {{ player.last_name }}</div>
+                                                <small class="text-muted">ID: {{ player.id }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if player.date_of_birth %}
+                                            {{ player.date_of_birth.strftime('%m/%d/%Y') }}
+                                        {% else %}
+                                            <span class="text-muted">Not set</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if player.date_of_birth %}
+                                            {% set current_year = 2024 %}
+                                            {% set age = (current_year - player.date_of_birth.year) %}
+                                            {{ age }} years
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ player.team or 'No Team' }}</span>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <div class="fw-semibold">{{ player.guardian_first_name }} {{ player.guardian_last_name }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="small">
+                                            <div>{{ player.address }}</div>
+                                            <div>{{ player.city }}, {{ player.state }} {{ player.zip_code }}</div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        {% if player.paid %}
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Paid
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-exclamation-circle"></i> Unpaid
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ url_for('main.view_player', id=player.id) }}" 
+                                               class="btn btn-sm btn-outline-info" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="{{ url_for('main.edit_player', id=player.id) }}" 
+                                               class="btn btn-sm btn-outline-primary" title="Edit">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <form action="{{ url_for('main.delete_player', id=player.id) }}" 
+                                                  method="POST" class="d-inline">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <button type="submit" 
+                                                        class="btn btn-sm btn-outline-danger" 
+                                                        title="Delete"
+                                                        onclick="return confirm('Are you sure you want to delete {{ player.first_name }} {{ player.last_name }}?')">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="10" class="text-center py-5">
+                                    <div class="text-muted">
+                                        <i class="bi bi-people display-4"></i>
+                                        <div class="mt-2">No players found</div>
+                                        {% if current_team or current_season or current_paid or search %}
+                                            <small>Try adjusting your filters or <a href="{{ url_for('main.roster') }}">clear all filters</a></small>
+                                        {% else %}
+                                            <small><a href="{{ url_for('main.add_player') }}">Add your first player</a></small>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Actions Panel -->
+    {% if players %}
+    <div class="card mt-3" id="bulkActionsPanel" style="display: none;">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-3">
+                <span id="selectedCount">0</span> players selected
+                <div class="btn-group">
+                    <button class="btn btn-sm btn-success" onclick="markSelectedAsPaid()">
+                        <i class="bi bi-check-circle"></i> Mark as Paid
+                    </button>
+                    <button class="btn btn-sm btn-warning" onclick="markSelectedAsUnpaid()">
+                        <i class="bi bi-exclamation-circle"></i> Mark as Unpaid
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteSelected()">
+                        <i class="bi bi-trash"></i> Delete Selected
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Bulk Import Modal -->
+<div class="modal fade" id="bulkImportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Import Players</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Upload a CSV file with player data. Download the template below to see the required format.
+                </div>
+                
+                <div class="mb-3">
+                    <a href="{{ url_for('main.download_template') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-download"></i> Download CSV Template
+                    </a>
+                </div>
+                
+                <form action="{{ url_for('main.bulk_import') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">CSV File</label>
+                        <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+                        <div class="form-text">Select a CSV file with player data</div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Import Players
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.avatar-sm {
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
+}
+</style>
+
+<script>
+// Bulk selection functionality
+function toggleAllPlayers() {
+    const selectAll = document.getElementById('selectAll');
+    const checkboxes = document.querySelectorAll('.player-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.checked = selectAll.checked;
+    });
+    
+    updateBulkActions();
+}
+
+function updateBulkActions() {
+    const checkboxes = document.querySelectorAll('.player-checkbox:checked');
+    const panel = document.getElementById('bulkActionsPanel');
+    const count = document.getElementById('selectedCount');
+    
+    count.textContent = checkboxes.length;
+    panel.style.display = checkboxes.length > 0 ? 'block' : 'none';
+}
+
+// Add event listeners to checkboxes
+document.addEventListener('DOMContentLoaded', function() {
+    const checkboxes = document.querySelectorAll('.player-checkbox');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateBulkActions);
+    });
+});
+
+function markSelectedAsPaid() {
+    const selected = Array.from(document.querySelectorAll('.player-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return;
+    
+    if (confirm(`Mark ${selected.length} players as paid?`)) {
+        // Implementation would go here
+        console.log('Mark as paid:', selected);
+    }
+}
+
+function markSelectedAsUnpaid() {
+    const selected = Array.from(document.querySelectorAll('.player-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return;
+    
+    if (confirm(`Mark ${selected.length} players as unpaid?`)) {
+        // Implementation would go here
+        console.log('Mark as unpaid:', selected);
+    }
+}
+
+function deleteSelected() {
+    const selected = Array.from(document.querySelectorAll('.player-checkbox:checked')).map(cb => cb.value);
+    if (selected.length === 0) return;
+    
+    if (confirm(`Delete ${selected.length} players? This action cannot be undone.`)) {
+        // Implementation would go here
+        console.log('Delete:', selected);
+    }
+}
+
+function toggleView(view) {
+    // Toggle between table and card views
+    console.log('Toggle view:', view);
+}
+</script>
+
+{% endblock %}

@@ -1,0 +1,418 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
+
+{% block content %}
+<style>
+/* Mobile form optimizations */
+@media (max-width: 768px) {
+    .card-header h4 {
+        font-size: 1.3rem;
+    }
+    
+    .form-section-header {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .form-control, .form-select {
+        font-size: 16px; /* Prevents zoom on iOS */
+        padding: 12px 15px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+    }
+    
+    .btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+        margin: 0.25rem 0;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .row.mb-4 {
+        margin-bottom: 2rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        width: 100%;
+        margin: 0;
+    }
+}
+</style>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title mb-0"><i class="bi bi-person-plus"></i> {{ title }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" enctype="multipart/form-data" id="playerForm">
+                        {{ form.hidden_tag() }}
+                        
+                        <!-- Basic Player Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-person"></i> Basic Information</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.season.label }}</label>
+                                {{ form.season(class="form-control") }}
+                                {% if form.season.errors %}
+                                    {% for error in form.season.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.first_name.label }}</label>
+                                {{ form.first_name(class="form-control") }}
+                                {% if form.first_name.errors %}
+                                    {% for error in form.first_name.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.last_name.label }}</label>
+                                {{ form.last_name(class="form-control") }}
+                                {% if form.last_name.errors %}
+                                    {% for error in form.last_name.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.birth_year.label }}</label>
+                                {{ form.birth_year(class="form-control") }}
+                                {% if form.birth_year.errors %}
+                                    {% for error in form.birth_year.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Team and Position -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-flag"></i> Team & Position</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.team.label }}</label>
+                                {{ form.team(class="form-control") }}
+                                {% if form.team.errors %}
+                                    {% for error in form.team.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.position.label }}</label>
+                                {{ form.position(class="form-control") }}
+                                {% if form.position.errors %}
+                                    {% for error in form.position.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Jersey and Equipment -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-shield"></i> Jersey & Equipment</h5>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">{{ form.jersey_number.label }}</label>
+                                {{ form.jersey_number(class="form-control") }}
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">{{ form.jersey_size.label }}</label>
+                                {{ form.jersey_size(class="form-control") }}
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">{{ form.socks.label }}</label>
+                                {{ form.socks(class="form-control") }}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.jacket.label }}</label>
+                                {{ form.jacket(class="form-control") }}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.usa_hockey_number.label }}</label>
+                                {{ form.usa_hockey_number(class="form-control") }}
+                            </div>
+                        </div>
+
+                        <!-- Parent Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-people"></i> Parent Information</h5>
+                            </div>
+                            <!-- Father -->
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Father Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">{{ form.dad_first_name.label }}</label>
+                                        {{ form.dad_first_name(class="form-control") }}
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">{{ form.dad_last_name.label }}</label>
+                                        {{ form.dad_last_name(class="form-control") }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <label class="form-label">{{ form.dad_phone.label }}</label>
+                                        {{ form.dad_phone(class="form-control") }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <label class="form-label">{{ form.dad_email.label }}</label>
+                                        {{ form.dad_email(class="form-control") }}
+                                        {% if form.dad_email.errors %}
+                                            {% for error in form.dad_email.errors %}
+                                                <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Mother -->
+                            <div class="col-md-6">
+                                <h6 class="text-secondary">Mother Information</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label class="form-label">{{ form.mom_first_name.label }}</label>
+                                        {{ form.mom_first_name(class="form-control") }}
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label">{{ form.mom_last_name.label }}</label>
+                                        {{ form.mom_last_name(class="form-control") }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <label class="form-label">{{ form.mom_phone.label }}</label>
+                                        {{ form.mom_phone(class="form-control") }}
+                                    </div>
+                                    <div class="col-6 mt-2">
+                                        <label class="form-label">{{ form.mom_email.label }}</label>
+                                        {{ form.mom_email(class="form-control") }}
+                                        {% if form.mom_email.errors %}
+                                            {% for error in form.mom_email.errors %}
+                                                <div class="text-danger small">{{ error }}</div>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-geo-alt"></i> Address Information</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.address.label }}</label>
+                                {{ form.address(class="form-control") }}
+                                {% if form.address.errors %}
+                                    {% for error in form.address.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">{{ form.city.label }}</label>
+                                {{ form.city(class="form-control") }}
+                                {% if form.city.errors %}
+                                    {% for error in form.city.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1">
+                                <label class="form-label">{{ form.state.label }}</label>
+                                {{ form.state(class="form-control") }}
+                                {% if form.state.errors %}
+                                    {% for error in form.state.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label">{{ form.zip_code.label }}</label>
+                                {{ form.zip_code(class="form-control") }}
+                                {% if form.zip_code.errors %}
+                                    {% for error in form.zip_code.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Financial Information -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-currency-dollar"></i> Financial Information</h5>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ form.total_tuition_amount.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form.total_tuition_amount(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">{{ form.amount_paid.label }}</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    {{ form.amount_paid(class="form-control") }}
+                                </div>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-end">
+                                <div class="form-check">
+                                    {{ form.paid_tuition(class="form-check-input") }}
+                                    <label class="form-check-label">{{ form.paid_tuition.label }}</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Documentation -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="text-primary border-bottom pb-2 form-section-header"><i class="bi bi-file-earmark-check"></i> Documentation & Legal</h5>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    {{ form.signed_waiver(class="form-check-input") }}
+                                    <label class="form-check-label">{{ form.signed_waiver.label }}</label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    {{ form.birth_certificate(class="form-check-input") }}
+                                    <label class="form-check-label">{{ form.birth_certificate.label }}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">{{ form.document_upload.label }}</label>
+                                {{ form.document_upload(class="form-control") }}
+                                {% if form.document_upload.errors %}
+                                    {% for error in form.document_upload.errors %}
+                                        <div class="text-danger small">{{ error }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                                <div class="form-text">Upload birth certificate, waiver, or other documents (PDF, images, Word docs)</div>
+                            </div>
+                        </div>
+
+                        <!-- Legacy Fields (Hidden) -->
+                        <div class="d-none">
+                            {{ form.date_of_birth(class="form-control") }}
+                            {{ form.guardian_first_name(class="form-control") }}
+                            {{ form.guardian_last_name(class="form-control") }}
+                            {{ form.paid(class="form-check-input") }}
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top">
+                            <a href="{{ url_for('main.roster') }}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> 
+                                {% if title.startswith('Edit') %}Update Player{% else %}Add Player{% endif %}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.border-bottom {
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+.text-primary {
+    color: #b01e43 !important;
+}
+
+.btn-primary {
+    background-color: #b01e43;
+    border-color: #b01e43;
+}
+
+.btn-primary:hover {
+    background-color: #8b1732;
+    border-color: #8b1732;
+}
+</style>
+
+<script>
+// Auto-populate legacy fields for backward compatibility
+document.addEventListener('DOMContentLoaded', function() {
+    // Copy new values to legacy fields when they change
+    const birthYear = document.getElementById('birth_year');
+    const dadFirstName = document.getElementById('dad_first_name');
+    const dadLastName = document.getElementById('dad_last_name');
+    const paidTuition = document.getElementById('paid_tuition');
+    
+    // Legacy field references
+    const legacyDateOfBirth = document.getElementById('date_of_birth');
+    const legacyGuardianFirst = document.getElementById('guardian_first_name');
+    const legacyGuardianLast = document.getElementById('guardian_last_name');
+    const legacyPaid = document.getElementById('paid');
+    
+    // Sync values
+    if (birthYear && legacyDateOfBirth) {
+        birthYear.addEventListener('change', function() {
+            if (this.value) {
+                legacyDateOfBirth.value = this.value + '-01-01';
+            }
+        });
+    }
+    
+    if (dadFirstName && legacyGuardianFirst) {
+        dadFirstName.addEventListener('change', function() {
+            legacyGuardianFirst.value = this.value;
+        });
+    }
+    
+    if (dadLastName && legacyGuardianLast) {
+        dadLastName.addEventListener('change', function() {
+            legacyGuardianLast.value = this.value;
+        });
+    }
+    
+    if (paidTuition && legacyPaid) {
+        paidTuition.addEventListener('change', function() {
+            legacyPaid.checked = this.checked;
+        });
+    }
+});
+</script>
+
+{% endblock %}
