@@ -327,26 +327,90 @@ def export_roster():
         si = StringIO()
         writer = csv.writer(si)
         
-        # Write headers
-        writer.writerow(['Season', 'First Name', 'Last Name', 'Date of Birth', 
-                        'Team', 'Guardian First Name', 'Guardian Last Name',
-                        'Address', 'City', 'State', 'Zip', 'Payment Status'])
+        # Write comprehensive headers with all available information
+        writer.writerow([
+            # Basic Player Information
+            'Season', 'First Name', 'Last Name', 'Birth Year', 'Team', 'Position',
+            
+            # Jersey and Equipment
+            'Jersey Number', 'Jersey Size', 'Socks Size', 'Jacket Size', 'USA Hockey Number',
+            
+            # Father/Dad Information
+            'Dad First Name', 'Dad Last Name', 'Dad Phone', 'Dad Email',
+            
+            # Mother/Mom Information
+            'Mom First Name', 'Mom Last Name', 'Mom Phone', 'Mom Email',
+            
+            # Address Information
+            'Address', 'City', 'State', 'Zip Code',
+            
+            # Financial Information
+            'Paid Tuition', 'Total Tuition Amount', 'Amount Paid',
+            
+            # Documentation and Legal
+            'Signed Waiver', 'Birth Certificate',
+            
+            # Legacy Fields (for backward compatibility)
+            'Date of Birth', 'Guardian First Name', 'Guardian Last Name', 'Paid Status',
+            
+            # System Information
+            'Created Date', 'Last Updated'
+        ])
         
-        # Write player data
+        # Write comprehensive player data
         for player in players:
             writer.writerow([
-                player.season,
-                player.first_name,
-                player.last_name,
+                # Basic Player Information
+                player.season or '',
+                player.first_name or '',
+                player.last_name or '',
+                player.birth_year or '',
+                player.team or '',
+                player.position or '',
+                
+                # Jersey and Equipment
+                player.jersey_number or '',
+                player.jersey_size or '',
+                player.socks or '',
+                player.jacket or '',
+                player.usa_hockey_number or '',
+                
+                # Father/Dad Information
+                player.dad_first_name or '',
+                player.dad_last_name or '',
+                player.dad_phone or '',
+                player.dad_email or '',
+                
+                # Mother/Mom Information
+                player.mom_first_name or '',
+                player.mom_last_name or '',
+                player.mom_phone or '',
+                player.mom_email or '',
+                
+                # Address Information
+                player.address or '',
+                player.city or '',
+                player.state or '',
+                player.zip_code or '',
+                
+                # Financial Information
+                'Yes' if player.paid_tuition else 'No',
+                f"${player.total_tuition_amount:.2f}" if player.total_tuition_amount else '',
+                f"${player.amount_paid:.2f}" if player.amount_paid else '',
+                
+                # Documentation and Legal
+                'Yes' if player.signed_waiver else 'No',
+                'Yes' if player.birth_certificate else 'No',
+                
+                # Legacy Fields
                 player.date_of_birth.strftime('%m/%d/%Y') if player.date_of_birth else '',
-                player.team,
-                player.guardian_first_name,
-                player.guardian_last_name,
-                player.address,
-                player.city,
-                player.state,
-                player.zip_code,
-                'Paid' if player.paid else 'Unpaid'
+                player.guardian_first_name or '',
+                player.guardian_last_name or '',
+                'Yes' if player.paid else 'No',
+                
+                # System Information
+                player.created_at.strftime('%m/%d/%Y %H:%M') if player.created_at else '',
+                player.updated_at.strftime('%m/%d/%Y %H:%M') if player.updated_at else ''
             ])
 
         output = make_response(si.getvalue())
