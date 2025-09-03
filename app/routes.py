@@ -874,6 +874,11 @@ def create_folder():
             print("No data received in create_folder request")
             return jsonify({'error': 'No data provided'}), 400
             
+        # Debug CSRF token
+        csrf_token = request.headers.get('X-CSRFToken')
+        print(f"CSRF token from headers: {csrf_token}")
+        print(f"Request headers: {dict(request.headers)}")
+            
         name = data.get('name', '').strip()
         parent_id = data.get('parent_id')
         description = data.get('description', '').strip()

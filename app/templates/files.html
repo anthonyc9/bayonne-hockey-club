@@ -506,11 +506,8 @@ function saveFolderForm() {
     const csrfToken = document.querySelector('meta[name=csrf-token]');
     const headers = {
         'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken ? csrfToken.getAttribute('content') : ''
     };
-    
-    if (csrfToken) {
-        data.csrf_token = csrfToken.getAttribute('content');
-    }
     
     fetch('/files/create-folder', {
         method: 'POST',
