@@ -498,9 +498,15 @@ function saveFolderForm() {
         parent_id: currentFolderId
     };
     
+    // Add CSRF token to headers
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
     const headers = {
         'Content-Type': 'application/json',
     };
+    
+    if (csrfToken) {
+        data.csrf_token = csrfToken.getAttribute('content');
+    }
     
     fetch('/files/create-folder', {
         method: 'POST',
@@ -659,6 +665,12 @@ function uploadFile(file, progressItem, isLast) {
     
     const progressBar = progressItem.querySelector('.progress-bar');
     const statusSpan = progressItem.querySelector('.file-status');
+    
+    // Add CSRF token to FormData
+    const csrfToken = document.querySelector('meta[name=csrf-token]');
+    if (csrfToken) {
+        formData.append('csrf_token', csrfToken.getAttribute('content'));
+    }
     
     fetch('/files/upload', {
         method: 'POST',

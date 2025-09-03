@@ -679,6 +679,7 @@ def test_upload():
     return jsonify({"status": "test upload received"})
 
 @main.route("/files/upload", methods=["POST"])
+@login_required
 def upload_file():
     """Handle file upload."""
     import os
