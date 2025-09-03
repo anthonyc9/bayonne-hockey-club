@@ -691,6 +691,7 @@ def upload_file():
         print(f"User: {current_user.email if current_user and current_user.is_authenticated else 'Not authenticated'}")
         print(f"Files: {list(request.files.keys())}")
         print(f"Form: {dict(request.form)}")
+        print(f"Folder ID from form: {request.form.get('folder_id')}")
         
         # Check authentication manually for debugging
         if not current_user or not current_user.is_authenticated:
@@ -725,14 +726,22 @@ def upload_file():
         
         print(f"File saved successfully: {file_size} bytes")
         
-        # Create database record (simplified)
+        # Get folder_id from form data
+        folder_id = request.form.get('folder_id')
+        if folder_id and folder_id != 'null' and folder_id != '':
+            try:
+                folder_id = int(folder_id)
+            except (ValueError, TypeError):
+                folder_id = None
+        
+        # Create database record
         db_file = File(
             name=unique_name,
             original_name=original_name,
             file_path=file_path,
             file_size=file_size,
             mime_type=file.content_type or 'application/octet-stream',
-            folder_id=None,  # No folder for now
+            folder_id=folder_id,
             user_id=current_user.id
         )
         
