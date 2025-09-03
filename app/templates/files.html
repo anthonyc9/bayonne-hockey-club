@@ -434,6 +434,10 @@
 
 <script>
 let currentFolderId = {{ current_folder.id if current_folder else 'null' }};
+// Convert 'null' string to actual null for JavaScript
+if (currentFolderId === 'null') {
+    currentFolderId = null;
+}
 let editingFolderId = null;
 
 // View toggle functionality
@@ -654,12 +658,11 @@ function uploadFile(file, progressItem, isLast) {
     
     const formData = new FormData();
     formData.append('file', file);
-    // Send null instead of empty string for root folder
-    if (currentFolderId && currentFolderId !== 'null' && currentFolderId !== '') {
+    // Send folder_id only if it's a valid folder
+    if (currentFolderId && currentFolderId !== null) {
         formData.append('folder_id', currentFolderId);
-    } else {
-        formData.append('folder_id', 'null');
     }
+    // Don't send folder_id at all for root folder - let backend handle as None
     
     console.log('FormData created, about to fetch...');
     

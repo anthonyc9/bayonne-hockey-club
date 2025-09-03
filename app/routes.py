@@ -766,11 +766,19 @@ def upload_file():
         
         # Get folder_id from form data
         folder_id = request.form.get('folder_id')
-        if folder_id and folder_id != 'null' and folder_id != '':
+        print(f"DEBUG: Raw folder_id from form: '{folder_id}' (type: {type(folder_id)})")
+        
+        # Handle various null/empty cases
+        if folder_id and folder_id not in ['null', 'None', '']:
             try:
                 folder_id = int(folder_id)
+                print(f"DEBUG: Converted folder_id to: {folder_id}")
             except (ValueError, TypeError):
+                print(f"DEBUG: Failed to convert folder_id '{folder_id}' to int, setting to None")
                 folder_id = None
+        else:
+            print(f"DEBUG: folder_id is null/empty, setting to None")
+            folder_id = None
         
         # Create database record
         db_file = File(
