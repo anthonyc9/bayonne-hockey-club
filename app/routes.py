@@ -1426,23 +1426,37 @@ def view_practice_plan(plan_id):
 @main.route("/practice-plans/<int:plan_id>/add-attachment", methods=["POST"])
 @login_required
 def add_practice_plan_attachment(plan_id):
-    """Add a file attachment to a practice plan."""
+    """Add file attachments to a practice plan."""
     practice_plan = PracticePlan.query.get_or_404(plan_id)
-    file_id = request.form.get('file_id')
     
-    if file_id:
+    # Handle both single file_id and multiple file_ids[]
+    file_ids = request.form.getlist('file_ids[]')
+    if not file_ids:
+        # Fallback to single file_id for backward compatibility
+        single_file_id = request.form.get('file_id')
+        if single_file_id:
+            file_ids = [single_file_id]
+    
+    if file_ids:
         try:
-            file = File.query.get(file_id)
-            if file:
-                practice_plan.attachments.append(file)
+            added_count = 0
+            for file_id in file_ids:
+                file = File.query.get(file_id)
+                if file and file not in practice_plan.attachments:
+                    practice_plan.attachments.append(file)
+                    added_count += 1
+            
+            if added_count > 0:
                 db.session.commit()
-                flash('Attachment added successfully!', 'success')
+                flash(f'{added_count} attachment(s) added successfully!', 'success')
             else:
-                flash('File not found.', 'danger')
+                flash('No new attachments to add.', 'info')
         except Exception as e:
             db.session.rollback()
-            flash('Error adding attachment. Please try again.', 'danger')
-            print(f"Error adding attachment: {str(e)}")
+            flash('Error adding attachments. Please try again.', 'danger')
+            print(f"Error adding attachments: {str(e)}")
+    else:
+        flash('No files selected.', 'warning')
     
     return redirect(url_for('main.view_practice_plan', plan_id=plan_id))
 

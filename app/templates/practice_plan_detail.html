@@ -276,15 +276,30 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <p class="text-muted">Select a file from your file library to attach to this practice plan.</p>
+                <p class="text-muted">Search and select files from your file library to attach to this practice plan.</p>
                 
-                <!-- File Selection -->
+                <!-- File Search -->
                 <div class="mb-3">
-                    <label for="fileSelect" class="form-label">Select File</label>
-                    <select class="form-select" id="fileSelect">
-                        <option value="">Choose a file...</option>
-                        <!-- This would be populated with available files -->
-                    </select>
+                    <label for="fileSearch" class="form-label">Search Files</label>
+                    <div class="input-group">
+                        <input type="text" id="fileSearch" class="form-control" placeholder="Search files by name or description...">
+                        <button type="button" class="btn btn-outline-secondary" onclick="searchFiles()">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Search Results -->
+                <div id="fileSearchResults" class="mb-3" style="display: none;">
+                    <!-- Search results will be populated here -->
+                </div>
+                
+                <!-- Selected Files -->
+                <div class="mb-3">
+                    <label class="form-label">Selected Files:</label>
+                    <div id="selectedFilesList" class="border rounded p-2 min-h-100">
+                        <p class="text-muted mb-0">No files selected</p>
+                    </div>
                 </div>
                 
                 <div class="alert alert-info">
@@ -294,7 +309,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="addAttachment()">Add Attachment</button>
+                <button type="button" class="btn btn-primary" onclick="addSelectedAttachments()">Add Selected Files</button>
             </div>
         </div>
     </div>
@@ -332,27 +347,136 @@ function deletePracticePlan(planId, planTitle) {
     new bootstrap.Modal(document.getElementById('deletePracticePlanModal')).show();
 }
 
-function addAttachment() {
-    const fileSelect = document.getElementById('fileSelect');
-    const fileId = fileSelect.value;
+let selectedFiles = [];
+
+function searchFiles() {
+    const searchTerm = document.getElementById('fileSearch').value.trim();
+    if (!searchTerm) {
+        alert('Please enter a search term');
+        return;
+    }
     
-    if (fileId) {
-        // Create a form and submit it
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = "{{ url_for('main.add_practice_plan_attachment', plan_id=practice_plan.id) }}";
-        
+    // Show loading state
+    const resultsDiv = document.getElementById('fileSearchResults');
+    resultsDiv.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Searching...</div>';
+    resultsDiv.style.display = 'block';
+    
+    // Search files via API
+    fetch(`/files/search?q=${encodeURIComponent(searchTerm)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.files.length > 0) {
+                displaySearchResults(data.files);
+            } else {
+                resultsDiv.innerHTML = '<div class="text-muted">No files found matching your search.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Search error:', error);
+            resultsDiv.innerHTML = '<div class="text-danger">Error searching files. Please try again.</div>';
+        });
+}
+
+function displaySearchResults(files) {
+    const resultsDiv = document.getElementById('fileSearchResults');
+    let html = '<div class="list-group">';
+    
+    files.forEach(file => {
+        html += `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-file-earmark"></i>
+                    <strong>${file.original_name}</strong>
+                    <small class="text-muted d-block">${file.mime_type} • ${formatFileSize(file.file_size)}</small>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-primary" onclick="addFile('${file.id}', '${file.original_name}')">
+                    <i class="bi bi-plus"></i> Add
+                </button>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    resultsDiv.innerHTML = html;
+}
+
+function addFile(fileId, fileName) {
+    // Check if file is already selected
+    if (selectedFiles.find(f => f.id === fileId)) {
+        alert('This file is already selected');
+        return;
+    }
+    
+    // Add to selected files
+    selectedFiles.push({ id: fileId, name: fileName });
+    updateSelectedFilesDisplay();
+}
+
+function removeFile(fileId) {
+    selectedFiles = selectedFiles.filter(f => f.id !== fileId);
+    updateSelectedFilesDisplay();
+}
+
+function updateSelectedFilesDisplay() {
+    const listDiv = document.getElementById('selectedFilesList');
+    
+    if (selectedFiles.length === 0) {
+        listDiv.innerHTML = '<p class="text-muted mb-0">No files selected</p>';
+        return;
+    }
+    
+    let html = '';
+    selectedFiles.forEach(file => {
+        html += `
+            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                <span><i class="bi bi-file-earmark"></i> ${file.name}</span>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile('${file.id}')">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </div>
+        `;
+    });
+    
+    listDiv.innerHTML = html;
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function addSelectedAttachments() {
+    if (selectedFiles.length === 0) {
+        alert('Please select at least one file to attach.');
+        return;
+    }
+    
+    // Create a form and submit it with all selected files
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = "{{ url_for('main.add_practice_plan_attachment', plan_id=practice_plan.id) }}";
+    
+    // Add CSRF token
+    const csrfInput = document.createElement('input');
+    csrfInput.type = 'hidden';
+    csrfInput.name = 'csrf_token';
+    csrfInput.value = document.querySelector('meta[name=csrf-token]').getAttribute('content');
+    form.appendChild(csrfInput);
+    
+    // Add each selected file
+    selectedFiles.forEach(file => {
         const input = document.createElement('input');
         input.type = 'hidden';
-        input.name = 'file_id';
-        input.value = fileId;
-        
+        input.name = 'file_ids[]';
+        input.value = file.id;
         form.appendChild(input);
-        document.body.appendChild(form);
-        form.submit();
-    } else {
-        alert('Please select a file to attach.');
-    }
+    });
+    
+    document.body.appendChild(form);
+    form.submit();
 }
 </script>
 {% endblock %}
