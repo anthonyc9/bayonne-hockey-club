@@ -1467,6 +1467,13 @@ def view_practice_plan(plan_id):
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     return render_template("practice_plan_detail.html", practice_plan=practice_plan, title=practice_plan.title)
 
+@main.route("/practice-plans/<int:plan_id>/print")
+@login_required
+def print_practice_plan(plan_id):
+    """Print view of a practice plan."""
+    practice_plan = PracticePlan.query.get_or_404(plan_id)
+    return render_template('practice_plan_print.html', practice_plan=practice_plan, title=practice_plan.title)
+
 
 @main.route("/practice-plans/<int:plan_id>/add-attachment", methods=["POST"])
 @login_required

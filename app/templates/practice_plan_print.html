@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block title %}{{ practice_plan.title }} - Print View{% endblock %}
+
+{% block extra_css %}
+<style>
+@media print {
+    body { margin: 0; padding: 20px; }
+    .no-print { display: none !important; }
+    .page-break { page-break-before: always; }
+    .card { border: 1px solid #000; box-shadow: none; }
+}
+
+.print-header {
+    border-bottom: 3px solid #000;
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.print-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+.print-details {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.print-objectives {
+    background: #f8f9fa;
+    border: 2px solid #000;
+    padding: 15px;
+    margin: 20px 0;
+}
+
+.print-objectives h4 {
+    margin: 0 0 10px 0;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.activity-section {
+    margin: 30px 0;
+    page-break-inside: avoid;
+}
+
+.activity-header {
+    background: #000;
+    color: white;
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.activity-content {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.activity-text {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.activity-rink {
+    flex: 1;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+.rink-diagram {
+    width: 100%;
+    height: 200px;
+    border: 2px solid #000;
+    position: relative;
+    background: #f8f9fa;
+}
+
+.rink-diagram::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #000;
+}
+
+.rink-diagram::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: #000;
+}
+
+.execution-points {
+    background: #f8f9fa;
+    border: 1px solid #000;
+    padding: 10px;
+    margin-top: 15px;
+}
+
+.execution-points h5 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.execution-points ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.85rem;
+}
+
+.print-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .activity-content {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid no-print">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <h1>Print View: {{ practice_plan.title }}</h1>
+                <div>
+                    <button onclick="window.print()" class="btn btn-primary">
+                        <i class="bi bi-printer"></i> Print Practice Plan
+                    </button>
+                    <a href="{{ url_for('main.view_practice_plan', plan_id=practice_plan.id) }}" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to Plan
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Print Content -->
+<div class="print-content">
+    <!-- Header -->
+    <div class="print-header">
+        <h1 class="print-title">{{ practice_plan.title }}</h1>
+        <div class="print-details">
+            <strong>TEAM:</strong> {{ practice_plan.team.name }} | 
+            <strong>DATE:</strong> {{ practice_plan.date.strftime('%B %d, %Y') }} | 
+            <strong>DURATION:</strong> {{ practice_plan.duration or '60' }} MIN
+        </div>
+        
+        <div class="print-objectives">
+            <h4>Session Objectives:</h4>
+            <ol>
+                {% if practice_plan.primary_focus %}
+                <li>{{ practice_plan.primary_focus }}</li>
+                {% endif %}
+                {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
+                <li>{{ practice_plan.secondary_focus }}</li>
+                {% endif %}
+                {% if practice_plan.warm_up %}
+                <li>Warm-up and preparation</li>
+                {% endif %}
+                {% if practice_plan.main_content %}
+                <li>Skill development and practice</li>
+                {% endif %}
+                {% if practice_plan.cool_down %}
+                <li>Cool-down and review</li>
+                {% endif %}
+            </ol>
+        </div>
+    </div>
+
+    <!-- Warm Up Section -->
+    {% if practice_plan.warm_up %}
+    <div class="activity-section">
+        <div class="activity-header">
+            Warm Up ({{ practice_plan.duration|int // 6 if practice_plan.duration else 10 }} MIN)
+        </div>
+        <div class="activity-content">
+            <div class="activity-text">
+                <h5>Warm-up Activities:</h5>
+                <p>{{ practice_plan.warm_up }}</p>
+            </div>
+            <div class="activity-rink">
+                <h5>Rink Setup:</h5>
+                <div class="rink-diagram">
+                    <!-- Rink diagram will be drawn here -->
+                </div>
+                <div class="execution-points">
+                    <h5>Key Execution Points:</h5>
+                    <ul>
+                        <li>Proper warm-up routine</li>
+                        <li>Focus on technique</li>
+                        <li>Gradual intensity increase</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Main Content Section -->
+    {% if practice_plan.main_content %}
+    <div class="activity-section">
+        <div class="activity-header">
+            Skill Stations ({{ practice_plan.duration|int // 3 if practice_plan.duration else 20 }} MIN)
+        </div>
+        <div class="activity-content">
+            <div class="activity-text">
+                <h5>Main Practice Activities:</h5>
+                <p>{{ practice_plan.main_content }}</p>
+            </div>
+            <div class="activity-rink">
+                <h5>Rink Setup:</h5>
+                <div class="rink-diagram">
+                    <!-- Rink diagram will be drawn here -->
+                </div>
+                <div class="execution-points">
+                    <h5>Key Execution Points:</h5>
+                    <ul>
+                        <li>Focus on fundamentals</li>
+                        <li>Proper body positioning</li>
+                        <li>Consistent practice</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Cool Down Section -->
+    {% if practice_plan.cool_down %}
+    <div class="activity-section">
+        <div class="activity-header">
+            Cool Down ({{ practice_plan.duration|int // 6 if practice_plan.duration else 10 }} MIN)
+        </div>
+        <div class="activity-content">
+            <div class="activity-text">
+                <h5>Cool-down Activities:</h5>
+                <p>{{ practice_plan.cool_down }}</p>
+            </div>
+            <div class="activity-rink">
+                <h5>Rink Setup:</h5>
+                <div class="rink-diagram">
+                    <!-- Rink diagram will be drawn here -->
+                </div>
+                <div class="execution-points">
+                    <h5>Key Execution Points:</h5>
+                    <ul>
+                        <li>Gradual intensity decrease</li>
+                        <li>Stretching and flexibility</li>
+                        <li>Review key points</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Equipment & Notes -->
+    {% if practice_plan.equipment_needed or practice_plan.additional_notes %}
+    <div class="activity-section">
+        <div class="activity-header">
+            Additional Information
+        </div>
+        <div class="activity-content">
+            {% if practice_plan.equipment_needed %}
+            <div class="activity-text">
+                <h5>Equipment Needed:</h5>
+                <p>{{ practice_plan.equipment_needed }}</p>
+            </div>
+            {% endif %}
+            {% if practice_plan.additional_notes %}
+            <div class="activity-text">
+                <h5>Additional Notes:</h5>
+                <p>{{ practice_plan.additional_notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Footer -->
+    <div class="print-footer">
+        <p>Generated by Bayonne Hockey Club Coaches Portal</p>
+        <p>{{ practice_plan.date.strftime('%B %d, %Y') }} | {{ practice_plan.team.name }}</p>
+    </div>
+</div>
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='rink_diagrams.js') }}"></script>
+{% endblock %}
+{% endblock %}
