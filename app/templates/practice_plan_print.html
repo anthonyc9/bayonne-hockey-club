@@ -2,18 +2,43 @@
 
 {% block title %}{{ practice_plan.title }} - Print View{% endblock %}
 
+<!-- Force refresh and prevent caching -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 {% block extra_css %}
 <style>
+/* Reset all styles to ensure clean print layout */
+* {
+    box-sizing: border-box;
+}
+
+body { 
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: Arial, sans-serif !important;
+    background: white !important;
+    color: black !important;
+}
+
 @media print {
     body { 
-        margin: 0; 
-        padding: 0.5in;
-        font-size: 10pt;
-        line-height: 1.3;
+        margin: 0 !important; 
+        padding: 0.5in !important;
+        font-size: 10pt !important;
+        line-height: 1.3 !important;
+        background: white !important;
+        color: black !important;
     }
     .no-print { display: none !important; }
     .page-break { page-break-before: always; }
-    .card { border: 1px solid #000; box-shadow: none; }
+    .card { border: 1px solid #000 !important; box-shadow: none !important; }
+    
+    /* Ensure print styles override everything */
+    .print-container { max-width: 8.5in !important; }
+    .print-card { border: 1px solid #000 !important; }
+    .activity-notes { border: 1px solid #000 !important; }
 }
 
 .print-container {

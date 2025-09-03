@@ -1472,7 +1472,8 @@ def view_practice_plan(plan_id):
 def print_practice_plan(plan_id):
     """Print view of a practice plan."""
     practice_plan = PracticePlan.query.get_or_404(plan_id)
-    return render_template('practice_plan_print.html', practice_plan=practice_plan, title=practice_plan.title)
+    # Add cache-busting parameter to prevent browser caching
+    return render_template('practice_plan_print.html', practice_plan=practice_plan, title=practice_plan.title, cache_buster=datetime.now().timestamp())
 
 
 @main.route("/practice-plans/<int:plan_id>/add-attachment", methods=["POST"])
