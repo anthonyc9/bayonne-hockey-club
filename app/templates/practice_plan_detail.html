@@ -2,6 +2,40 @@
 
 {% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
 
+{% block extra_css %}
+<style>
+.practice-plan-card {
+    height: 100%;
+    transition: all 0.2s ease;
+}
+
+.practice-plan-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.practice-plan-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.practice-plan-badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+.sidebar-card {
+    height: fit-content;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar-card {
+        margin-top: 1rem;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <!-- Header with Breadcrumbs -->
@@ -58,40 +92,50 @@
                     <h5 class="mb-0"><i class="bi bi-info-circle"></i> Practice Plan Details</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Primary Focus</label>
-                                <p class="mb-0">
-                                    <span class="badge bg-primary">{{ practice_plan.primary_focus }}</span>
-                                </p>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded bg-light practice-plan-card">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-target practice-plan-icon text-primary"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Primary Focus</h6>
+                                <div>
+                                    <span class="badge bg-primary practice-plan-badge">{{ practice_plan.primary_focus }}</span>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Secondary Focus</label>
-                                <p class="mb-0">
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded bg-light practice-plan-card">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-target practice-plan-icon text-secondary"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Secondary Focus</h6>
+                                <div>
                                     {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
-                                        <span class="badge bg-secondary">{{ practice_plan.secondary_focus }}</span>
+                                        <span class="badge bg-secondary practice-plan-badge">{{ practice_plan.secondary_focus }}</span>
                                     {% else %}
                                         <span class="text-muted">N/A</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Review Status</label>
-                        <p class="mb-0">
-                            {% if practice_plan.review_status == 'Reviewed' %}
-                                <span class="badge bg-success">{{ practice_plan.review_status }}</span>
-                            {% elif practice_plan.review_status == 'Needs Changes' %}
-                                <span class="badge bg-warning">{{ practice_plan.review_status }}</span>
-                            {% else %}
-                                <span class="badge bg-secondary">{{ practice_plan.review_status }}</span>
-                            {% endif %}
-                        </p>
+                        <div class="col-md-4">
+                            <div class="text-center p-3 border rounded bg-light practice-plan-card">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-check-circle practice-plan-icon text-success"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Review Status</h6>
+                                <div>
+                                    {% if practice_plan.review_status == 'Reviewed' %}
+                                        <span class="badge bg-success practice-plan-badge">{{ practice_plan.review_status }}</span>
+                                    {% elif practice_plan.review_status == 'Needs Changes' %}
+                                        <span class="badge bg-warning practice-plan-badge">{{ practice_plan.review_status }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary practice-plan-badge">{{ practice_plan.review_status }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -102,49 +146,52 @@
                     <h5 class="mb-0"><i class="bi bi-list-ul"></i> Practice Structure</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">
-                                    <i class="bi bi-clock text-warning"></i> Warm Up
-                                </label>
-                                <p class="mb-0">
+                            <div class="h-100 p-3 border rounded bg-light">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-clock text-warning fs-4"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Warm Up</h6>
+                                <div class="text-center">
                                     {% if practice_plan.warm_up %}
-                                        {{ practice_plan.warm_up }}
+                                        <p class="mb-0">{{ practice_plan.warm_up }}</p>
                                     {% else %}
                                         <span class="text-muted">Not specified</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">
-                                    <i class="bi bi-list-ul text-primary"></i> Main Content
-                                </label>
-                                <p class="mb-0">
+                            <div class="h-100 p-3 border rounded bg-light">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-list-ul text-primary fs-4"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Main Content</h6>
+                                <div class="text-center">
                                     {% if practice_plan.main_content %}
-                                        {{ practice_plan.main_content }}
+                                        <p class="mb-0">{{ practice_plan.main_content }}</p>
                                     {% else %}
                                         <span class="text-muted">Not specified</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">
-                                    <i class="bi bi-snow text-info"></i> Cool Down
-                                </label>
-                                <p class="mb-0">
+                            <div class="h-100 p-3 border rounded bg-light">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-snow text-info fs-4"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Cool Down</h6>
+                                <div class="text-center">
                                     {% if practice_plan.cool_down %}
-                                        {{ practice_plan.cool_down }}
+                                        <p class="mb-0">{{ practice_plan.cool_down }}</p>
                                     {% else %}
                                         <span class="text-muted">Not specified</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -157,30 +204,36 @@
                     <h5 class="mb-0"><i class="bi bi-gear"></i> Additional Information</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row g-3">
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Equipment Needed</label>
-                                <p class="mb-0">
+                            <div class="h-100 p-3 border rounded bg-light">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-tools text-info fs-4"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Equipment Needed</h6>
+                                <div class="text-center">
                                     {% if practice_plan.equipment_needed %}
-                                        {{ practice_plan.equipment_needed }}
+                                        <p class="mb-0">{{ practice_plan.equipment_needed }}</p>
                                     {% else %}
                                         <span class="text-muted">Not specified</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label fw-bold">Additional Notes</label>
-                                <p class="mb-0">
+                            <div class="h-100 p-3 border rounded bg-light">
+                                <div class="text-center mb-2">
+                                    <i class="bi bi-sticky text-success fs-4"></i>
+                                </div>
+                                <h6 class="text-center fw-bold text-muted mb-2">Additional Notes</h6>
+                                <div class="text-center">
                                     {% if practice_plan.additional_notes %}
-                                        {{ practice_plan.additional_notes }}
+                                        <p class="mb-0">{{ practice_plan.additional_notes }}</p>
                                     {% else %}
                                         <span class="text-muted">None</span>
                                     {% endif %}
-                                </p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -191,7 +244,7 @@
         <!-- Sidebar -->
         <div class="col-lg-4">
             <!-- Attachments -->
-            <div class="card mb-4">
+            <div class="card mb-4 sidebar-card">
                 <div class="card-header">
                     <h6 class="mb-0"><i class="bi bi-paperclip"></i> Attachments</h6>
                 </div>
@@ -200,46 +253,49 @@
                         <div class="list-group list-group-flush">
                             {% for attachment in practice_plan.attachments %}
                                 <div class="list-group-item d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <i class="bi bi-file-earmark"></i>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-file-earmark text-primary me-2"></i>
                                         <a href="{{ url_for('main.download_file', file_id=attachment.id) }}" class="text-decoration-none">
                                             {{ attachment.original_name }}
                                         </a>
                                     </div>
-                                                                            <form method="POST" action="{{ url_for('main.remove_practice_plan_attachment', plan_id=practice_plan.id, file_id=attachment.id) }}" 
-                                              style="display: inline;" onsubmit="return confirm('Remove this attachment?')">
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">
-                                                <i class="bi bi-x"></i>
-                                            </button>
-                                        </form>
+                                    <form method="POST" action="{{ url_for('main.remove_practice_plan_attachment', plan_id=practice_plan.id, file_id=attachment.id) }}" 
+                                          style="display: inline;" onsubmit="return confirm('Remove this attachment?')">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             {% endfor %}
                         </div>
                     {% else %}
-                        <p class="text-muted mb-0">No attachments</p>
+                        <p class="text-muted mb-0 text-center py-3">No attachments</p>
                     {% endif %}
                     
                     <hr>
                     
                     <!-- Add Attachment Button -->
-                    <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
-                        <i class="bi bi-plus"></i> Add Attachment
-                    </button>
+                    <div class="text-center">
+                        <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addAttachmentModal">
+                            <i class="bi bi-plus"></i> Add Attachment
+                        </button>
+                    </div>
                 </div>
             </div>
 
             <!-- External Links -->
             {% if practice_plan.external_links %}
-                <div class="card mb-4">
+                <div class="card mb-4 sidebar-card">
                     <div class="card-header">
                         <h6 class="mb-0"><i class="bi bi-link-45deg"></i> External Links</h6>
                     </div>
                     <div class="card-body">
                         <div class="list-group list-group-flush">
                             {% for link in practice_plan.external_links.split(',') %}
-                                <a href="{{ link.strip() }}" target="_blank" class="list-group-item list-group-item-action">
-                                    <i class="bi bi-box-arrow-up-right"></i> {{ link.strip() }}
+                                <a href="{{ link.strip() }}" target="_blank" class="list-group-item list-group-item-action d-flex align-items-center">
+                                    <i class="bi bi-box-arrow-up-right text-primary me-2"></i>
+                                    <span class="text-truncate">{{ link.strip() }}</span>
                                 </a>
                             {% endfor %}
                         </div>
@@ -248,7 +304,7 @@
             {% endif %}
 
             <!-- Quick Actions -->
-            <div class="card">
+            <div class="card sidebar-card">
                 <div class="card-header">
                     <h6 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h6>
                 </div>
