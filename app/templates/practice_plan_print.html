@@ -8,12 +8,12 @@
     body { 
         margin: 0; 
         padding: 0.5in;
-        font-size: 11pt;
-        line-height: 1.2;
+        font-size: 10pt;
+        line-height: 1.3;
     }
     .no-print { display: none !important; }
     .page-break { page-break-before: always; }
-    .card { border: none; box-shadow: none; }
+    .card { border: 1px solid #000; box-shadow: none; }
 }
 
 .print-container {
@@ -29,31 +29,40 @@
 }
 
 .print-title {
-    font-size: 18pt;
+    font-size: 16pt;
     font-weight: bold;
     text-transform: uppercase;
-    margin: 0 0 5px 0;
+    margin: 0 0 8px 0;
     letter-spacing: 1px;
 }
 
 .print-details {
-    font-size: 12pt;
+    font-size: 11pt;
     margin: 5px 0;
+}
+
+.print-details .badge {
+    background: #dc3545 !important;
+    color: white !important;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 9pt;
+    font-weight: bold;
 }
 
 .print-objectives {
     background: #f8f9fa;
     border: 1px solid #000;
-    padding: 10px;
+    padding: 12px;
     margin: 15px 0;
-    font-size: 10pt;
+    font-size: 9pt;
 }
 
 .print-objectives h4 {
     margin: 0 0 8px 0;
     text-transform: uppercase;
     font-weight: bold;
-    font-size: 11pt;
+    font-size: 10pt;
 }
 
 .print-objectives ol {
@@ -65,98 +74,186 @@
     margin-bottom: 3px;
 }
 
-.activity-section {
-    margin: 20px 0;
-    page-break-inside: avoid;
-}
-
-.activity-header {
-    background: #000;
-    color: white;
-    padding: 8px 12px;
-    margin-bottom: 15px;
-    font-weight: bold;
-    text-transform: uppercase;
-    font-size: 12pt;
-}
-
-.activity-content {
+.main-content {
     display: flex;
     gap: 20px;
-    min-height: 120px;
+    margin-bottom: 20px;
 }
 
-.activity-text {
+.left-column {
+    flex: 2;
+}
+
+.right-column {
     flex: 1;
-    padding: 12px;
+}
+
+.print-card {
     border: 1px solid #ddd;
-    background: #fff;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background: white;
+    overflow: hidden;
 }
 
-.activity-notes {
-    flex: 1;
-    padding: 12px;
-    border: 1px solid #ddd;
-    background: #f9f9f9;
-    position: relative;
-}
-
-.activity-notes::before {
-    content: 'Notes & Drawings';
-    position: absolute;
-    top: 5px;
-    left: 10px;
-    font-size: 9pt;
-    color: #666;
-    font-style: italic;
-}
-
-.activity-text h5 {
-    margin: 0 0 8px 0;
-    font-size: 11pt;
+.print-card-header {
+    background: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 10px 15px;
     font-weight: bold;
+    font-size: 10pt;
     text-transform: uppercase;
     color: #333;
 }
 
-.activity-text p {
+.print-card-body {
+    padding: 15px;
+}
+
+.focus-badges {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.focus-badge {
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 9pt;
+    font-weight: bold;
+    color: white;
+}
+
+.focus-badge.primary {
+    background: #007bff;
+}
+
+.focus-badge.secondary {
+    background: #6c757d;
+}
+
+.focus-badge.success {
+    background: #28a745;
+}
+
+.focus-badge.warning {
+    background: #ffc107;
+    color: #000;
+}
+
+.activity-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.activity-item {
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f8f9fa;
+}
+
+.activity-item h6 {
+    margin: 0 0 8px 0;
+    font-size: 9pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.activity-item .icon {
+    font-size: 16pt;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.activity-item .icon.warmup { color: #ffc107; }
+.activity-item .icon.main { color: #007bff; }
+.activity-item .icon.cooldown { color: #17a2b8; }
+
+.activity-item p {
     margin: 0;
-    font-size: 10pt;
+    font-size: 9pt;
     line-height: 1.3;
 }
 
 .equipment-section {
     margin: 20px 0;
-    padding: 15px;
-    border: 1px solid #ddd;
-    background: #f8f9fa;
 }
 
-.equipment-section h4 {
-    margin: 0 0 10px 0;
-    font-size: 11pt;
-    text-transform: uppercase;
-    font-weight: bold;
-}
-
-.equipment-content {
-    display: flex;
-    gap: 30px;
+.equipment-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 .equipment-item {
-    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #f8f9fa;
 }
 
 .equipment-item h5 {
-    margin: 0 0 5px 0;
-    font-size: 10pt;
+    margin: 0 0 8px 0;
+    font-size: 9pt;
     font-weight: bold;
+    text-transform: uppercase;
+    color: #333;
 }
 
 .equipment-item p {
     margin: 0;
-    font-size: 10pt;
+    font-size: 9pt;
+    line-height: 1.3;
+}
+
+.attachments-section {
+    margin: 20px 0;
+}
+
+.attachments-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.attachments-list li {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background: white;
+    font-size: 9pt;
+}
+
+.attachments-list li:before {
+    content: "📎 ";
+    margin-right: 8px;
+}
+
+.external-links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.external-links-list li {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background: white;
+    font-size: 9pt;
+}
+
+.external-links-list li:before {
+    content: "🔗 ";
+    margin-right: 8px;
 }
 
 .print-footer {
@@ -169,11 +266,14 @@
 }
 
 @media (max-width: 768px) {
-    .activity-content {
+    .main-content {
         flex-direction: column;
     }
-    .equipment-content {
-        flex-direction: column;
+    .activity-grid {
+        grid-template-columns: 1fr;
+    }
+    .equipment-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -204,9 +304,11 @@
     <div class="print-header">
         <h1 class="print-title">{{ practice_plan.title }}</h1>
         <div class="print-details">
-            <strong>TEAM:</strong> {{ practice_plan.team.name }} | 
-            <strong>DATE:</strong> {{ practice_plan.date.strftime('%B %d, %Y') }} | 
-            <strong>DURATION:</strong> {{ practice_plan.duration or '60' }} MIN
+            <i class="bi bi-calendar"></i> {{ practice_plan.date.strftime('%A, %B %d, %Y') }}
+            {% if practice_plan.duration %}
+                • <i class="bi bi-clock"></i> {{ practice_plan.duration }} MIN
+            {% endif %}
+            • <span class="badge">{{ practice_plan.team.name }}</span>
         </div>
         
         <div class="print-objectives">
@@ -231,80 +333,141 @@
         </div>
     </div>
 
-    <!-- Warm Up Section -->
-    {% if practice_plan.warm_up %}
-    <div class="activity-section">
-        <div class="activity-header">
-            Warm Up ({{ practice_plan.duration|int // 6 if practice_plan.duration else 10 }} MIN)
-        </div>
-        <div class="activity-content">
-            <div class="activity-text">
-                <h5>Warm-up Activities:</h5>
-                <p>{{ practice_plan.warm_up }}</p>
+    <div class="main-content">
+        <!-- Left Column - Main Content -->
+        <div class="left-column">
+            <!-- Practice Plan Details -->
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-info-circle"></i> Practice Plan Details
+                </div>
+                <div class="print-card-body">
+                    <div class="focus-badges">
+                        {% if practice_plan.primary_focus %}
+                        <span class="focus-badge primary">{{ practice_plan.primary_focus }}</span>
+                        {% endif %}
+                        {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
+                        <span class="focus-badge secondary">{{ practice_plan.secondary_focus }}</span>
+                        {% endif %}
+                        {% if practice_plan.review_status %}
+                        <span class="focus-badge {% if practice_plan.review_status == 'Reviewed' %}success{% else %}warning{% endif %}">
+                            {{ practice_plan.review_status }}
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="activity-notes">
-                <!-- Blank space for coaches' notes and drawings -->
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
-    <!-- Main Content Section -->
-    {% if practice_plan.main_content %}
-    <div class="activity-section">
-        <div class="activity-header">
-            Skill Stations ({{ practice_plan.duration|int // 3 if practice_plan.duration else 20 }} MIN)
-        </div>
-        <div class="activity-content">
-            <div class="activity-text">
-                <h5>Main Practice Activities:</h5>
-                <p>{{ practice_plan.main_content }}</p>
+            <!-- Practice Structure -->
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-list-ul"></i> Practice Structure
+                </div>
+                <div class="print-card-body">
+                    <div class="activity-grid">
+                        {% if practice_plan.warm_up %}
+                        <div class="activity-item">
+                            <span class="icon warmup">⏰</span>
+                            <h6>Warm Up</h6>
+                            <p>{{ practice_plan.warm_up }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if practice_plan.main_content %}
+                        <div class="activity-item">
+                            <span class="icon main">📋</span>
+                            <h6>Main Content</h6>
+                            <p>{{ practice_plan.main_content }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if practice_plan.cool_down %}
+                        <div class="activity-item">
+                            <span class="icon cooldown">❄️</span>
+                            <h6>Cool Down</h6>
+                            <p>{{ practice_plan.cool_down }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
-            <div class="activity-notes">
-                <!-- Blank space for coaches' notes and drawings -->
-            </div>
-        </div>
-    </div>
-    {% endif %}
 
-    <!-- Cool Down Section -->
-    {% if practice_plan.cool_down %}
-    <div class="activity-section">
-        <div class="activity-header">
-            Cool Down ({{ practice_plan.duration|int // 6 if practice_plan.duration else 10 }} MIN)
-        </div>
-        <div class="activity-content">
-            <div class="activity-text">
-                <h5>Cool-down Activities:</h5>
-                <p>{{ practice_plan.cool_down }}</p>
-            </div>
-            <div class="activity-notes">
-                <!-- Blank space for coaches' notes and drawings -->
-            </div>
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- Equipment & Notes Section -->
-    {% if practice_plan.equipment_needed or practice_plan.additional_notes %}
-    <div class="equipment-section">
-        <h4>Additional Information</h4>
-        <div class="equipment-content">
-            {% if practice_plan.equipment_needed %}
-            <div class="equipment-item">
-                <h5>Equipment Needed:</h5>
-                <p>{{ practice_plan.equipment_needed }}</p>
+            <!-- Additional Information -->
+            {% if practice_plan.equipment_needed or practice_plan.additional_notes %}
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-gear"></i> Additional Information
+                </div>
+                <div class="print-card-body">
+                    <div class="equipment-grid">
+                        {% if practice_plan.equipment_needed %}
+                        <div class="equipment-item">
+                            <h5>Equipment Needed</h5>
+                            <p>{{ practice_plan.equipment_needed }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        {% if practice_plan.additional_notes %}
+                        <div class="equipment-item">
+                            <h5>Additional Notes</h5>
+                            <p>{{ practice_plan.additional_notes }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
             </div>
             {% endif %}
-            {% if practice_plan.additional_notes %}
-            <div class="equipment-item">
-                <h5>Additional Notes:</h5>
-                <p>{{ practice_plan.additional_notes }}</p>
+        </div>
+
+        <!-- Right Column - Sidebar Info -->
+        <div class="right-column">
+            <!-- Attachments -->
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-paperclip"></i> Attachments
+                </div>
+                <div class="print-card-body">
+                    {% if practice_plan.attachments %}
+                        <ul class="attachments-list">
+                            {% for attachment in practice_plan.attachments %}
+                            <li>{{ attachment.original_name }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p style="font-size: 9pt; color: #666; margin: 0;">No attachments</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- External Links -->
+            {% if practice_plan.external_links %}
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-link-45deg"></i> External Links
+                </div>
+                <div class="print-card-body">
+                    <ul class="external-links-list">
+                        {% for link in practice_plan.external_links.split(',') %}
+                        <li>{{ link.strip() }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
             {% endif %}
+
+            <!-- Quick Reference -->
+            <div class="print-card">
+                <div class="print-card-header">
+                    <i class="bi bi-lightning"></i> Quick Reference
+                </div>
+                <div class="print-card-body">
+                    <p style="font-size: 9pt; margin: 0 0 8px 0;"><strong>Team:</strong> {{ practice_plan.team.name }}</p>
+                    <p style="font-size: 9pt; margin: 0 0 8px 0;"><strong>Date:</strong> {{ practice_plan.date.strftime('%m/%d/%Y') }}</p>
+                    <p style="font-size: 9pt; margin: 0;"><strong>Duration:</strong> {{ practice_plan.duration or '60' }} min</p>
+                </div>
+            </div>
         </div>
     </div>
-    {% endif %}
 
     <!-- Footer -->
     <div class="print-footer">
