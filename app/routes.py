@@ -678,6 +678,51 @@ def test_upload():
     print(f"Form: {dict(request.form)}")
     return jsonify({"status": "test upload received"})
 
+@main.route("/files/browse")
+@main.route("/files/browse/<int:folder_id>")
+@login_required
+def browse_files(folder_id=None):
+    """Browse files and folders in a specific directory."""
+    try:
+        # Get folders in the current directory
+        folders = Folder.query.filter_by(parent_id=folder_id).order_by(Folder.name).all()
+        
+        # Get files in the current directory
+        files = File.query.filter_by(folder_id=folder_id).order_by(File.original_name).all()
+        
+        # Prepare folder data
+        folder_list = []
+        for folder in folders:
+            folder_list.append({
+                'id': folder.id,
+                'name': folder.name,
+                'description': folder.description,
+                'color': folder.color
+            })
+        
+        # Prepare file data
+        file_list = []
+        for file in files:
+            file_list.append({
+                'id': file.id,
+                'original_name': file.original_name,
+                'mime_type': file.mime_type,
+                'file_size': file.file_size,
+                'description': file.description
+            })
+        
+        return jsonify({
+            'success': True,
+            'folders': folder_list,
+            'files': file_list,
+            'current_folder_id': folder_id
+        })
+        
+    except Exception as e:
+        print(f"File browse error: {str(e)}")
+        return jsonify({'success': False, 'error': 'Browse failed'}), 500
+
+
 @main.route("/files/search")
 @login_required
 def search_files():
