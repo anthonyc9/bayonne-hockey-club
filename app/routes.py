@@ -1472,7 +1472,13 @@ def view_practice_plan(plan_id):
 def print_practice_plan(plan_id):
     """Print view of a practice plan."""
     practice_plan = PracticePlan.query.get_or_404(plan_id)
-    return render_template('practice_plan_print.html', practice_plan=practice_plan, title=practice_plan.title)
+    print(f"DEBUG: Rendering print template for plan {plan_id}")
+    print(f"DEBUG: Template path: practice_plan_print.html")
+    response = make_response(render_template('practice_plan_print.html', practice_plan=practice_plan, title=practice_plan.title))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
 
 
 @main.route("/practice-plans/<int:plan_id>/add-attachment", methods=["POST"])
