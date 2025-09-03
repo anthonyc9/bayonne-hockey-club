@@ -67,7 +67,7 @@
         {% endwith %}
 
         <form action="{{ url_for('main.login') }}" method="POST">
-            <!-- CSRF temporarily disabled -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <input type="email" name="email" class="form-control" placeholder="Email address" required>
             </div>

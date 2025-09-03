@@ -67,7 +67,7 @@
         {% endwith %}
 
         <form action="{{ url_for('main.register') }}" method="POST">
-            <!-- CSRF temporarily disabled -->
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
                 <input type="text" name="username" class="form-control" placeholder="Username" required>
             </div>
