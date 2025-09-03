@@ -72,3 +72,6 @@ class PracticePlanForm(FlaskForm):
     
     # External Links
     external_links = TextAreaField('External Links (one per line)', validators=[Optional(), Length(max=1000)])
+    
+    # File Attachments
+    attachment_ids = StringField('File Attachments', validators=[Optional()])

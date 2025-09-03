@@ -678,6 +678,44 @@ def test_upload():
     print(f"Form: {dict(request.form)}")
     return jsonify({"status": "test upload received"})
 
+@main.route("/files/search")
+@login_required
+def search_files():
+    """Search files by name or description."""
+    try:
+        query = request.args.get('q', '').strip()
+        if not query:
+            return jsonify({'success': False, 'error': 'Search query required'})
+        
+        # Search in file names and descriptions
+        files = File.query.filter(
+            db.or_(
+                File.original_name.ilike(f'%{query}%'),
+                File.description.ilike(f'%{query}%')
+            )
+        ).limit(20).all()
+        
+        file_list = []
+        for file in files:
+            file_list.append({
+                'id': file.id,
+                'original_name': file.original_name,
+                'mime_type': file.mime_type,
+                'file_size': file.file_size,
+                'description': file.description
+            })
+        
+        return jsonify({
+            'success': True,
+            'files': file_list,
+            'count': len(file_list)
+        })
+        
+    except Exception as e:
+        print(f"File search error: {str(e)}")
+        return jsonify({'success': False, 'error': 'Search failed'}), 500
+
+
 @main.route("/files/upload", methods=["POST"])
 @login_required
 def upload_file():
@@ -1272,6 +1310,18 @@ def add_practice_plan(team_id):
             )
             
             db.session.add(practice_plan)
+            db.session.flush()  # Get the ID without committing
+            
+            # Handle file attachments
+            if form.attachment_ids.data:
+                attachment_ids = [int(id.strip()) for id in form.attachment_ids.data.split(',') if id.strip()]
+                for file_id in attachment_ids:
+                    # Check if file exists
+                    file = File.query.get(file_id)
+                    if file:
+                        # Create attachment relationship
+                        practice_plan.attachments.append(file)
+            
             db.session.commit()
             flash('Practice plan added successfully!', 'success')
             return redirect(url_for('main.team_practice_plans', team_id=team_id))
@@ -1312,6 +1362,20 @@ def edit_practice_plan(plan_id):
             practice_plan.additional_notes = form.additional_notes.data
             practice_plan.review_status = form.review_status.data
             practice_plan.external_links = ','.join(external_links) if external_links else None
+            
+            # Handle file attachments
+            if form.attachment_ids.data:
+                attachment_ids = [int(id.strip()) for id in form.attachment_ids.data.split(',') if id.strip()]
+                # Clear existing attachments
+                practice_plan.attachments.clear()
+                # Add new attachments
+                for file_id in attachment_ids:
+                    file = File.query.get(file_id)
+                    if file:
+                        practice_plan.attachments.append(file)
+            else:
+                # Clear all attachments if none selected
+                practice_plan.attachments.clear()
             
             db.session.commit()
             flash('Practice plan updated successfully!', 'success')
