@@ -13,6 +13,7 @@ import json
 from werkzeug.utils import secure_filename
 import os
 import uuid
+import traceback
 
 # Main Blueprint
 main = Blueprint('main', __name__)
@@ -517,6 +518,7 @@ def edit_player(id):
     form = PlayerForm(obj=player)
     
     if form.validate_on_submit():
+        print(f"Form validated successfully for player {player.id}")
         try:
             # Update all comprehensive player fields
             # Basic Information
@@ -572,22 +574,13 @@ def edit_player(id):
                 document_file = form.document_upload.data
                 if allowed_file(document_file.filename):
                     try:
-                        saved_file_path, secure_name = save_document(document_file, player.id, 'general')
-                        
-                        # Create document record
-                        document = PlayerDocument(
-                            document_type='general',
-                            original_filename=document_file.filename,
-                            secure_filename=secure_name,
-                            file_path=saved_file_path,
-                            file_size=len(document_file.read()),
-                            mime_type=document_file.mimetype,
-                            uploaded_by=current_user.id,
-                            player_id=player.id
-                        )
-                        db.session.add(document)
-                        # Reset file pointer
-                        document_file.seek(0)
+                        document = save_document(document_file, player.id, 'general')
+                        if document:
+                            # Document was saved successfully, it's already added to the session
+                            # Reset file pointer
+                            document_file.seek(0)
+                        else:
+                            flash('Error saving document. Please try again.', 'warning')
                     except Exception as e:
                         flash(f'Error saving document: {str(e)}', 'warning')
             
@@ -598,9 +591,16 @@ def edit_player(id):
             
         except Exception as e:
             db.session.rollback()
-            flash('Error updating player. Please try again.', 'danger')
+            flash(f'Error updating player: {str(e)}. Please try again.', 'danger')
             print(f"Error updating player: {str(e)}")
+            print(f"Player ID: {player.id}")
+            print(f"Form data: {form.data}")
             traceback.print_exc()
+    
+    if request.method == "POST" and not form.validate():
+        print(f"Form validation failed for player {player.id}")
+        print(f"Form errors: {form.errors}")
+        flash('Please correct the errors below.', 'danger')
     
     return render_template("player_form.html", form=form, title="Edit Player", player=player)
 
