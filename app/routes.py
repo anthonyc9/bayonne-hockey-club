@@ -1030,6 +1030,60 @@ def download_file(file_id):
         return redirect(url_for('main.files'))
 
 
+@main.route("/files/preview/<int:file_id>")
+@login_required
+def preview_file(file_id):
+    """Preview a file in the browser (for supported formats)."""
+    try:
+        file = File.query.filter_by(id=file_id).first_or_404()
+        
+        # Check if file exists
+        if not os.path.exists(file.file_path):
+            print(f"File not found at path: {file.file_path}")
+            flash('File not found on disk. Please contact an administrator.', 'error')
+            return redirect(url_for('main.files'))
+        
+        # Check if file type is supported for preview
+        if file.file_extension.lower() == 'pdf':
+            # For PDFs, send file with inline disposition for browser preview
+            return send_file(
+                file.file_path,
+                as_attachment=False,  # Don't download, display in browser
+                mimetype='application/pdf'
+            )
+        elif file.is_image:
+            # For images, send file inline
+            return send_file(
+                file.file_path,
+                as_attachment=False,
+                mimetype=file.mime_type
+            )
+        elif file.file_extension.lower() in ['txt', 'csv', 'json', 'xml', 'html', 'css', 'js']:
+            # For text files, read and display content
+            try:
+                with open(file.file_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                return render_template('file_preview.html', file=file, content=content)
+            except UnicodeDecodeError:
+                # If UTF-8 fails, try other encodings
+                try:
+                    with open(file.file_path, 'r', encoding='latin-1') as f:
+                        content = f.read()
+                    return render_template('file_preview.html', file=file, content=content)
+                except:
+                    flash('Unable to preview this file. Please download it instead.', 'warning')
+                    return redirect(url_for('main.files'))
+        else:
+            flash('This file type cannot be previewed. Please download it instead.', 'info')
+            return redirect(url_for('main.files'))
+        
+    except Exception as e:
+        print(f"Error previewing file: {str(e)}")
+        print(f"File path: {file.file_path if 'file' in locals() else 'Unknown'}")
+        flash('Error previewing file.', 'danger')
+        return redirect(url_for('main.files'))
+
+
 @main.route("/files/delete/<int:file_id>", methods=["POST"])
 @login_required
 def delete_file(file_id):

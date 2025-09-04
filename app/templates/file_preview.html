@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Preview {{ file.original_name }} - Bayonne Hockey Club{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-file-text me-2"></i>
+                File Preview
+            </h1>
+            <p class="text-muted mb-0">{{ file.original_name }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('main.files') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-2"></i>Back to Files
+            </a>
+            <a href="{{ url_for('main.download_file', file_id=file.id) }}" class="btn btn-success">
+                <i class="bi bi-download me-2"></i>Download
+            </a>
+        </div>
+    </div>
+
+    <!-- File Info Card -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="card-title">File Information</h6>
+                    <table class="table table-sm">
+                        <tr>
+                            <td><strong>Name:</strong></td>
+                            <td>{{ file.original_name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Type:</strong></td>
+                            <td><span class="badge bg-info">{{ file.file_extension.upper() or 'FILE' }}</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Size:</strong></td>
+                            <td>{{ file.formatted_size }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Created:</strong></td>
+                            <td>{{ file.created_at.strftime('%m/%d/%Y %I:%M %p') }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="card-title">Actions</h6>
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('main.download_file', file_id=file.id) }}" class="btn btn-success">
+                            <i class="bi bi-download me-2"></i>Download File
+                        </a>
+                        <button class="btn btn-outline-primary" onclick="window.print()">
+                            <i class="bi bi-printer me-2"></i>Print
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Content Preview -->
+    <div class="card">
+        <div class="card-header">
+            <h6 class="card-title mb-0">
+                <i class="bi bi-eye me-2"></i>
+                File Content Preview
+            </h6>
+        </div>
+        <div class="card-body p-0">
+            {% if file.file_extension.lower() == 'csv' %}
+                <!-- CSV Preview -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-sm mb-0">
+                        {% set lines = content.split('\n') %}
+                        {% for line in lines %}
+                            {% if line.strip() %}
+                                <tr>
+                                    {% set columns = line.split(',') %}
+                                    {% for column in columns %}
+                                        <td>{{ column.strip() }}</td>
+                                    {% endfor %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </table>
+                </div>
+            {% elif file.file_extension.lower() in ['json', 'xml'] %}
+                <!-- JSON/XML Preview -->
+                <pre class="bg-light p-3 mb-0" style="max-height: 600px; overflow-y: auto;"><code>{{ content }}</code></pre>
+            {% else %}
+                <!-- Text Preview -->
+                <pre class="bg-light p-3 mb-0" style="max-height: 600px; overflow-y: auto; white-space: pre-wrap; font-family: 'Courier New', monospace;">{{ content }}</pre>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    @media print {
+        .btn, .d-flex {
+            display: none !important;
+        }
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+</style>
+{% endblock %}

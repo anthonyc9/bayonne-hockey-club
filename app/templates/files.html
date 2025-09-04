@@ -119,10 +119,14 @@
                                 <div class="card-body text-center p-3">
                                     {% if file.is_image %}
                                         <div class="file-thumbnail mb-2">
-                                            <img src="{{ url_for('main.download_file', file_id=file.id) }}" 
-                                                 alt="{{ file.original_name }}" 
-                                                 class="img-fluid rounded"
-                                                 style="max-height: 80px; object-fit: cover;">
+                                            <a href="{{ url_for('main.preview_file', file_id=file.id) }}" 
+                                               target="_blank" 
+                                               title="Click to preview full size">
+                                                <img src="{{ url_for('main.download_file', file_id=file.id) }}" 
+                                                     alt="{{ file.original_name }}" 
+                                                     class="img-fluid rounded"
+                                                     style="max-height: 80px; object-fit: cover; cursor: pointer;">
+                                            </a>
                                         </div>
                                     {% else %}
                                         <div class="file-icon mb-2">
@@ -136,6 +140,13 @@
                                     <small class="text-muted d-block">{{ file.created_at.strftime('%m/%d/%Y') }}</small>
                                     <div class="file-actions mt-2">
                                         <div class="btn-group-vertical btn-group-sm w-100">
+                                            {% if file.file_extension.lower() in ['pdf', 'txt', 'csv', 'json', 'xml', 'html', 'css', 'js'] or file.is_image %}
+                                                <a href="{{ url_for('main.preview_file', file_id=file.id) }}" 
+                                                   class="btn btn-outline-primary btn-sm" 
+                                                   target="_blank">
+                                                    <i class="bi bi-eye"></i> Preview
+                                                </a>
+                                            {% endif %}
                                             <a href="{{ url_for('main.download_file', file_id=file.id) }}" 
                                                class="btn btn-outline-success btn-sm">
                                                 <i class="bi bi-download"></i> Download
@@ -222,12 +233,22 @@
                                     <td>{{ file.created_at.strftime('%m/%d/%Y %I:%M %p') }}</td>
                                     <td>
                                         <div class="btn-group btn-group-sm">
+                                            {% if file.file_extension.lower() in ['pdf', 'txt', 'csv', 'json', 'xml', 'html', 'css', 'js'] or file.is_image %}
+                                                <a href="{{ url_for('main.preview_file', file_id=file.id) }}" 
+                                                   class="btn btn-outline-primary" 
+                                                   target="_blank"
+                                                   title="Preview">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>
+                                            {% endif %}
                                             <a href="{{ url_for('main.download_file', file_id=file.id) }}" 
-                                               class="btn btn-outline-success">
+                                               class="btn btn-outline-success"
+                                               title="Download">
                                                 <i class="bi bi-download"></i>
                                             </a>
                                             <button class="btn btn-outline-danger" 
-                                                    onclick="deleteFile({{ file.id }}, '{{ file.original_name }}')">
+                                                    onclick="deleteFile({{ file.id }}, '{{ file.original_name }}')"
+                                                    title="Delete">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </div>
