@@ -19,61 +19,187 @@
             </h5>
         </div>
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-sm table-bordered">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Day</th>
-                            <th>Team</th>
-                            <th>Time</th>
-                            <th>Notes</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>Monday</strong></td>
-                            <td><span class="badge bg-success">10U</span></td>
-                            <td>7:00 PM - 8:00 PM</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wednesday</strong></td>
-                            <td><span class="badge bg-info">8U</span></td>
-                            <td>7:00 PM - 8:00 PM</td>
-                            <td>6:00-7:00 PM on 9/3 & 9/10</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Wednesday</strong></td>
-                            <td><span class="badge bg-secondary">Learn to Play</span></td>
-                            <td>6:00 PM - 7:00 PM</td>
-                            <td>9/17 through 11/5 only</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Thursday</strong></td>
-                            <td><span class="badge bg-primary">12U</span></td>
-                            <td>7:00 PM - 8:00 PM</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Saturday</strong></td>
-                            <td><span class="badge bg-warning text-dark">8U</span></td>
-                            <td>7:45 AM - 8:45 AM</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Saturday</strong></td>
-                            <td><span class="badge bg-success">10U</span></td>
-                            <td>8:45 AM - 10:00 AM</td>
-                            <td>-</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Saturday</strong></td>
-                            <td><span class="badge bg-primary">12U</span></td>
-                            <td>10:15 AM - 11:30 AM</td>
-                            <td>-</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Mobile Cards View -->
+            <div class="d-md-none">
+                <!-- Monday -->
+                <div class="card border-danger mb-3">
+                    <div class="card-header bg-danger text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Monday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success fs-6">10U</span>
+                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday 8U -->
+                <div class="card border-warning mb-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Wednesday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-info fs-6">8U</span>
+                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
+                        </div>
+                        <div class="small text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Special times: 6:00-7:00 PM on 9/3 & 9/10
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wednesday Learn to Play -->
+                <div class="card border-warning mb-3">
+                    <div class="card-header bg-warning text-dark">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Wednesday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary fs-6">Learn to Play</span>
+                            <span class="text-muted fw-bold">6:00 PM - 7:00 PM</span>
+                        </div>
+                        <div class="small text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Starting 9/17 through 11/5 only
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Thursday -->
+                <div class="card border-primary mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Thursday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary fs-6">12U</span>
+                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturday 8U -->
+                <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Saturday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-warning text-dark fs-6">8U</span>
+                            <span class="text-muted fw-bold">7:45 AM - 8:45 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturday 10U -->
+                <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Saturday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-success fs-6">10U</span>
+                            <span class="text-muted fw-bold">8:45 AM - 10:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Saturday 12U -->
+                <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="card-title mb-0">
+                            <i class="bi bi-calendar-day me-2"></i>
+                            Saturday
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-primary fs-6">12U</span>
+                            <span class="text-muted fw-bold">10:15 AM - 11:30 AM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Desktop Table View -->
+            <div class="d-none d-md-block">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Day</th>
+                                <th>Team</th>
+                                <th>Time</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Monday</strong></td>
+                                <td><span class="badge bg-success">10U</span></td>
+                                <td>7:00 PM - 8:00 PM</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wednesday</strong></td>
+                                <td><span class="badge bg-info">8U</span></td>
+                                <td>7:00 PM - 8:00 PM</td>
+                                <td>6:00-7:00 PM on 9/3 & 9/10</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wednesday</strong></td>
+                                <td><span class="badge bg-secondary">Learn to Play</span></td>
+                                <td>6:00 PM - 7:00 PM</td>
+                                <td>9/17 through 11/5 only</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Thursday</strong></td>
+                                <td><span class="badge bg-primary">12U</span></td>
+                                <td>7:00 PM - 8:00 PM</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Saturday</strong></td>
+                                <td><span class="badge bg-warning text-dark">8U</span></td>
+                                <td>7:45 AM - 8:45 AM</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Saturday</strong></td>
+                                <td><span class="badge bg-success">10U</span></td>
+                                <td>8:45 AM - 10:00 AM</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Saturday</strong></td>
+                                <td><span class="badge bg-primary">12U</span></td>
+                                <td>10:15 AM - 11:30 AM</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
