@@ -640,7 +640,8 @@ def download_document(player_id, document_id):
         
         # Check if file exists
         if not os.path.exists(document.file_path):
-            flash('Document file not found.', 'error')
+            print(f"Document not found at path: {document.file_path}")
+            flash('Document file not found on disk. Please contact an administrator.', 'error')
             return redirect(url_for('main.view_player', id=player_id))
         
         # Send the file
@@ -652,6 +653,8 @@ def download_document(player_id, document_id):
         )
         
     except Exception as e:
+        print(f"Error downloading document: {str(e)}")
+        print(f"Document path: {document.file_path if 'document' in locals() else 'Unknown'}")
         flash(f'Error downloading document: {str(e)}', 'error')
         return redirect(url_for('main.view_player', id=player_id))
 
@@ -861,8 +864,8 @@ def upload_file():
         original_name = secure_filename(file.filename)
         unique_name = f"{uuid.uuid4().hex}_{original_name}"
         
-        # Simple upload directory
-        upload_dir = os.path.join(current_app.root_path, 'instance', 'uploads')
+        # Use the configured upload directory
+        upload_dir = current_app.config['UPLOAD_FOLDER']
         os.makedirs(upload_dir, exist_ok=True)
         
         file_path = os.path.join(upload_dir, unique_name)
@@ -1003,6 +1006,12 @@ def download_file(file_id):
     try:
         file = File.query.filter_by(id=file_id).first_or_404()
         
+        # Check if file exists
+        if not os.path.exists(file.file_path):
+            print(f"File not found at path: {file.file_path}")
+            flash('File not found on disk. Please contact an administrator.', 'error')
+            return redirect(url_for('main.files'))
+        
         # Update download count
         file.download_count += 1
         db.session.commit()
@@ -1016,6 +1025,7 @@ def download_file(file_id):
         
     except Exception as e:
         print(f"Error downloading file: {str(e)}")
+        print(f"File path: {file.file_path if 'file' in locals() else 'Unknown'}")
         flash('Error downloading file.', 'danger')
         return redirect(url_for('main.files'))
 
