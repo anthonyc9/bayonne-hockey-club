@@ -405,11 +405,6 @@ body {
                         {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
                         <span class="focus-badge secondary">{{ practice_plan.secondary_focus }}</span>
                         {% endif %}
-                        {% if practice_plan.review_status %}
-                        <span class="focus-badge {% if practice_plan.review_status == 'Reviewed' %}success{% else %}warning{% endif %}">
-                            {{ practice_plan.review_status }}
-                        </span>
-                        {% endif %}
                     </div>
                 </div>
             </div>

@@ -371,17 +371,6 @@ document.querySelector('form').addEventListener('submit', function(e) {
                                     {% endif %}
                                 </div>
                                 
-                                <div class="mb-3">
-                                    <label for="review_status" class="form-label">{{ form.review_status.label }}</label>
-                                    {{ form.review_status(class="form-select") }}
-                                    {% if form.review_status.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.review_status.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
                             </div>
                         </div>
                         

@@ -63,13 +63,6 @@ class PracticePlanForm(FlaskForm):
     equipment_needed = TextAreaField('Equipment Needed', validators=[Optional(), Length(max=500)])
     additional_notes = TextAreaField('Additional Notes', validators=[Optional(), Length(max=1000)])
     
-    # Review Status
-    review_status = SelectField('Review Status', choices=[
-        ('Not Reviewed', 'Not Reviewed'),
-        ('Reviewed', 'Reviewed'),
-        ('Needs Changes', 'Needs Changes')
-    ], default='Not Reviewed')
-    
     # External Links
     external_links = TextAreaField('External Links (one per line)', validators=[Optional(), Length(max=1000)])
     

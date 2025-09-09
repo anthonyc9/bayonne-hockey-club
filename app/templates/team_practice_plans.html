@@ -57,7 +57,6 @@
                                 <th>Title</th>
                                 <th>Primary Focus</th>
                                 <th>Secondary Focus</th>
-                                <th>Review</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -78,15 +77,6 @@
                                             <span class="badge bg-secondary">{{ plan.secondary_focus }}</span>
                                         {% else %}
                                             <span class="text-muted">N/A</span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="review-cell">
-                                        {% if plan.review_status == 'Reviewed' %}
-                                            <span class="badge bg-success">{{ plan.review_status }}</span>
-                                        {% elif plan.review_status == 'Needs Changes' %}
-                                            <span class="badge bg-warning">{{ plan.review_status }}</span>
-                                        {% else %}
-                                            <span class="badge bg-secondary">{{ plan.review_status }}</span>
                                         {% endif %}
                                     </td>
                                     <td class="actions-cell">

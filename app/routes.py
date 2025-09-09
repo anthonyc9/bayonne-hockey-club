@@ -1489,7 +1489,6 @@ def add_practice_plan(team_id):
                 cool_down=form.cool_down.data,
                 equipment_needed=form.equipment_needed.data,
                 additional_notes=form.additional_notes.data,
-                review_status=form.review_status.data,
                 external_links=','.join(external_links) if external_links else None,
                 team_id=team_id,
                 user_id=current_user.id
@@ -1546,7 +1545,6 @@ def edit_practice_plan(plan_id):
             practice_plan.cool_down = form.cool_down.data
             practice_plan.equipment_needed = form.equipment_needed.data
             practice_plan.additional_notes = form.additional_notes.data
-            practice_plan.review_status = form.review_status.data
             practice_plan.external_links = ','.join(external_links) if external_links else None
             
             # Handle file attachments
