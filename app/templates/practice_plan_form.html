@@ -284,11 +284,27 @@ document.querySelector('form').addEventListener('submit', function(e) {
 // Drill Pieces Management
 let drillPieceIndex = {{ form.drill_pieces|length }};
 
-document.getElementById('add-drill-piece').addEventListener('click', function() {
-    const container = document.getElementById('drill-pieces-container');
-    const newDrillPiece = createDrillPieceElement(drillPieceIndex);
-    container.appendChild(newDrillPiece);
-    drillPieceIndex++;
+document.addEventListener('DOMContentLoaded', function() {
+    // Add drill piece button
+    const addButton = document.getElementById('add-drill-piece');
+    if (addButton) {
+        addButton.addEventListener('click', function() {
+            const container = document.getElementById('drill-pieces-container');
+            const newDrillPiece = createDrillPieceElement(drillPieceIndex);
+            container.appendChild(newDrillPiece);
+            drillPieceIndex++;
+            updateRemoveButtons();
+        });
+    }
+    
+    // Remove drill piece buttons
+    document.querySelectorAll('.remove-drill-piece').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.drill-piece-item').remove();
+            updateDrillPieceNumbers();
+            updateRemoveButtons();
+        });
+    });
     updateRemoveButtons();
 });
 
@@ -367,17 +383,6 @@ function updateRemoveButtons() {
     });
 }
 
-// Add event listeners to existing remove buttons
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.remove-drill-piece').forEach(button => {
-        button.addEventListener('click', function() {
-            this.closest('.drill-piece-item').remove();
-            updateDrillPieceNumbers();
-            updateRemoveButtons();
-        });
-    });
-    updateRemoveButtons();
-});
 </script>
 {% endblock %}
 
