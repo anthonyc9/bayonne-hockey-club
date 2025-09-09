@@ -496,7 +496,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                         <div class="row g-3">
                                             <div class="col-md-3">
                                                 <label class="form-label">Time</label>
-                                                {{ drill_form.time(class="form-control") }}
+                                                {% if drill_form.time is callable %}
+                                                    {{ drill_form.time(class="form-control") }}
+                                                {% else %}
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min">
+                                                {% endif %}
                                                 {% if drill_form.time.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.time.errors %}
@@ -507,7 +511,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                             </div>
                                             <div class="col-md-9">
                                                 <label class="form-label">Drill Name</label>
-                                                {{ drill_form.drill_name(class="form-control") }}
+                                                {% if drill_form.drill_name is callable %}
+                                                    {{ drill_form.drill_name(class="form-control") }}
+                                                {% else %}
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice">
+                                                {% endif %}
                                                 {% if drill_form.drill_name.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.drill_name.errors %}
@@ -518,7 +526,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Description</label>
-                                                {{ drill_form.description(class="form-control") }}
+                                                {% if drill_form.description is callable %}
+                                                    {{ drill_form.description(class="form-control") }}
+                                                {% else %}
+                                                    <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives..."></textarea>
+                                                {% endif %}
                                                 {% if drill_form.description.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.description.errors %}
@@ -529,7 +541,11 @@ document.addEventListener('DOMContentLoaded', function() {
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Link/Attachment</label>
-                                                {{ drill_form.link_attachment(class="form-control") }}
+                                                {% if drill_form.link_attachment is callable %}
+                                                    {{ drill_form.link_attachment(class="form-control") }}
+                                                {% else %}
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-link_attachment" class="form-control" placeholder="URL or file reference (optional)">
+                                                {% endif %}
                                                 {% if drill_form.link_attachment.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.link_attachment.errors %}
