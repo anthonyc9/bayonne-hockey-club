@@ -1470,10 +1470,6 @@ def add_practice_plan(team_id):
     team = Team.query.get_or_404(team_id)
     form = PracticePlanForm()
     
-    # Ensure at least one drill piece is available for the form
-    if not form.drill_pieces.data:
-        form.drill_pieces.append_entry()
-    
     if form.validate_on_submit():
         try:
             # Parse external links (one per line)
@@ -1543,10 +1539,6 @@ def edit_practice_plan(plan_id):
     
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     form = PracticePlanForm(obj=practice_plan)
-    
-    # Ensure at least one drill piece is available for the form
-    if not form.drill_pieces.data:
-        form.drill_pieces.append_entry()
     
     if form.validate_on_submit():
         try:

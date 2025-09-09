@@ -69,6 +69,12 @@ class PracticePlanForm(FlaskForm):
     # Practice Structure - Dynamic Drill Pieces
     drill_pieces = FieldList(FormField(DrillPieceForm), min_entries=1, max_entries=20)
     
+    def __init__(self, *args, **kwargs):
+        super(PracticePlanForm, self).__init__(*args, **kwargs)
+        # Ensure at least one drill piece is always available
+        if not self.drill_pieces.entries:
+            self.drill_pieces.append_entry()
+    
     # Legacy Practice Structure (keeping for backward compatibility)
     warm_up = TextAreaField('Warm Up', validators=[Optional(), Length(max=1000)])
     main_content = TextAreaField('Main Content', validators=[Optional(), Length(max=1000)])
