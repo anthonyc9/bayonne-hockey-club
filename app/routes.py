@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, make_response, send_file
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan
+from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece
 from app.player_forms import PlayerForm
 
 from app.email_utils import send_password_reset_email
@@ -1497,6 +1497,19 @@ def add_practice_plan(team_id):
             db.session.add(practice_plan)
             db.session.flush()  # Get the ID without committing
             
+            # Handle drill pieces
+            for index, drill_form in enumerate(form.drill_pieces.data):
+                if drill_form.get('drill_name') and drill_form.get('time'):  # Only add if has required fields
+                    drill_piece = DrillPiece(
+                        time=drill_form['time'],
+                        drill_name=drill_form['drill_name'],
+                        description=drill_form.get('description', ''),
+                        link_attachment=drill_form.get('link_attachment', ''),
+                        order_index=index,
+                        practice_plan_id=practice_plan.id
+                    )
+                    db.session.add(drill_piece)
+            
             # Handle file attachments
             if form.attachment_ids.data:
                 attachment_ids = [int(id.strip()) for id in form.attachment_ids.data.split(',') if id.strip()]
@@ -1546,6 +1559,23 @@ def edit_practice_plan(plan_id):
             practice_plan.equipment_needed = form.equipment_needed.data
             practice_plan.additional_notes = form.additional_notes.data
             practice_plan.external_links = ','.join(external_links) if external_links else None
+            
+            # Handle drill pieces - clear existing and add new ones
+            # Clear existing drill pieces
+            DrillPiece.query.filter_by(practice_plan_id=practice_plan.id).delete()
+            
+            # Add new drill pieces
+            for index, drill_form in enumerate(form.drill_pieces.data):
+                if drill_form.get('drill_name') and drill_form.get('time'):  # Only add if has required fields
+                    drill_piece = DrillPiece(
+                        time=drill_form['time'],
+                        drill_name=drill_form['drill_name'],
+                        description=drill_form.get('description', ''),
+                        link_attachment=drill_form.get('link_attachment', ''),
+                        order_index=index,
+                        practice_plan_id=practice_plan.id
+                    )
+                    db.session.add(drill_piece)
             
             # Handle file attachments
             if form.attachment_ids.data:

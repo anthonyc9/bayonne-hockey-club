@@ -320,6 +320,9 @@ class PracticePlan(db.Model):
     # Attachments (many-to-many with File model)
     attachments = db.relationship('File', secondary='practice_plan_attachments', lazy='subquery',
                                 backref=db.backref('practice_plans', lazy=True))
+    
+    # Drill pieces (one-to-many relationship)
+    drill_pieces = db.relationship('DrillPiece', backref='practice_plan', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):
         return f"PracticePlan('{self.title}', Team: {self.team.name}, Date: {self.date})"
@@ -341,6 +344,28 @@ class Team(db.Model):
 
     def __repr__(self):
         return f"Team('{self.name}')"
+
+
+class DrillPiece(db.Model):
+    """Model for individual drill pieces within a practice plan."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Drill Details
+    time = db.Column(db.String(50), nullable=False)  # e.g., "10 minutes", "5-10 min"
+    drill_name = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    link_attachment = db.Column(db.String(500))  # URL or file reference
+    
+    # Order within the practice plan
+    order_index = db.Column(db.Integer, nullable=False, default=0)
+    
+    # Relationships
+    practice_plan_id = db.Column(db.Integer, db.ForeignKey('practice_plan.id'), nullable=False)
+    
+    def __repr__(self):
+        return f"DrillPiece('{self.drill_name}', Time: {self.time})"
 
 
 # Association table for practice plan attachments

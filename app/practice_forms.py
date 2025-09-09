@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, TextAreaField, SelectField
+from wtforms import StringField, DateField, TextAreaField, SelectField, FieldList, FormField
 from wtforms.validators import DataRequired, Length, Optional
 from datetime import datetime
 
@@ -7,6 +7,18 @@ class TeamForm(FlaskForm):
     """Form for creating/editing teams."""
     name = StringField('Team Name', validators=[DataRequired(), Length(min=1, max=50)])
     description = TextAreaField('Description', validators=[Optional(), Length(max=500)])
+
+
+class DrillPieceForm(FlaskForm):
+    """Form for individual drill pieces."""
+    time = StringField('Time', validators=[DataRequired(), Length(max=50)], 
+                      render_kw={'placeholder': 'e.g., 10 minutes, 5-10 min'})
+    drill_name = StringField('Drill Name', validators=[DataRequired(), Length(max=200)],
+                           render_kw={'placeholder': 'e.g., Skating Drills, Passing Practice'})
+    description = TextAreaField('Description', validators=[Optional()],
+                              render_kw={'rows': 3, 'placeholder': 'Describe the drill, setup, and objectives...'})
+    link_attachment = StringField('Link/Attachment', validators=[Optional(), Length(max=500)],
+                                render_kw={'placeholder': 'URL or file reference (optional)'})
 
 
 class PracticePlanForm(FlaskForm):
@@ -54,7 +66,10 @@ class PracticePlanForm(FlaskForm):
         ('Other', 'Other')
     ], validators=[Optional()])
     
-    # Practice Structure
+    # Practice Structure - Dynamic Drill Pieces
+    drill_pieces = FieldList(FormField(DrillPieceForm), min_entries=1, max_entries=20)
+    
+    # Legacy Practice Structure (keeping for backward compatibility)
     warm_up = TextAreaField('Warm Up', validators=[Optional(), Length(max=1000)])
     main_content = TextAreaField('Main Content', validators=[Optional(), Length(max=1000)])
     cool_down = TextAreaField('Cool Down', validators=[Optional(), Length(max=1000)])

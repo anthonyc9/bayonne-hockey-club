@@ -280,6 +280,104 @@ document.addEventListener('DOMContentLoaded', function() {
 document.querySelector('form').addEventListener('submit', function(e) {
     updateHiddenInput();
 });
+
+// Drill Pieces Management
+let drillPieceIndex = {{ form.drill_pieces|length }};
+
+document.getElementById('add-drill-piece').addEventListener('click', function() {
+    const container = document.getElementById('drill-pieces-container');
+    const newDrillPiece = createDrillPieceElement(drillPieceIndex);
+    container.appendChild(newDrillPiece);
+    drillPieceIndex++;
+    updateRemoveButtons();
+});
+
+function createDrillPieceElement(index) {
+    const div = document.createElement('div');
+    div.className = 'drill-piece-item card mb-3';
+    div.setAttribute('data-index', index);
+    
+    div.innerHTML = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+                <i class="bi bi-activity"></i> Drill Piece #${index + 1}
+            </h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-drill-piece">
+                <i class="bi bi-trash"></i> Remove
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Time</label>
+                    <input type="text" name="drill_pieces-${index}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min">
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label">Drill Name</label>
+                    <input type="text" name="drill_pieces-${index}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="drill_pieces-${index}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives..."></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Link/Attachment</label>
+                    <input type="text" name="drill_pieces-${index}-link_attachment" class="form-control" placeholder="URL or file reference (optional)">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add remove event listener
+    div.querySelector('.remove-drill-piece').addEventListener('click', function() {
+        div.remove();
+        updateDrillPieceNumbers();
+        updateRemoveButtons();
+    });
+    
+    return div;
+}
+
+function updateDrillPieceNumbers() {
+    const drillPieces = document.querySelectorAll('.drill-piece-item');
+    drillPieces.forEach((piece, index) => {
+        const header = piece.querySelector('.card-header h6');
+        header.innerHTML = `<i class="bi bi-activity"></i> Drill Piece #${index + 1}`;
+        piece.setAttribute('data-index', index);
+        
+        // Update form field names
+        const inputs = piece.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            const name = input.name;
+            if (name) {
+                const parts = name.split('-');
+                parts[1] = index;
+                input.name = parts.join('-');
+            }
+        });
+    });
+}
+
+function updateRemoveButtons() {
+    const drillPieces = document.querySelectorAll('.drill-piece-item');
+    const removeButtons = document.querySelectorAll('.remove-drill-piece');
+    
+    removeButtons.forEach(button => {
+        button.disabled = drillPieces.length <= 1;
+    });
+}
+
+// Add event listeners to existing remove buttons
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.remove-drill-piece').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.drill-piece-item').remove();
+            updateDrillPieceNumbers();
+            updateRemoveButtons();
+        });
+    });
+    updateRemoveButtons();
+});
 </script>
 {% endblock %}
 
@@ -376,56 +474,80 @@ document.querySelector('form').addEventListener('submit', function(e) {
                         
                         <hr class="my-4">
                         
-                        <!-- Practice Structure -->
-                        <h5 class="mb-3">Practice Structure</h5>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="warm_up" class="form-label">
-                                        <i class="bi bi-clock"></i> {{ form.warm_up.label }}
-                                    </label>
-                                    {{ form.warm_up(class="form-control", rows="4", placeholder="Warm-up activities...") }}
-                                    {% if form.warm_up.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.warm_up.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
+                        <!-- Practice Structure - Dynamic Drill Pieces -->
+                        <h5 class="mb-3">
+                            <i class="bi bi-list-ol"></i> Practice Structure
+                            <small class="text-muted">Add as many drill pieces as needed</small>
+                        </h5>
+                        
+                        <div id="drill-pieces-container">
+                            {% for drill_form in form.drill_pieces %}
+                                <div class="drill-piece-item card mb-3" data-index="{{ loop.index0 }}">
+                                    <div class="card-header d-flex justify-content-between align-items-center">
+                                        <h6 class="mb-0">
+                                            <i class="bi bi-activity"></i> Drill Piece #{{ loop.index }}
+                                        </h6>
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-drill-piece" 
+                                                {% if loop.length == 1 %}disabled{% endif %}>
+                                            <i class="bi bi-trash"></i> Remove
+                                        </button>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row g-3">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Time</label>
+                                                {{ drill_form.time(class="form-control") }}
+                                                {% if drill_form.time.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in drill_form.time.errors %}
+                                                            <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-md-9">
+                                                <label class="form-label">Drill Name</label>
+                                                {{ drill_form.drill_name(class="form-control") }}
+                                                {% if drill_form.drill_name.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in drill_form.drill_name.errors %}
+                                                            <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Description</label>
+                                                {{ drill_form.description(class="form-control") }}
+                                                {% if drill_form.description.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in drill_form.description.errors %}
+                                                            <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label">Link/Attachment</label>
+                                                {{ drill_form.link_attachment(class="form-control") }}
+                                                {% if drill_form.link_attachment.errors %}
+                                                    <div class="text-danger">
+                                                        {% for error in drill_form.link_attachment.errors %}
+                                                            <small>{{ error }}</small>
+                                                        {% endfor %}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                    {% endif %}
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="main_content" class="form-label">
-                                        <i class="bi bi-list-ul"></i> {{ form.main_content.label }}
-                                    </label>
-                                    {{ form.main_content(class="form-control", rows="4", placeholder="Main practice content...") }}
-                                    {% if form.main_content.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.main_content.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-4">
-                                <div class="mb-3">
-                                    <label for="cool_down" class="form-label">
-                                        <i class="bi bi-snow"></i> {{ form.cool_down.label }}
-                                    </label>
-                                    {{ form.cool_down(class="form-control", rows="4", placeholder="Cool-down activities...") }}
-                                    {% if form.cool_down.errors %}
-                                        <div class="text-danger">
-                                            {% for error in form.cool_down.errors %}
-                                                <small>{{ error }}</small>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="text-center mb-4">
+                            <button type="button" class="btn btn-outline-primary" id="add-drill-piece">
+                                <i class="bi bi-plus-circle"></i> Add Another Drill Piece
+                            </button>
                         </div>
                         
                         <hr class="my-4">
