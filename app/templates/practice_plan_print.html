@@ -366,6 +366,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border-right: 2px solid #000;
 }
 
 .drill-name {
@@ -390,8 +391,7 @@ body {
 }
 
 .drill-notes {
-    width: 140px;
-    border-left: 2px solid #000;
+    width: 50%;
     background: #f9f9f9;
     position: relative;
     flex-shrink: 0;
@@ -428,6 +428,7 @@ body {
     
     .drill-content {
         padding: 6px 8px !important;
+        border-right: 2px solid #000 !important;
     }
     
     .drill-name {
@@ -445,9 +446,8 @@ body {
     }
     
     .drill-notes {
-        border-left: 2px solid #000 !important;
         background: #f9f9f9 !important;
-        width: 120px !important;
+        width: 50% !important;
         min-height: 50px !important;
     }
     
@@ -483,10 +483,14 @@ body {
         border-bottom: 1px solid #000;
     }
     
+    .drill-content {
+        border-right: none;
+        border-bottom: 2px solid #000;
+    }
+    
     .drill-notes {
         width: 100%;
-        border-left: none;
-        border-top: 2px solid #000;
+        border-top: none;
         min-height: 50px;
     }
 }
