@@ -1542,6 +1542,23 @@ def edit_practice_plan(plan_id):
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     form = PracticePlanForm(obj=practice_plan)
     
+    # Populate drill pieces data for editing
+    if request.method == "GET":
+        # Clear existing entries and populate with actual drill pieces
+        form.drill_pieces.entries = []
+        for drill_piece in practice_plan.drill_pieces:
+            drill_data = {
+                'time': drill_piece.time,
+                'drill_name': drill_piece.drill_name,
+                'description': drill_piece.description or '',
+                'link_attachment': drill_piece.link_attachment or ''
+            }
+            form.drill_pieces.append_entry(drill_data)
+        
+        # Ensure at least one entry exists
+        if not form.drill_pieces.entries:
+            form.drill_pieces.append_entry()
+    
     if form.validate_on_submit():
         try:
             # Parse external links (one per line)
