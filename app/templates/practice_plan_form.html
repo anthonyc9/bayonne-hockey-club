@@ -118,69 +118,6 @@ function updateHiddenInput() {
     document.getElementById('attachmentIds').value = attachmentIds;
 }
 
-// Upload new file function
-function uploadFile() {
-    alert('Upload function called!'); // Simple test
-    
-    const fileInput = document.getElementById('fileUpload');
-    const descriptionInput = document.getElementById('uploadDescription');
-    const statusDiv = document.getElementById('uploadStatus');
-    
-    console.log('Upload function called');
-    console.log('File input:', fileInput);
-    console.log('Files:', fileInput.files);
-    
-    if (!fileInput.files[0]) {
-        alert('Please select a file to upload');
-        return;
-    }
-    
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    if (descriptionInput.value) {
-        formData.append('description', descriptionInput.value);
-    }
-    
-    console.log('FormData created, sending request...');
-    
-    statusDiv.style.display = 'block';
-    statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Uploading file...</div>';
-    
-    fetch('/files/upload', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => {
-        console.log('Response received:', response);
-        return response.json();
-    })
-    .then(data => {
-        console.log('Response data:', data);
-        if (data.success) {
-            statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
-            
-            // Add the uploaded file to selected files
-            selectedFiles.push({ id: data.file_id, name: data.filename });
-            updateSelectedFilesDisplay();
-            updateHiddenInput();
-            
-            // Clear the form
-            fileInput.value = '';
-            descriptionInput.value = '';
-            
-            // Hide status after 3 seconds
-            setTimeout(() => {
-                statusDiv.style.display = 'none';
-            }, 3000);
-        } else {
-            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed: ${data.error}</div>`;
-        }
-    })
-    .catch(error => {
-        console.error('Upload error:', error);
-        statusDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed. Please try again.</div>';
-    });
-}
 
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
@@ -190,39 +127,6 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// File Browser Functions
-function loadRootFolder() {
-    alert('Load Root Folder called!'); // Simple test
-    console.log('loadRootFolder called');
-    currentBrowseFolderId = null;
-    folderStack = [];
-    
-    // Show loading state
-    const browserDiv = document.getElementById('fileBrowser');
-    console.log('Browser div:', browserDiv);
-    browserDiv.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Loading...</div>';
-    
-    // Fetch root folder contents
-    console.log('Fetching /files/browse...');
-    fetch('/files/browse')
-        .then(response => {
-            console.log('Browse response:', response);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Browse data:', data);
-            if (data.success) {
-                displayFolderContents(data.folders, data.files, null);
-                updatePathDisplay(null);
-            } else {
-                browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
-            }
-        })
-        .catch(error => {
-            console.error('Browse error:', error);
-            browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
-        });
-}
 
 function loadFolderContents(folderId) {
     currentBrowseFolderId = folderId;
@@ -914,6 +818,104 @@ function updateRemoveButtons() {
     removeButtons.forEach(button => {
         button.disabled = drillPieces.length <= 1;
     });
+}
+
+// File Upload Function
+function uploadFile() {
+    alert('Upload function called!'); // Simple test
+    
+    const fileInput = document.getElementById('fileUpload');
+    const descriptionInput = document.getElementById('uploadDescription');
+    const statusDiv = document.getElementById('uploadStatus');
+    
+    console.log('Upload function called');
+    console.log('File input:', fileInput);
+    console.log('Files:', fileInput.files);
+    
+    if (!fileInput.files[0]) {
+        alert('Please select a file to upload');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    if (descriptionInput.value) {
+        formData.append('description', descriptionInput.value);
+    }
+    
+    console.log('FormData created, sending request...');
+    
+    statusDiv.style.display = 'block';
+    statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Uploading file...</div>';
+    
+    fetch('/files/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        console.log('Response received:', response);
+        return response.json();
+    })
+    .then(data => {
+        console.log('Response data:', data);
+        if (data.success) {
+            statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
+            
+            // Add the uploaded file to selected files
+            selectedFiles.push({ id: data.file_id, name: data.filename });
+            updateSelectedFilesDisplay();
+            updateHiddenInput();
+            
+            // Clear the form
+            fileInput.value = '';
+            descriptionInput.value = '';
+            
+            // Hide status after 3 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        } else {
+            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        statusDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed. Please try again.</div>';
+    });
+}
+
+// File Browser Function
+function loadRootFolder() {
+    alert('Load Root Folder called!'); // Simple test
+    console.log('loadRootFolder called');
+    currentBrowseFolderId = null;
+    folderStack = [];
+    
+    // Show loading state
+    const browserDiv = document.getElementById('fileBrowser');
+    console.log('Browser div:', browserDiv);
+    browserDiv.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Loading...</div>';
+    
+    // Fetch root folder contents
+    console.log('Fetching /files/browse...');
+    fetch('/files/browse')
+        .then(response => {
+            console.log('Browse response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Browse data:', data);
+            if (data.success) {
+                displayFolderContents(data.folders, data.files, null);
+                updatePathDisplay(null);
+            } else {
+                browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Browse error:', error);
+            browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
+        });
 }
 </script>
 {% endblock %}
