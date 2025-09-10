@@ -71,6 +71,23 @@ class PracticePlanForm(FlaskForm):
     
     def __init__(self, *args, **kwargs):
         super(PracticePlanForm, self).__init__(*args, **kwargs)
+        
+        # Handle drill pieces data if provided
+        if 'obj' in kwargs and kwargs['obj']:
+            practice_plan = kwargs['obj']
+            print(f"DEBUG: Form init - practice_plan has {len(practice_plan.drill_pieces)} drill pieces")
+            # Clear existing entries and populate with actual drill pieces
+            self.drill_pieces.entries = []
+            for drill_piece in practice_plan.drill_pieces:
+                drill_data = {
+                    'time': drill_piece.time,
+                    'drill_name': drill_piece.drill_name,
+                    'description': drill_piece.description or '',
+                    'link_attachment': drill_piece.link_attachment or ''
+                }
+                self.drill_pieces.append_entry(drill_data)
+                print(f"DEBUG: Form init - Added drill piece: {drill_data}")
+        
         # Ensure at least one drill piece is always available
         if not self.drill_pieces.entries:
             self.drill_pieces.append_entry()

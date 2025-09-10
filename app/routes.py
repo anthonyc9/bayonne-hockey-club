@@ -1541,25 +1541,8 @@ def edit_practice_plan(plan_id):
     
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     
-    # Create form with practice plan object
+    # Create form with practice plan object (form will handle drill pieces automatically)
     form = PracticePlanForm(obj=practice_plan)
-    
-    if request.method == "GET":
-        # Manually populate drill pieces data
-        form.drill_pieces.entries = []
-        for drill_piece in practice_plan.drill_pieces:
-            drill_data = {
-                'time': drill_piece.time,
-                'drill_name': drill_piece.drill_name,
-                'description': drill_piece.description or '',
-                'link_attachment': drill_piece.link_attachment or ''
-            }
-            form.drill_pieces.append_entry(drill_data)
-            print(f"DEBUG: Added drill piece data: {drill_data}")
-        
-        # Ensure at least one drill piece entry
-        if not form.drill_pieces.entries:
-            form.drill_pieces.append_entry()
     
     if form.validate_on_submit():
         try:
