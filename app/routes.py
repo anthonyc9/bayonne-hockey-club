@@ -1541,24 +1541,12 @@ def edit_practice_plan(plan_id):
     
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     
+    # Create form with practice plan object
+    form = PracticePlanForm(obj=practice_plan)
+    
     if request.method == "GET":
-        # Prepare form data including drill pieces for GET requests only
-        form_data = {
-            'title': practice_plan.title,
-            'date': practice_plan.date,
-            'duration': practice_plan.duration,
-            'primary_focus': practice_plan.primary_focus,
-            'secondary_focus': practice_plan.secondary_focus,
-            'warm_up': practice_plan.warm_up,
-            'main_content': practice_plan.main_content,
-            'cool_down': practice_plan.cool_down,
-            'equipment_needed': practice_plan.equipment_needed,
-            'additional_notes': practice_plan.additional_notes,
-            'external_links': practice_plan.external_links,
-            'drill_pieces': []
-        }
-        
-        # Add drill pieces data
+        # Manually populate drill pieces data
+        form.drill_pieces.entries = []
         for drill_piece in practice_plan.drill_pieces:
             drill_data = {
                 'time': drill_piece.time,
@@ -1566,22 +1554,12 @@ def edit_practice_plan(plan_id):
                 'description': drill_piece.description or '',
                 'link_attachment': drill_piece.link_attachment or ''
             }
-            form_data['drill_pieces'].append(drill_data)
+            form.drill_pieces.append_entry(drill_data)
             print(f"DEBUG: Added drill piece data: {drill_data}")
         
         # Ensure at least one drill piece entry
-        if not form_data['drill_pieces']:
-            form_data['drill_pieces'].append({
-                'time': '',
-                'drill_name': '',
-                'description': '',
-                'link_attachment': ''
-            })
-        
-        form = PracticePlanForm(data=form_data)
-    else:
-        # For POST requests, create form normally
-        form = PracticePlanForm()
+        if not form.drill_pieces.entries:
+            form.drill_pieces.append_entry()
     
     if form.validate_on_submit():
         try:
