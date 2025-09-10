@@ -1540,24 +1540,42 @@ def edit_practice_plan(plan_id):
     from app.practice_forms import PracticePlanForm
     
     practice_plan = PracticePlan.query.get_or_404(plan_id)
-    form = PracticePlanForm(obj=practice_plan)
     
-    # Populate drill pieces data for editing
-    if request.method == "GET":
-        # Clear existing entries and populate with actual drill pieces
-        form.drill_pieces.entries = []
-        for drill_piece in practice_plan.drill_pieces:
-            drill_data = {
-                'time': drill_piece.time,
-                'drill_name': drill_piece.drill_name,
-                'description': drill_piece.description or '',
-                'link_attachment': drill_piece.link_attachment or ''
-            }
-            form.drill_pieces.append_entry(drill_data)
-        
-        # Ensure at least one entry exists
-        if not form.drill_pieces.entries:
-            form.drill_pieces.append_entry()
+    # Prepare form data including drill pieces
+    form_data = {
+        'title': practice_plan.title,
+        'date': practice_plan.date,
+        'duration': practice_plan.duration,
+        'primary_focus': practice_plan.primary_focus,
+        'secondary_focus': practice_plan.secondary_focus,
+        'warm_up': practice_plan.warm_up,
+        'main_content': practice_plan.main_content,
+        'cool_down': practice_plan.cool_down,
+        'equipment_needed': practice_plan.equipment_needed,
+        'additional_notes': practice_plan.additional_notes,
+        'external_links': practice_plan.external_links,
+        'drill_pieces': []
+    }
+    
+    # Add drill pieces data
+    for drill_piece in practice_plan.drill_pieces:
+        form_data['drill_pieces'].append({
+            'time': drill_piece.time,
+            'drill_name': drill_piece.drill_name,
+            'description': drill_piece.description or '',
+            'link_attachment': drill_piece.link_attachment or ''
+        })
+    
+    # Ensure at least one drill piece entry
+    if not form_data['drill_pieces']:
+        form_data['drill_pieces'].append({
+            'time': '',
+            'drill_name': '',
+            'description': '',
+            'link_attachment': ''
+        })
+    
+    form = PracticePlanForm(data=form_data)
     
     if form.validate_on_submit():
         try:
