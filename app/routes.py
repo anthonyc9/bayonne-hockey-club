@@ -1546,6 +1546,8 @@ def edit_practice_plan(plan_id):
     
     if form.validate_on_submit():
         try:
+            print(f"DEBUG: Form submitted successfully for plan {plan_id}")
+            print(f"DEBUG: form.drill_pieces.data: {form.drill_pieces.data}")
             # Parse external links (one per line)
             external_links = []
             if form.external_links.data:
@@ -1596,6 +1598,12 @@ def edit_practice_plan(plan_id):
                 practice_plan.attachments.clear()
             
             db.session.commit()
+            print(f"DEBUG: Database committed successfully for plan {plan_id}")
+            # Verify the data was saved
+            updated_plan = PracticePlan.query.get(plan_id)
+            print(f"DEBUG: After commit, plan has {len(updated_plan.drill_pieces)} drill pieces")
+            for i, drill in enumerate(updated_plan.drill_pieces):
+                print(f"DEBUG: Saved drill {i}: '{drill.drill_name}' - Description: '{drill.description}'")
             flash('Practice plan updated successfully!', 'success')
             return redirect(url_for('main.view_practice_plan', plan_id=practice_plan.id))
         except Exception as e:
