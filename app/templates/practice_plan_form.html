@@ -273,6 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Handle form submission to ensure selected files are included
 document.querySelector('form').addEventListener('submit', function(e) {
+    alert('DEBUG: Form is being submitted!');
     updateHiddenInput();
     
     // Debug: Log form data before submission
