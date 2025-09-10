@@ -271,32 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 {% endif %}
 
-// Debug: Check if JavaScript is loading
-alert('DEBUG: JavaScript is loading!');
-
-// Handle form submission to ensure selected files are included
-document.addEventListener('DOMContentLoaded', function() {
-    alert('DEBUG: DOM loaded, looking for form...');
-    const form = document.querySelector('form');
-    if (form) {
-        alert('DEBUG: Form found, adding event listener...');
-        form.addEventListener('submit', function(e) {
-            alert('DEBUG: Form is being submitted!');
-            updateHiddenInput();
-            
-            // Debug: Log form data before submission
-            console.log('DEBUG: Form submission - logging form data...');
-            const formData = new FormData(this);
-            for (let [key, value] of formData.entries()) {
-                if (key.includes('drill_pieces') && key.includes('description')) {
-                    console.log(`DEBUG: ${key} = "${value}"`);
-                }
-            }
-        });
-    } else {
-        alert('DEBUG: No form found!');
-    }
-});
 
 
 function createDrillPieceElement(index) {
@@ -623,6 +597,28 @@ let drillPieceIndex = {{ form.drill_pieces|length }};
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing drill pieces...');
+    
+    // Debug: Check form submission
+    alert('DEBUG: DOM loaded, looking for form...');
+    const form = document.querySelector('form');
+    if (form) {
+        alert('DEBUG: Form found, adding event listener...');
+        form.addEventListener('submit', function(e) {
+            alert('DEBUG: Form is being submitted!');
+            updateHiddenInput();
+            
+            // Debug: Log form data before submission
+            console.log('DEBUG: Form submission - logging form data...');
+            const formData = new FormData(this);
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('drill_pieces') && key.includes('description')) {
+                    console.log(`DEBUG: ${key} = "${value}"`);
+                }
+            }
+        });
+    } else {
+        alert('DEBUG: No form found!');
+    }
     
     // Add drill piece button
     const addButton = document.getElementById('add-drill-piece');
