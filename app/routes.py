@@ -1546,6 +1546,8 @@ def edit_practice_plan(plan_id):
     
     if form.validate_on_submit():
         try:
+            print(f"DEBUG: Form submitted successfully")
+            print(f"DEBUG: form.drill_pieces.data: {form.drill_pieces.data}")
             # Parse external links (one per line)
             external_links = []
             if form.external_links.data:
@@ -1570,6 +1572,7 @@ def edit_practice_plan(plan_id):
             
             # Add new drill pieces
             for index, drill_form in enumerate(form.drill_pieces.data):
+                print(f"DEBUG: Processing drill piece {index}: {drill_form}")
                 if drill_form.get('drill_name') and drill_form.get('time'):  # Only add if has required fields
                     drill_piece = DrillPiece(
                         time=drill_form['time'],
@@ -1579,6 +1582,7 @@ def edit_practice_plan(plan_id):
                         order_index=index,
                         practice_plan_id=practice_plan.id
                     )
+                    print(f"DEBUG: Created drill piece with description: '{drill_piece.description}'")
                     db.session.add(drill_piece)
             
             # Handle file attachments
