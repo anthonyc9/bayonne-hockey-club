@@ -281,34 +281,9 @@ document.querySelector('form').addEventListener('submit', function(e) {
     updateHiddenInput();
 });
 
-// Drill Pieces Management
-let drillPieceIndex = {{ form.drill_pieces|length }};
-
-document.addEventListener('DOMContentLoaded', function() {
-    // Add drill piece button
-    const addButton = document.getElementById('add-drill-piece');
-    if (addButton) {
-        addButton.addEventListener('click', function() {
-            const container = document.getElementById('drill-pieces-container');
-            const newDrillPiece = createDrillPieceElement(drillPieceIndex);
-            container.appendChild(newDrillPiece);
-            drillPieceIndex++;
-            updateRemoveButtons();
-        });
-    }
-    
-    // Remove drill piece buttons
-    document.querySelectorAll('.remove-drill-piece').forEach(button => {
-        button.addEventListener('click', function() {
-            this.closest('.drill-piece-item').remove();
-            updateDrillPieceNumbers();
-            updateRemoveButtons();
-        });
-    });
-    updateRemoveButtons();
-});
 
 function createDrillPieceElement(index) {
+    console.log('Creating drill piece element with index:', index);
     const div = document.createElement('div');
     div.className = 'drill-piece-item card mb-3';
     div.setAttribute('data-index', index);
@@ -712,4 +687,117 @@ function updateRemoveButtons() {
         </div>
     </div>
 </div>
+
+<script>
+// Drill Pieces Management
+let drillPieceIndex = {{ form.drill_pieces|length }};
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing drill pieces...');
+    
+    // Add drill piece button
+    const addButton = document.getElementById('add-drill-piece');
+    console.log('Add button found:', addButton);
+    
+    if (addButton) {
+        addButton.addEventListener('click', function() {
+            console.log('Add button clicked!');
+            const container = document.getElementById('drill-pieces-container');
+            console.log('Container found:', container);
+            const newDrillPiece = createDrillPieceElement(drillPieceIndex);
+            container.appendChild(newDrillPiece);
+            drillPieceIndex++;
+            updateRemoveButtons();
+        });
+    } else {
+        console.error('Add button not found!');
+    }
+    
+    // Remove drill piece buttons
+    document.querySelectorAll('.remove-drill-piece').forEach(button => {
+        button.addEventListener('click', function() {
+            this.closest('.drill-piece-item').remove();
+            updateDrillPieceNumbers();
+            updateRemoveButtons();
+        });
+    });
+    updateRemoveButtons();
+});
+
+function createDrillPieceElement(index) {
+    console.log('Creating drill piece element with index:', index);
+    const div = document.createElement('div');
+    div.className = 'drill-piece-item card mb-3';
+    div.setAttribute('data-index', index);
+    
+    div.innerHTML = `
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+                <i class="bi bi-activity"></i> Drill Piece #${index + 1}
+            </h6>
+            <button type="button" class="btn btn-sm btn-outline-danger remove-drill-piece">
+                <i class="bi bi-trash"></i> Remove
+            </button>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Time</label>
+                    <input type="text" name="drill_pieces-${index}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min">
+                </div>
+                <div class="col-md-9">
+                    <label class="form-label">Drill Name</label>
+                    <input type="text" name="drill_pieces-${index}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice">
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Description</label>
+                    <textarea name="drill_pieces-${index}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives..."></textarea>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Link/Attachment</label>
+                    <input type="text" name="drill_pieces-${index}-link_attachment" class="form-control" placeholder="URL or file reference (optional)">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add remove event listener
+    div.querySelector('.remove-drill-piece').addEventListener('click', function() {
+        div.remove();
+        updateDrillPieceNumbers();
+        updateRemoveButtons();
+    });
+    
+    return div;
+}
+
+function updateDrillPieceNumbers() {
+    const drillPieces = document.querySelectorAll('.drill-piece-item');
+    drillPieces.forEach((piece, index) => {
+        const header = piece.querySelector('.card-header h6');
+        header.innerHTML = `<i class="bi bi-activity"></i> Drill Piece #${index + 1}`;
+        piece.setAttribute('data-index', index);
+        
+        // Update form field names
+        const inputs = piece.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            const name = input.name;
+            if (name) {
+                const parts = name.split('-');
+                parts[1] = index;
+                input.name = parts.join('-');
+            }
+        });
+    });
+}
+
+function updateRemoveButtons() {
+    const drillPieces = document.querySelectorAll('.drill-piece-item');
+    const removeButtons = document.querySelectorAll('.remove-drill-piece');
+    
+    removeButtons.forEach(button => {
+        button.disabled = drillPieces.length <= 1;
+    });
+}
+</script>
 {% endblock %}
