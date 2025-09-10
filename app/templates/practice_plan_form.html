@@ -474,7 +474,7 @@ function updateRemoveButtons() {
                                                 {% if drill_form.time is callable %}
                                                     {{ drill_form.time(class="form-control") }}
                                                 {% else %}
-                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min">
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min" value="{{ drill_form.time.data or '' }}">
                                                 {% endif %}
                                                 {% if drill_form.time.errors %}
                                                     <div class="text-danger">
@@ -489,7 +489,7 @@ function updateRemoveButtons() {
                                                 {% if drill_form.drill_name is callable %}
                                                     {{ drill_form.drill_name(class="form-control") }}
                                                 {% else %}
-                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice">
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice" value="{{ drill_form.drill_name.data or '' }}">
                                                 {% endif %}
                                                 {% if drill_form.drill_name.errors %}
                                                     <div class="text-danger">
@@ -504,7 +504,7 @@ function updateRemoveButtons() {
                                                 {% if drill_form.description is callable %}
                                                     {{ drill_form.description(class="form-control") }}
                                                 {% else %}
-                                                    <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives..."></textarea>
+                                                    <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives...">{{ drill_form.description.data or '' }}</textarea>
                                                 {% endif %}
                                                 {% if drill_form.description.errors %}
                                                     <div class="text-danger">
@@ -519,7 +519,7 @@ function updateRemoveButtons() {
                                                 {% if drill_form.link_attachment is callable %}
                                                     {{ drill_form.link_attachment(class="form-control") }}
                                                 {% else %}
-                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-link_attachment" class="form-control" placeholder="URL or file reference (optional)">
+                                                    <input type="text" name="drill_pieces-{{ loop.index0 }}-link_attachment" class="form-control" placeholder="URL or file reference (optional)" value="{{ drill_form.link_attachment.data or '' }}">
                                                 {% endif %}
                                                 {% if drill_form.link_attachment.errors %}
                                                     <div class="text-danger">
