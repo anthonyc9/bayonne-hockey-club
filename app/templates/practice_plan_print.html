@@ -31,9 +31,9 @@ body {
 @media print {
     body { 
         margin: 0 !important; 
-        padding: 0.5in !important;
-        font-size: 10pt !important;
-        line-height: 1.3 !important;
+        padding: 0.4in !important;
+        font-size: 9pt !important;
+        line-height: 1.2 !important;
         background: white !important;
         color: black !important;
     }
@@ -45,6 +45,17 @@ body {
     .print-container { max-width: 8.5in !important; }
     .print-card { border: 1px solid #000 !important; }
     .activity-notes { border: 1px solid #000 !important; }
+    
+    /* Optimize spacing for one page */
+    .print-header { margin-bottom: 15px !important; padding-bottom: 10px !important; }
+    .print-objectives { margin: 10px 0 !important; padding: 8px !important; }
+    .activity-section { margin: 15px 0 !important; }
+    .print-card { margin-bottom: 15px !important; }
+    .print-card-body { padding: 10px !important; }
+    .activity-content { margin-bottom: 10px !important; }
+    .activity-text, .activity-notes { padding: 8px !important; }
+    .equipment-content { gap: 15px !important; }
+    .equipment-item { padding: 8px !important; }
 }
 
 .print-container {
@@ -322,6 +333,128 @@ body {
     padding-top: 10px;
 }
 
+/* Drill Pieces Print Styles */
+.drill-pieces-print {
+    margin: 0;
+}
+
+.drill-piece-print {
+    display: flex;
+    border: 1px solid #000;
+    margin-bottom: 8px;
+    background: white;
+    min-height: 60px;
+}
+
+.drill-time {
+    width: 80px;
+    background: #f8f9fa;
+    border-right: 1px solid #000;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 9pt;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.drill-content {
+    flex: 1;
+    padding: 8px 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.drill-name {
+    font-weight: bold;
+    font-size: 10pt;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    color: #333;
+}
+
+.drill-description {
+    font-size: 9pt;
+    line-height: 1.3;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.drill-link {
+    font-size: 8pt;
+    color: #666;
+    font-style: italic;
+}
+
+.drill-notes {
+    width: 120px;
+    border-left: 1px solid #000;
+    background: #f9f9f9;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.drill-notes::before {
+    content: 'Notes';
+    position: absolute;
+    top: 4px;
+    left: 6px;
+    font-size: 7pt;
+    color: #666;
+    font-style: italic;
+    font-weight: bold;
+}
+
+@media print {
+    .drill-piece-print {
+        page-break-inside: avoid;
+        border: 1px solid #000 !important;
+        margin-bottom: 6px !important;
+        min-height: 50px !important;
+    }
+    
+    .drill-time {
+        background: #f8f9fa !important;
+        border-right: 1px solid #000 !important;
+        width: 70px !important;
+        padding: 6px !important;
+        font-size: 8pt !important;
+    }
+    
+    .drill-content {
+        padding: 6px 8px !important;
+    }
+    
+    .drill-name {
+        font-size: 9pt !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .drill-description {
+        font-size: 8pt !important;
+        margin-bottom: 2px !important;
+    }
+    
+    .drill-link {
+        font-size: 7pt !important;
+    }
+    
+    .drill-notes {
+        border-left: 1px solid #000 !important;
+        background: #f9f9f9 !important;
+        width: 100px !important;
+    }
+    
+    .drill-notes::before {
+        font-size: 6pt !important;
+        top: 2px !important;
+        left: 4px !important;
+    }
+}
+
 @media (max-width: 768px) {
     .main-content {
         flex-direction: column;
@@ -331,6 +464,23 @@ body {
     }
     .equipment-content {
         flex-direction: column;
+    }
+    
+    .drill-piece-print {
+        flex-direction: column;
+    }
+    
+    .drill-time {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #000;
+    }
+    
+    .drill-notes {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #000;
+        min-height: 40px;
     }
 }
 </style>
@@ -409,6 +559,34 @@ body {
                 </div>
             </div>
 
+            <!-- Practice Structure - Drill Pieces -->
+            {% if practice_plan.drill_pieces %}
+            <div class="activity-section">
+                <div class="activity-header">
+                    Practice Structure
+                </div>
+                <div class="drill-pieces-print">
+                    {% for drill in practice_plan.drill_pieces|sort(attribute='order_index') %}
+                    <div class="drill-piece-print">
+                        <div class="drill-time">{{ drill.time }}</div>
+                        <div class="drill-content">
+                            <div class="drill-name">{{ drill.drill_name }}</div>
+                            {% if drill.description %}
+                            <div class="drill-description">{{ drill.description }}</div>
+                            {% endif %}
+                            {% if drill.link_attachment %}
+                            <div class="drill-link">📎 {{ drill.link_attachment }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="drill-notes">
+                            <!-- Blank space for notes -->
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <!-- Fallback to legacy structure if no drill pieces -->
             <!-- Warm Up Section -->
             {% if practice_plan.warm_up %}
             <div class="activity-section">
@@ -461,6 +639,7 @@ body {
                     </div>
                 </div>
             </div>
+            {% endif %}
             {% endif %}
 
             <!-- Additional Information -->
