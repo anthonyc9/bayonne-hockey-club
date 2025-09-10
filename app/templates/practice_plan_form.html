@@ -274,6 +274,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Handle form submission to ensure selected files are included
 document.querySelector('form').addEventListener('submit', function(e) {
     updateHiddenInput();
+    
+    // Debug: Log form data before submission
+    console.log('DEBUG: Form submission - logging form data...');
+    const formData = new FormData(this);
+    for (let [key, value] of formData.entries()) {
+        if (key.includes('drill_pieces') && key.includes('description')) {
+            console.log(`DEBUG: ${key} = "${value}"`);
+        }
+    }
 });
 
 
