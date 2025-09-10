@@ -612,13 +612,6 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('submit', function(e) {
             alert('DEBUG: Form is being submitted!');
             
-            try {
-                updateHiddenInput();
-            } catch (error) {
-                alert('DEBUG: Error in updateHiddenInput: ' + error.message);
-                console.error('updateHiddenInput error:', error);
-            }
-            
             // Debug: Log form data before submission
             console.log('DEBUG: Form submission - logging form data...');
             const formData = new FormData(this);
