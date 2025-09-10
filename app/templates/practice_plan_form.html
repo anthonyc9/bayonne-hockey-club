@@ -847,9 +847,18 @@ function uploadFile() {
     statusDiv.style.display = 'block';
     statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Uploading file...</div>';
     
+    // Get CSRF token from the form
+    const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+    if (csrfToken) {
+        formData.append('csrf_token', csrfToken);
+    }
+    
     fetch('/files/upload', {
         method: 'POST',
-        body: formData
+        body: formData,
+        headers: {
+            'X-CSRFToken': csrfToken || ''
+        }
     })
     .then(response => {
         console.log('Response received:', response);
@@ -859,6 +868,11 @@ function uploadFile() {
         console.log('Response data:', data);
         if (data.success) {
             statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
+            
+            // Ensure selectedFiles is an array
+            if (!Array.isArray(selectedFiles)) {
+                selectedFiles = [];
+            }
             
             // Add the uploaded file to selected files
             selectedFiles.push({ id: data.file_id, name: data.filename });
@@ -920,6 +934,11 @@ function loadRootFolder() {
 function displayFolderContents(folders, files, folderId) {
     const browserDiv = document.getElementById('fileBrowser');
     let html = '';
+    
+    // Ensure selectedFiles is an array
+    if (!Array.isArray(selectedFiles)) {
+        selectedFiles = [];
+    }
     
     // Display folders first
     if (folders && folders.length > 0) {
@@ -1012,6 +1031,11 @@ function loadFolderContents(folderId) {
 }
 
 function toggleFileSelection(fileId, fileName) {
+    // Ensure selectedFiles is an array
+    if (!Array.isArray(selectedFiles)) {
+        selectedFiles = [];
+    }
+    
     const existingFile = selectedFiles.find(f => f.id === fileId);
     if (existingFile) {
         removeFile(fileId);
@@ -1021,6 +1045,11 @@ function toggleFileSelection(fileId, fileName) {
 }
 
 function addFile(fileId, fileName) {
+    // Ensure selectedFiles is an array
+    if (!Array.isArray(selectedFiles)) {
+        selectedFiles = [];
+    }
+    
     // Check if file is already selected
     if (selectedFiles.some(f => f.id === fileId)) {
         return;
@@ -1032,6 +1061,11 @@ function addFile(fileId, fileName) {
 }
 
 function removeFile(fileId) {
+    // Ensure selectedFiles is an array
+    if (!Array.isArray(selectedFiles)) {
+        selectedFiles = [];
+    }
+    
     selectedFiles = selectedFiles.filter(f => f.id !== fileId);
     updateSelectedFilesDisplay();
     updateHiddenInput();
