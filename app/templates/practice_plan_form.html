@@ -124,6 +124,10 @@ function uploadFile() {
     const descriptionInput = document.getElementById('uploadDescription');
     const statusDiv = document.getElementById('uploadStatus');
     
+    console.log('Upload function called');
+    console.log('File input:', fileInput);
+    console.log('Files:', fileInput.files);
+    
     if (!fileInput.files[0]) {
         alert('Please select a file to upload');
         return;
@@ -135,6 +139,8 @@ function uploadFile() {
         formData.append('description', descriptionInput.value);
     }
     
+    console.log('FormData created, sending request...');
+    
     statusDiv.style.display = 'block';
     statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Uploading file...</div>';
     
@@ -142,8 +148,12 @@ function uploadFile() {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response received:', response);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
             
@@ -180,9 +190,35 @@ function formatFileSize(bytes) {
 
 // File Browser Functions
 function loadRootFolder() {
+    console.log('loadRootFolder called');
     currentBrowseFolderId = null;
     folderStack = [];
-    loadFolderContents(null);
+    
+    // Show loading state
+    const browserDiv = document.getElementById('fileBrowser');
+    console.log('Browser div:', browserDiv);
+    browserDiv.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Loading...</div>';
+    
+    // Fetch root folder contents
+    console.log('Fetching /files/browse...');
+    fetch('/files/browse')
+        .then(response => {
+            console.log('Browse response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Browse data:', data);
+            if (data.success) {
+                displayFolderContents(data.folders, data.files, null);
+                updatePathDisplay(null);
+            } else {
+                browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Browse error:', error);
+            browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
+        });
 }
 
 function loadFolderContents(folderId) {
