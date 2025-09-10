@@ -118,6 +118,58 @@ function updateHiddenInput() {
     document.getElementById('attachmentIds').value = attachmentIds;
 }
 
+// Upload new file function
+function uploadFile() {
+    const fileInput = document.getElementById('fileUpload');
+    const descriptionInput = document.getElementById('uploadDescription');
+    const statusDiv = document.getElementById('uploadStatus');
+    
+    if (!fileInput.files[0]) {
+        alert('Please select a file to upload');
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('file', fileInput.files[0]);
+    if (descriptionInput.value) {
+        formData.append('description', descriptionInput.value);
+    }
+    
+    statusDiv.style.display = 'block';
+    statusDiv.innerHTML = '<div class="alert alert-info"><i class="bi bi-hourglass-split"></i> Uploading file...</div>';
+    
+    fetch('/files/upload', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
+            
+            // Add the uploaded file to selected files
+            selectedFiles.push({ id: data.file_id, name: data.filename });
+            updateSelectedFilesDisplay();
+            updateHiddenInput();
+            
+            // Clear the form
+            fileInput.value = '';
+            descriptionInput.value = '';
+            
+            // Hide status after 3 seconds
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 3000);
+        } else {
+            statusDiv.innerHTML = `<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed: ${data.error}</div>`;
+        }
+    })
+    .catch(error => {
+        console.error('Upload error:', error);
+        statusDiv.innerHTML = '<div class="alert alert-danger"><i class="bi bi-exclamation-triangle"></i> Upload failed. Please try again.</div>';
+    });
+}
+
 function formatFileSize(bytes) {
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
@@ -598,39 +650,34 @@ function updateRemoveButtons() {
                         <!-- File Attachments -->
                         <h5 class="mb-3">File Attachments</h5>
                         <div class="mb-3">
-                            <label class="form-label">Select Files from Library</label>
+                            <label class="form-label">File Attachments</label>
                             
-                            <!-- File Search and Browse Tabs -->
+                            <!-- File Options Tabs -->
                             <ul class="nav nav-tabs mb-3" id="attachmentTabs" role="tablist">
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="search-tab" data-bs-toggle="tab" data-bs-target="#search-pane" type="button" role="tab">
-                                        <i class="bi bi-search"></i> Search Files
+                                    <button class="nav-link active" id="existing-tab" data-bs-toggle="tab" data-bs-target="#existing-pane" type="button" role="tab">
+                                        <i class="bi bi-folder2-open"></i> Find Existing File
                                     </button>
                                 </li>
                                 <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="browse-tab" data-bs-toggle="tab" data-bs-target="#browse-pane" type="button" role="tab">
-                                        <i class="bi bi-folder2-open"></i> Browse Files
+                                    <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload-pane" type="button" role="tab">
+                                        <i class="bi bi-upload"></i> Upload New File
                                     </button>
                                 </li>
                             </ul>
                             
                             <!-- Tab Content -->
                             <div class="tab-content" id="attachmentTabContent">
-                                <!-- Search Tab -->
-                                <div class="tab-pane fade show active" id="search-pane" role="tabpanel">
-                                    <div class="input-group">
-                                        <input type="text" id="fileSearch" class="form-control" placeholder="Search files...">
+                                <!-- Find Existing File Tab -->
+                                <div class="tab-pane fade show active" id="existing-pane" role="tabpanel">
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="fileSearch" class="form-control" placeholder="Search existing files...">
                                         <button type="button" class="btn btn-outline-secondary" onclick="searchFiles()">
                                             <i class="bi bi-search"></i> Search
                                         </button>
                                     </div>
-                                    <div id="fileSearchResults" class="mt-2" style="display: none;">
-                                        <!-- Search results will be populated here -->
-                                    </div>
-                                </div>
-                                
-                                <!-- Browse Tab -->
-                                <div class="tab-pane fade" id="browse-pane" role="tabpanel">
+                                    
+                                    <!-- File Browser -->
                                     <div class="mb-2">
                                         <div class="d-flex align-items-center mb-2">
                                             <button type="button" class="btn btn-sm btn-outline-secondary me-2" onclick="goToParentFolder()" id="parentFolderBtn" style="display: none;">
@@ -640,18 +687,48 @@ function updateRemoveButtons() {
                                         </div>
                                     </div>
                                     
-                                    <!-- Folder and File Browser -->
                                     <div id="fileBrowser" class="border rounded p-2" style="max-height: 300px; overflow-y: auto;">
-                                        <!-- Browser content will be populated here -->
+                                        <p class="text-muted text-center">Click "Load Files" to browse existing files</p>
                                     </div>
                                     
                                     <div class="mt-2">
                                         <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadRootFolder()">
-                                            <i class="bi bi-house"></i> Go to Root
+                                            <i class="bi bi-house"></i> Load Files
                                         </button>
+                                    </div>
+                                    
+                                    <div id="fileSearchResults" class="mt-3" style="display: none;">
+                                        <h6>Search Results:</h6>
+                                        <div id="searchResultsList" class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                            <!-- Search results will be populated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Upload New File Tab -->
+                                <div class="tab-pane fade" id="upload-pane" role="tabpanel">
+                                    <div class="mb-3">
+                                        <label for="fileUpload" class="form-label">Choose File to Upload</label>
+                                        <input type="file" class="form-control" id="fileUpload" name="file" accept=".pdf,.doc,.docx,.txt,.jpg,.jpeg,.png,.gif,.mp4,.mov,.avi">
+                                        <div class="form-text">Supported formats: PDF, DOC, DOCX, TXT, JPG, PNG, GIF, MP4, MOV, AVI</div>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label for="uploadDescription" class="form-label">Description (Optional)</label>
+                                        <input type="text" class="form-control" id="uploadDescription" name="upload_description" placeholder="Brief description of the file">
+                                    </div>
+                                    
+                                    <button type="button" class="btn btn-primary" onclick="uploadFile()">
+                                        <i class="bi bi-upload"></i> Upload File
+                                    </button>
+                                    
+                                    <div id="uploadStatus" class="mt-2" style="display: none;">
+                                        <!-- Upload status will be shown here -->
                                     </div>
                                 </div>
                             </div>
+                            
+                            <!-- Selected Files Display -->
                             <div id="selectedFiles" class="mt-3">
                                 <label class="form-label">Selected Files:</label>
                                 <div id="selectedFilesList" class="border rounded p-2 min-h-100">

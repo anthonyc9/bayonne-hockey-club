@@ -910,6 +910,8 @@ def upload_file():
         
         return jsonify({
             'success': True,
+            'file_id': db_file.id,
+            'filename': db_file.original_name,
             'file': {
                 'id': db_file.id,
                 'name': db_file.original_name,
