@@ -1541,8 +1541,11 @@ def edit_practice_plan(plan_id):
     
     practice_plan = PracticePlan.query.get_or_404(plan_id)
     
-    # Create form with practice plan object (form will handle drill pieces automatically)
-    form = PracticePlanForm(obj=practice_plan)
+    # Create form - use obj for GET, data for POST
+    if request.method == 'GET':
+        form = PracticePlanForm(obj=practice_plan)
+    else:
+        form = PracticePlanForm()
     
     if form.validate_on_submit():
         try:
