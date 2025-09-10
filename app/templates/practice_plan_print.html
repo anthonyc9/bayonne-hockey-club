@@ -390,22 +390,24 @@ body {
 }
 
 .drill-notes {
-    width: 120px;
-    border-left: 1px solid #000;
+    width: 140px;
+    border-left: 2px solid #000;
     background: #f9f9f9;
     position: relative;
     flex-shrink: 0;
+    min-height: 60px;
 }
 
 .drill-notes::before {
-    content: 'Notes';
+    content: 'NOTES & DRAWINGS';
     position: absolute;
     top: 4px;
     left: 6px;
     font-size: 7pt;
-    color: #666;
-    font-style: italic;
+    color: #000;
     font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 @media print {
@@ -443,15 +445,20 @@ body {
     }
     
     .drill-notes {
-        border-left: 1px solid #000 !important;
+        border-left: 2px solid #000 !important;
         background: #f9f9f9 !important;
-        width: 100px !important;
+        width: 120px !important;
+        min-height: 50px !important;
     }
     
     .drill-notes::before {
         font-size: 6pt !important;
         top: 2px !important;
         left: 4px !important;
+        color: #000 !important;
+        font-weight: bold !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
     }
 }
 
@@ -479,8 +486,8 @@ body {
     .drill-notes {
         width: 100%;
         border-left: none;
-        border-top: 1px solid #000;
-        min-height: 40px;
+        border-top: 2px solid #000;
+        min-height: 50px;
     }
 }
 </style>
@@ -515,6 +522,20 @@ body {
                 • <i class="bi bi-clock"></i> {{ practice_plan.duration }} MIN
             {% endif %}
             • <span class="badge">{{ practice_plan.team.name }}</span>
+        </div>
+        
+        <!-- Quick Reference moved to top -->
+        <div class="print-card" style="margin: 15px 0; border: 2px solid #000;">
+            <div class="print-card-header" style="background: #000; color: white;">
+                <i class="bi bi-lightning"></i> Quick Reference
+            </div>
+            <div class="print-card-body" style="padding: 10px;">
+                <div style="display: flex; justify-content: space-between; font-size: 10pt;">
+                    <div><strong>Team:</strong> {{ practice_plan.team.name }}</div>
+                    <div><strong>Date:</strong> {{ practice_plan.date.strftime('%m/%d/%Y') }}</div>
+                    <div><strong>Duration:</strong> {{ practice_plan.duration or '60' }} min</div>
+                </div>
+            </div>
         </div>
         
         <div class="print-objectives">
@@ -671,24 +692,6 @@ body {
 
         <!-- Right Column - Sidebar Info -->
         <div class="right-column">
-            <!-- Attachments -->
-            <div class="print-card">
-                <div class="print-card-header">
-                    <i class="bi bi-paperclip"></i> Attachments
-                </div>
-                <div class="print-card-body">
-                    {% if practice_plan.attachments %}
-                        <ul class="attachments-list">
-                            {% for attachment in practice_plan.attachments %}
-                            <li>{{ attachment.original_name }}</li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p style="font-size: 9pt; color: #666; margin: 0;">No attachments</p>
-                    {% endif %}
-                </div>
-            </div>
-
             <!-- External Links -->
             {% if practice_plan.external_links %}
             <div class="print-card">
@@ -704,18 +707,6 @@ body {
                 </div>
             </div>
             {% endif %}
-
-            <!-- Quick Reference -->
-            <div class="print-card">
-                <div class="print-card-header">
-                    <i class="bi bi-lightning"></i> Quick Reference
-                </div>
-                <div class="print-card-body">
-                    <p style="font-size: 9pt; margin: 0 0 8px 0;"><strong>Team:</strong> {{ practice_plan.team.name }}</p>
-                    <p style="font-size: 9pt; margin: 0 0 8px 0;"><strong>Date:</strong> {{ practice_plan.date.strftime('%m/%d/%Y') }}</p>
-                    <p style="font-size: 9pt; margin: 0;"><strong>Duration:</strong> {{ practice_plan.duration or '60' }} min</p>
-                </div>
-            </div>
         </div>
     </div>
 
