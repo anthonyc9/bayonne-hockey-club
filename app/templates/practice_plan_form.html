@@ -595,6 +595,12 @@ function updateRemoveButtons() {
 // Drill Pieces Management
 let drillPieceIndex = {{ form.drill_pieces|length }};
 
+// Global error handler to catch any JavaScript errors
+window.addEventListener('error', function(e) {
+    alert('DEBUG: JavaScript Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
+    console.error('JavaScript Error:', e);
+});
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing drill pieces...');
     
@@ -605,7 +611,13 @@ document.addEventListener('DOMContentLoaded', function() {
         alert('DEBUG: Form found, adding event listener...');
         form.addEventListener('submit', function(e) {
             alert('DEBUG: Form is being submitted!');
-            updateHiddenInput();
+            
+            try {
+                updateHiddenInput();
+            } catch (error) {
+                alert('DEBUG: Error in updateHiddenInput: ' + error.message);
+                console.error('updateHiddenInput error:', error);
+            }
             
             // Debug: Log form data before submission
             console.log('DEBUG: Form submission - logging form data...');
