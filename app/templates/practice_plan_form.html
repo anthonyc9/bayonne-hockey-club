@@ -500,6 +500,7 @@ function updateRemoveButtons() {
                                                 <!-- DEBUG: drill_form.description: {{ drill_form.description }} -->
                                                 <!-- DEBUG: drill_form.description.data: {{ drill_form.description.data }} -->
                                                 <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives...">{{ drill_form.form.description.data or '' }}</textarea>
+                                                <!-- DEBUG: Field name: drill_pieces-{{ loop.index0 }}-description -->
                                                 {% if drill_form.description.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.description.errors %}
