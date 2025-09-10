@@ -620,6 +620,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     console.log(`DEBUG: ${key} = "${value}"`);
                 }
             }
+            
+            // Debug: Also check the actual textarea values
+            const textareas = document.querySelectorAll('textarea[name*="description"]');
+            textareas.forEach((textarea, index) => {
+                console.log(`DEBUG: Textarea ${index} (${textarea.name}) value: "${textarea.value}"`);
+            });
         });
     } else {
         alert('DEBUG: No form found!');
