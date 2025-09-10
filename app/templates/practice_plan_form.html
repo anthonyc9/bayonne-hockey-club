@@ -501,6 +501,8 @@ function updateRemoveButtons() {
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Description</label>
+                                                <!-- DEBUG: drill_form.description is callable: {{ drill_form.description is callable }} -->
+                                                <!-- DEBUG: drill_form.description.data: {{ drill_form.description.data }} -->
                                                 {% if drill_form.description is callable %}
                                                     {{ drill_form.description(class="form-control") }}
                                                 {% else %}
