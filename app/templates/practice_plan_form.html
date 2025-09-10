@@ -595,48 +595,10 @@ function updateRemoveButtons() {
 // Drill Pieces Management
 let drillPieceIndex = {{ form.drill_pieces|length }};
 
-// Global error handler to catch any JavaScript errors
-window.addEventListener('error', function(e) {
-    alert('DEBUG: JavaScript Error: ' + e.message + ' at ' + e.filename + ':' + e.lineno);
-    console.error('JavaScript Error:', e);
-});
-
-// Simple test to see if JavaScript is working
-alert('DEBUG: JavaScript is loading on page load!');
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing drill pieces...');
     
-    // Debug: Check form submission
-    alert('DEBUG: DOM loaded, looking for form...');
-    const form = document.querySelector('form');
-    if (form) {
-        alert('DEBUG: Form found, adding event listener...');
-        form.addEventListener('submit', function(e) {
-            alert('DEBUG: Form is being submitted!');
-            
-            // Debug: Log form data before submission
-            alert('DEBUG: Form submission - logging form data...');
-            const formData = new FormData(this);
-            let formDataMessage = 'Form Data:\n';
-            for (let [key, value] of formData.entries()) {
-                if (key.includes('drill_pieces') && key.includes('description')) {
-                    formDataMessage += `${key} = "${value}"\n`;
-                }
-            }
-            alert(formDataMessage);
-            
-            // Debug: Also check the actual textarea values
-            const textareas = document.querySelectorAll('textarea[name*="description"]');
-            let textareaMessage = 'Textarea Values:\n';
-            textareas.forEach((textarea, index) => {
-                textareaMessage += `Textarea ${index} (${textarea.name}) value: "${textarea.value}"\n`;
-            });
-            alert(textareaMessage);
-        });
-    } else {
-        alert('DEBUG: No form found!');
-    }
     
     // Add drill piece button
     const addButton = document.getElementById('add-drill-piece');

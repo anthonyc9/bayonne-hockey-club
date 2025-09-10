@@ -1549,13 +1549,6 @@ def edit_practice_plan(plan_id):
     
     if form.validate_on_submit():
         try:
-            print(f"DEBUG: Form submitted successfully for plan {plan_id}")
-            print(f"DEBUG: form.drill_pieces.data: {form.drill_pieces.data}")
-            
-            # Debug: Print each drill piece individually
-            for i, drill_data in enumerate(form.drill_pieces.data):
-                print(f"DEBUG: Drill piece {i}: {drill_data}")
-                print(f"DEBUG: Drill piece {i} description: '{drill_data.get('description', 'NOT_FOUND')}'")
             # Parse external links (one per line)
             external_links = []
             if form.external_links.data:
