@@ -1630,6 +1630,10 @@ def delete_practice_plan(plan_id):
 def view_practice_plan(plan_id):
     """View a practice plan in detail."""
     practice_plan = PracticePlan.query.get_or_404(plan_id)
+    print(f"DEBUG: Viewing practice plan {plan_id}")
+    print(f"DEBUG: Practice plan has {len(practice_plan.drill_pieces)} drill pieces")
+    for i, drill in enumerate(practice_plan.drill_pieces):
+        print(f"DEBUG: Drill {i}: '{drill.drill_name}' - Description: '{drill.description}'")
     return render_template("practice_plan_detail.html", practice_plan=practice_plan, title=practice_plan.title)
 
 @main.route("/practice-plans/<int:plan_id>/print")
