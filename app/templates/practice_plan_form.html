@@ -616,19 +616,23 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('DEBUG: Form is being submitted!');
             
             // Debug: Log form data before submission
-            console.log('DEBUG: Form submission - logging form data...');
+            alert('DEBUG: Form submission - logging form data...');
             const formData = new FormData(this);
+            let formDataMessage = 'Form Data:\n';
             for (let [key, value] of formData.entries()) {
                 if (key.includes('drill_pieces') && key.includes('description')) {
-                    console.log(`DEBUG: ${key} = "${value}"`);
+                    formDataMessage += `${key} = "${value}"\n`;
                 }
             }
+            alert(formDataMessage);
             
             // Debug: Also check the actual textarea values
             const textareas = document.querySelectorAll('textarea[name*="description"]');
+            let textareaMessage = 'Textarea Values:\n';
             textareas.forEach((textarea, index) => {
-                console.log(`DEBUG: Textarea ${index} (${textarea.name}) value: "${textarea.value}"`);
+                textareaMessage += `Textarea ${index} (${textarea.name}) value: "${textarea.value}"\n`;
             });
+            alert(textareaMessage);
         });
     } else {
         alert('DEBUG: No form found!');
