@@ -474,7 +474,7 @@ function updateRemoveButtons() {
                                         <div class="row g-3">
                                             <div class="col-md-3">
                                                 <label class="form-label">Time</label>
-                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min" value="{{ drill_form.time.data or '' }}">
+                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-time" class="form-control" placeholder="e.g., 10 minutes, 5-10 min" value="{{ drill_form.form.time.data or '' }}">
                                                 {% if drill_form.time.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.time.errors %}
@@ -485,7 +485,7 @@ function updateRemoveButtons() {
                                             </div>
                                             <div class="col-md-9">
                                                 <label class="form-label">Drill Name</label>
-                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice" value="{{ drill_form.drill_name.data or '' }}">
+                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-drill_name" class="form-control" placeholder="e.g., Skating Drills, Passing Practice" value="{{ drill_form.form.drill_name.data or '' }}">
                                                 {% if drill_form.drill_name.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.drill_name.errors %}
@@ -499,7 +499,7 @@ function updateRemoveButtons() {
                                                 <!-- DEBUG: drill_form: {{ drill_form }} -->
                                                 <!-- DEBUG: drill_form.description: {{ drill_form.description }} -->
                                                 <!-- DEBUG: drill_form.description.data: {{ drill_form.description.data }} -->
-                                                <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives...">{{ drill_form.description.data or '' }}</textarea>
+                                                <textarea name="drill_pieces-{{ loop.index0 }}-description" class="form-control" rows="3" placeholder="Describe the drill, setup, and objectives...">{{ drill_form.form.description.data or '' }}</textarea>
                                                 {% if drill_form.description.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.description.errors %}
@@ -510,7 +510,7 @@ function updateRemoveButtons() {
                                             </div>
                                             <div class="col-12">
                                                 <label class="form-label">Link/Attachment</label>
-                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-link_attachment" class="form-control" placeholder="URL or file reference (optional)" value="{{ drill_form.link_attachment.data or '' }}">
+                                                <input type="text" name="drill_pieces-{{ loop.index0 }}-link_attachment" class="form-control" placeholder="URL or file reference (optional)" value="{{ drill_form.form.link_attachment.data or '' }}">
                                                 {% if drill_form.link_attachment.errors %}
                                                     <div class="text-danger">
                                                         {% for error in drill_form.link_attachment.errors %}
