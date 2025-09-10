@@ -534,55 +534,38 @@ body {
                 <i class="bi bi-lightning"></i> Quick Reference
             </div>
             <div class="print-card-body" style="padding: 10px;">
-                <div style="display: flex; justify-content: space-between; font-size: 10pt;">
+                <div style="display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 10px;">
                     <div><strong>Team:</strong> {{ practice_plan.team.name }}</div>
                     <div><strong>Date:</strong> {{ practice_plan.date.strftime('%m/%d/%Y') }}</div>
                     <div><strong>Duration:</strong> {{ practice_plan.duration or '60' }} min</div>
                 </div>
+                <div style="border-top: 1px solid #ccc; padding-top: 8px;">
+                    <div style="font-size: 9pt; font-weight: bold; margin-bottom: 5px;">Session Objectives:</div>
+                    <ol style="margin: 0; padding-left: 20px; font-size: 9pt;">
+                        {% if practice_plan.primary_focus %}
+                        <li>{{ practice_plan.primary_focus }}</li>
+                        {% endif %}
+                        {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
+                        <li>{{ practice_plan.secondary_focus }}</li>
+                        {% endif %}
+                        {% if practice_plan.warm_up %}
+                        <li>Warm-up and preparation</li>
+                        {% endif %}
+                        {% if practice_plan.main_content %}
+                        <li>Skill development and practice</li>
+                        {% endif %}
+                        {% if practice_plan.cool_down %}
+                        <li>Cool-down and review</li>
+                        {% endif %}
+                    </ol>
+                </div>
             </div>
-        </div>
-        
-        <div class="print-objectives">
-            <h4>Session Objectives:</h4>
-            <ol>
-                {% if practice_plan.primary_focus %}
-                <li>{{ practice_plan.primary_focus }}</li>
-                {% endif %}
-                {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
-                <li>{{ practice_plan.secondary_focus }}</li>
-                {% endif %}
-                {% if practice_plan.warm_up %}
-                <li>Warm-up and preparation</li>
-                {% endif %}
-                {% if practice_plan.main_content %}
-                <li>Skill development and practice</li>
-                {% endif %}
-                {% if practice_plan.cool_down %}
-                <li>Cool-down and review</li>
-                {% endif %}
-            </ol>
         </div>
     </div>
 
     <div class="main-content">
         <!-- Left Column - Main Content -->
         <div class="left-column">
-            <!-- Practice Plan Details -->
-            <div class="print-card">
-                <div class="print-card-header">
-                    <i class="bi bi-info-circle"></i> Practice Plan Details
-                </div>
-                <div class="print-card-body">
-                    <div class="focus-badges">
-                        {% if practice_plan.primary_focus %}
-                        <span class="focus-badge primary">{{ practice_plan.primary_focus }}</span>
-                        {% endif %}
-                        {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
-                        <span class="focus-badge secondary">{{ practice_plan.secondary_focus }}</span>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
 
             <!-- Practice Structure - Drill Pieces -->
             {% if practice_plan.drill_pieces %}
