@@ -862,10 +862,21 @@ function uploadFile() {
     })
     .then(response => {
         console.log('Response received:', response);
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         return response.json();
     })
     .then(data => {
         console.log('Response data:', data);
+        console.log('Data success:', data.success);
+        console.log('Data file_id:', data.file_id);
+        console.log('Data filename:', data.filename);
+        
         if (data.success) {
             statusDiv.innerHTML = '<div class="alert alert-success"><i class="bi bi-check-circle"></i> File uploaded successfully!</div>';
             
@@ -913,10 +924,21 @@ function loadRootFolder() {
     fetch('/files/browse')
         .then(response => {
             console.log('Browse response:', response);
+            console.log('Browse response status:', response.status);
+            console.log('Browse response ok:', response.ok);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             return response.json();
         })
         .then(data => {
             console.log('Browse data:', data);
+            console.log('Browse data success:', data.success);
+            console.log('Browse data folders:', data.folders);
+            console.log('Browse data files:', data.files);
+            
             if (data.success) {
                 displayFolderContents(data.folders, data.files, null);
                 updatePathDisplay(null);
