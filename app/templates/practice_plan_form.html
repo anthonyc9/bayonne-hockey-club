@@ -822,7 +822,6 @@ function updateRemoveButtons() {
 
 // File Upload Function
 function uploadFile() {
-    alert('Upload function called!'); // Simple test
     
     const fileInput = document.getElementById('fileUpload');
     const descriptionInput = document.getElementById('uploadDescription');
@@ -886,7 +885,6 @@ function uploadFile() {
 
 // File Browser Function
 function loadRootFolder() {
-    alert('Load Root Folder called!'); // Simple test
     console.log('loadRootFolder called');
     currentBrowseFolderId = null;
     folderStack = [];
@@ -916,6 +914,147 @@ function loadRootFolder() {
             console.error('Browse error:', error);
             browserDiv.innerHTML = '<div class="text-danger">Error loading files.</div>';
         });
+}
+
+// Missing file browser functions
+function displayFolderContents(folders, files, folderId) {
+    const browserDiv = document.getElementById('fileBrowser');
+    let html = '';
+    
+    // Display folders first
+    if (folders && folders.length > 0) {
+        html += '<div class="mb-2"><strong class="text-muted">Folders:</strong></div>';
+        folders.forEach(folder => {
+            html += `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div class="d-flex align-items-center" style="cursor: pointer;" onclick="openFolder(${folder.id})">
+                        <i class="bi bi-folder2 text-warning me-2"></i>
+                        <span>${folder.name}</span>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    // Display files
+    if (files && files.length > 0) {
+        html += '<div class="mb-2 mt-3"><strong class="text-muted">Files:</strong></div>';
+        files.forEach(file => {
+            const isSelected = selectedFiles.find(f => f.id === file.id);
+            html += `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-file-earmark text-primary me-2"></i>
+                        <span>${file.original_name}</span>
+                        <small class="text-muted ms-2">${formatFileSize(file.file_size)}</small>
+                    </div>
+                    <button type="button" class="btn btn-sm ${isSelected ? 'btn-success' : 'btn-outline-primary'}" 
+                            onclick="toggleFileSelection('${file.id}', '${file.original_name}')">
+                        <i class="bi ${isSelected ? 'bi-check' : 'bi-plus'}"></i>
+                        ${isSelected ? 'Selected' : 'Add'}
+                    </button>
+                </div>
+            `;
+        });
+    }
+    
+    if ((!folders || folders.length === 0) && (!files || files.length === 0)) {
+        html = '<div class="text-muted text-center py-3">This folder is empty</div>';
+    }
+    
+    browserDiv.innerHTML = html;
+}
+
+function updatePathDisplay(folderId) {
+    const pathElement = document.getElementById('currentPath');
+    const parentBtn = document.getElementById('parentFolderBtn');
+    
+    if (folderId === null) {
+        pathElement.textContent = 'Root';
+        parentBtn.style.display = 'none';
+    } else {
+        pathElement.textContent = `Folder ${folderId}`;
+        parentBtn.style.display = 'inline-block';
+    }
+}
+
+function openFolder(folderId) {
+    // Add current folder to stack for navigation
+    if (currentBrowseFolderId !== null) {
+        folderStack.push(currentBrowseFolderId);
+    }
+    loadFolderContents(folderId);
+}
+
+function loadFolderContents(folderId) {
+    currentBrowseFolderId = folderId;
+    
+    // Show loading state
+    const browserDiv = document.getElementById('fileBrowser');
+    browserDiv.innerHTML = '<div class="text-center"><i class="bi bi-hourglass-split"></i> Loading...</div>';
+    
+    // Fetch folder contents
+    const url = folderId ? `/files/browse/${folderId}` : '/files/browse';
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayFolderContents(data.folders, data.files, folderId);
+                updatePathDisplay(folderId);
+            } else {
+                browserDiv.innerHTML = '<div class="text-danger">Error loading folder contents.</div>';
+            }
+        })
+        .catch(error => {
+            console.error('Browse error:', error);
+            browserDiv.innerHTML = '<div class="text-danger">Error loading folder contents.</div>';
+        });
+}
+
+function toggleFileSelection(fileId, fileName) {
+    const existingFile = selectedFiles.find(f => f.id === fileId);
+    if (existingFile) {
+        removeFile(fileId);
+    } else {
+        addFile(fileId, fileName);
+    }
+}
+
+function addFile(fileId, fileName) {
+    // Check if file is already selected
+    if (selectedFiles.some(f => f.id === fileId)) {
+        return;
+    }
+    
+    selectedFiles.push({ id: fileId, name: fileName });
+    updateSelectedFilesDisplay();
+    updateHiddenInput();
+}
+
+function removeFile(fileId) {
+    selectedFiles = selectedFiles.filter(f => f.id !== fileId);
+    updateSelectedFilesDisplay();
+    updateHiddenInput();
+}
+
+function updateSelectedFilesDisplay() {
+    const selectedFilesList = document.getElementById('selectedFilesList');
+    selectedFilesList.innerHTML = '';
+    
+    selectedFiles.forEach(file => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        li.innerHTML = `
+            <div class="d-flex align-items-center">
+                <i class="bi bi-file-earmark me-2"></i>
+                <span>${file.name}</span>
+            </div>
+            <button class="btn btn-sm btn-outline-danger" onclick="removeFile(${file.id})">
+                <i class="bi bi-x"></i>
+            </button>
+        `;
+        selectedFilesList.appendChild(li);
+    });
 }
 </script>
 {% endblock %}
