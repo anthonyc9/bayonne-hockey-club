@@ -618,6 +618,10 @@ def delete_player(id):
     from flask_wtf.csrf import validate_csrf
     
     try:
+        # Debug: Print form data
+        print(f"DEBUG: Delete request form data: {dict(request.form)}")
+        print(f"DEBUG: CSRF token from form: {request.form.get('csrf_token')}")
+        
         # Validate CSRF token manually
         validate_csrf(request.form.get('csrf_token'))
         
