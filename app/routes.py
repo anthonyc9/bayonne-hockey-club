@@ -223,9 +223,10 @@ def dashboard():
 @login_required
 def roster():
     """Display all players."""
-    from app.forms import BulkImportForm
+    from app.forms import BulkImportForm, DeletePlayerForm
     
     form = BulkImportForm()
+    delete_form = DeletePlayerForm()
     
     try:
         # Get optional filter parameters
@@ -287,6 +288,7 @@ def roster():
                              current_season=season_filter,
                              current_paid=payment_filter,
                              form=form,
+                             delete_form=delete_form,
                              search=search)
     except Exception as e:
         print(f"Error in roster route: {str(e)}")
@@ -613,6 +615,13 @@ def edit_player(id):
 @login_required
 def delete_player(id):
     """Delete a player."""
+    from app.forms import DeletePlayerForm
+    
+    form = DeletePlayerForm()
+    if not form.validate_on_submit():
+        flash('Invalid form submission. Please try again.', 'danger')
+        return redirect(url_for('main.roster'))
+    
     player = Player.query.get_or_404(id)
     try:
         db.session.delete(player)
@@ -1335,8 +1344,15 @@ def download_template():
 @login_required
 def bulk_action():
     """Handle bulk actions on selected players."""
+    from app.forms import BulkActionForm
+    
+    form = BulkActionForm()
+    if not form.validate_on_submit():
+        flash('Invalid form submission. Please try again.', 'danger')
+        return redirect(url_for('main.roster'))
+    
     try:
-        action = request.form.get('action')
+        action = form.action.data
         player_ids = request.form.getlist('player_ids')
         
         if not player_ids:

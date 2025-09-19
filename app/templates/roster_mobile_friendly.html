@@ -235,7 +235,7 @@
                                     </a>
                                     <form action="{{ url_for('main.delete_player', id=player.id) }}" 
                                           method="POST" class="flex-fill">
-
+                                        {{ delete_form.hidden_tag() }}
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100" 
                                                 onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')">
                                             <i class="bi bi-trash"></i> Delete

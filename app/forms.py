@@ -21,4 +21,12 @@ class BulkImportForm(FlaskForm):
     csv_file = FileField('CSV File', validators=[FileRequired()])
     submit = SubmitField('Import Players')
 
+class DeletePlayerForm(FlaskForm):
+    submit = SubmitField('Delete Player')
+
+class BulkActionForm(FlaskForm):
+    action = StringField('Action', validators=[DataRequired()])
+    player_ids = StringField('Player IDs')
+    submit = SubmitField('Submit')
+
 

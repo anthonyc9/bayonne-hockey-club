@@ -356,7 +356,7 @@
                                             </a>
                                             <form action="{{ url_for('main.delete_player', id=player.id) }}" 
                                                   method="POST" class="d-inline w-100">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                {{ delete_form.hidden_tag() }}
                                                 <button type="submit" class="btn btn-sm btn-outline-danger w-100" 
                                                         onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')">
                                                     <i class="bi bi-trash"></i> Delete
