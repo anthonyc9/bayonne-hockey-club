@@ -615,21 +615,22 @@ def edit_player(id):
 @login_required
 def delete_player(id):
     """Delete a player."""
-    from app.forms import DeletePlayerForm
+    from flask_wtf.csrf import validate_csrf
     
-    form = DeletePlayerForm()
-    if not form.validate_on_submit():
-        flash(f'Invalid form submission. Errors: {form.errors}', 'danger')
-        return redirect(url_for('main.roster'))
-    
-    player = Player.query.get_or_404(id)
     try:
+        # Validate CSRF token manually
+        validate_csrf(request.form.get('csrf_token'))
+        
+        player = Player.query.get_or_404(id)
         db.session.delete(player)
         db.session.commit()
         flash('Player deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        flash('Error deleting player. Please try again.', 'danger')
+        if 'CSRF' in str(e):
+            flash('CSRF token validation failed. Please try again.', 'danger')
+        else:
+            flash('Error deleting player. Please try again.', 'danger')
         print(f"Error deleting player: {str(e)}")
     
     return redirect(url_for('main.roster'))
