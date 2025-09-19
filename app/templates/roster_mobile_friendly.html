@@ -789,7 +789,7 @@ function submitBulkAction(action, playerIds) {
     form.method = 'POST';
     form.action = '{{ url_for("main.bulk_action") }}';
     
-    // Add CSRF token
+    // Add CSRF token (Flask-WTF format)
     const csrfToken = document.querySelector('meta[name=csrf-token]');
     if (csrfToken) {
         const csrfInput = document.createElement('input');

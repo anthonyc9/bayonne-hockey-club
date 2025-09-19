@@ -619,7 +619,7 @@ def delete_player(id):
     
     form = DeletePlayerForm()
     if not form.validate_on_submit():
-        flash('Invalid form submission. Please try again.', 'danger')
+        flash(f'Invalid form submission. Errors: {form.errors}', 'danger')
         return redirect(url_for('main.roster'))
     
     player = Player.query.get_or_404(id)
@@ -1344,15 +1344,13 @@ def download_template():
 @login_required
 def bulk_action():
     """Handle bulk actions on selected players."""
-    from app.forms import BulkActionForm
-    
-    form = BulkActionForm()
-    if not form.validate_on_submit():
-        flash('Invalid form submission. Please try again.', 'danger')
-        return redirect(url_for('main.roster'))
+    from flask_wtf.csrf import validate_csrf
     
     try:
-        action = form.action.data
+        # Validate CSRF token manually
+        validate_csrf(request.form.get('csrf_token'))
+        
+        action = request.form.get('action')
         player_ids = request.form.getlist('player_ids')
         
         if not player_ids:
@@ -1390,7 +1388,10 @@ def bulk_action():
             
     except Exception as e:
         db.session.rollback()
-        flash(f'Error performing bulk action: {str(e)}', 'danger')
+        if 'CSRF' in str(e):
+            flash('CSRF token validation failed. Please try again.', 'danger')
+        else:
+            flash(f'Error performing bulk action: {str(e)}', 'danger')
     
     return redirect(url_for('main.roster'))
 
