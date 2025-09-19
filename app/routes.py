@@ -622,8 +622,8 @@ def delete_player(id):
         print(f"DEBUG: Delete request form data: {dict(request.form)}")
         print(f"DEBUG: CSRF token from form: {request.form.get('csrf_token')}")
         
-        # Temporarily skip CSRF validation to test
-        # validate_csrf(request.form.get('csrf_token'))
+        # Validate CSRF token manually
+        validate_csrf(request.form.get('csrf_token'))
         
         player = Player.query.get_or_404(id)
         db.session.delete(player)
