@@ -631,12 +631,12 @@ def delete_player(id):
     
     return redirect(url_for('main.roster'))
 
-@main.route("/player/<int:id>/remove", methods=["POST"])
+@main.route("/api/player/<int:id>/delete", methods=["POST"])
 @login_required
-def remove_player(id):
-    """Remove a player - alternative route without CSRF protection."""
+def api_delete_player(id):
+    """API endpoint to delete a player - bypasses CSRF protection."""
     try:
-        print(f"DEBUG: Remove request form data: {dict(request.form)}")
+        print(f"DEBUG: API Delete request form data: {dict(request.form)}")
         
         player = Player.query.get_or_404(id)
         db.session.delete(player)
@@ -645,7 +645,7 @@ def remove_player(id):
     except Exception as e:
         db.session.rollback()
         flash('Error deleting player. Please try again.', 'danger')
-        print(f"Error removing player: {str(e)}")
+        print(f"Error in API delete: {str(e)}")
     
     return redirect(url_for('main.roster'))
 
