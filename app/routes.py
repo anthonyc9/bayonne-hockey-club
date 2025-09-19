@@ -223,6 +223,10 @@ def dashboard():
 @login_required
 def roster():
     """Display all players."""
+    from app.forms import BulkImportForm
+    
+    form = BulkImportForm()
+    
     try:
         # Get optional filter parameters
         team_filter = request.args.get('team', None)
@@ -282,6 +286,7 @@ def roster():
                              current_team=team_filter,
                              current_season=season_filter,
                              current_paid=payment_filter,
+                             form=form,
                              search=search)
     except Exception as e:
         print(f"Error in roster route: {str(e)}")
@@ -1162,19 +1167,15 @@ def delete_folder(folder_id):
 @login_required
 def bulk_import():
     """Handle bulk import of players from CSV."""
+    from app.forms import BulkImportForm
+    
+    form = BulkImportForm()
+    if not form.validate_on_submit():
+        flash('Invalid form submission. Please try again.', 'danger')
+        return redirect(url_for('main.roster'))
+    
     try:
-        if 'csv_file' not in request.files:
-            flash('No file selected.', 'danger')
-            return redirect(url_for('main.roster'))
-        
-        file = request.files['csv_file']
-        if file.filename == '':
-            flash('No file selected.', 'danger')
-            return redirect(url_for('main.roster'))
-        
-        if not file.filename.lower().endswith('.csv'):
-            flash('Please upload a CSV file.', 'danger')
-            return redirect(url_for('main.roster'))
+        file = form.csv_file.data
         
         # Read CSV content
         stream = StringIO(file.stream.read().decode("UTF8"), newline=None)
