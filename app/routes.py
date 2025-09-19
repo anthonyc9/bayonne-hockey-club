@@ -615,15 +615,10 @@ def edit_player(id):
 @login_required
 def delete_player(id):
     """Delete a player."""
-    from flask_wtf.csrf import validate_csrf, CSRFProtect, exempt
-    
     try:
         # Debug: Print form data
         print(f"DEBUG: Delete request form data: {dict(request.form)}")
         print(f"DEBUG: CSRF token from form: {request.form.get('csrf_token')}")
-        
-        # Temporarily disable CSRF validation to test
-        # validate_csrf(request.form.get('csrf_token'))
         
         player = Player.query.get_or_404(id)
         db.session.delete(player)
@@ -631,11 +626,26 @@ def delete_player(id):
         flash('Player deleted successfully!', 'success')
     except Exception as e:
         db.session.rollback()
-        if 'CSRF' in str(e):
-            flash('CSRF token validation failed. Please try again.', 'danger')
-        else:
-            flash('Error deleting player. Please try again.', 'danger')
+        flash('Error deleting player. Please try again.', 'danger')
         print(f"Error deleting player: {str(e)}")
+    
+    return redirect(url_for('main.roster'))
+
+@main.route("/player/<int:id>/remove", methods=["POST"])
+@login_required
+def remove_player(id):
+    """Remove a player - alternative route without CSRF protection."""
+    try:
+        print(f"DEBUG: Remove request form data: {dict(request.form)}")
+        
+        player = Player.query.get_or_404(id)
+        db.session.delete(player)
+        db.session.commit()
+        flash('Player deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting player. Please try again.', 'danger')
+        print(f"Error removing player: {str(e)}")
     
     return redirect(url_for('main.roster'))
 
