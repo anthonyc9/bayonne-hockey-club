@@ -2176,8 +2176,8 @@ def game_statistics():
     from app.forms import GameFilterForm
     
     # Get filter parameters
-    team_filter = request.args.get('team', '')
-    season_filter = request.args.get('season', '')
+    team_filter = request.args.get('team_filter', '')
+    season_filter = request.args.get('season_filter', '')
     
     # Get players with their statistics
     query = Player.query
@@ -2230,6 +2230,10 @@ def game_statistics():
     filter_form = GameFilterForm()
     filter_form.team_filter.choices = [('', 'All Teams')] + [(team, team) for team in teams]
     filter_form.season_filter.choices = [('', 'All Seasons')] + [(season, season) for season in seasons]
+    
+    # Set current filter values
+    filter_form.team_filter.data = team_filter
+    filter_form.season_filter.data = season_filter
     
     return render_template("game_statistics.html", 
                          player_stats=player_stats,
