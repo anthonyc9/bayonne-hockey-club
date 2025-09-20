@@ -201,7 +201,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="goalForm">
+                <form id="goalForm" onsubmit="event.preventDefault(); saveGoal(); return false;">
                     <div class="mb-3">
                         <label class="form-label">Scorer</label>
                         <select id="goalScorer" class="form-select" required>
@@ -231,7 +231,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <form id="assistForm">
+                <form id="assistForm" onsubmit="event.preventDefault(); saveAssist(); return false;">
                     <div class="mb-3">
                         <label class="form-label">Assister</label>
                         <select id="assistAssister" class="form-select" required>
@@ -313,6 +313,21 @@ document.addEventListener('DOMContentLoaded', function() {
             updateAssistsList();
         }, 500);
     {% endif %}
+    
+    // Add Enter key handling for modal forms
+    document.getElementById('goalQuantity').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveGoal();
+        }
+    });
+    
+    document.getElementById('assistQuantity').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            saveAssist();
+        }
+    });
 });
 
 function populatePlayerDropdowns(teamName) {
