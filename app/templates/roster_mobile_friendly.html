@@ -235,6 +235,7 @@
                                     </a>
                                     <form action="{{ url_for('main.api_delete_player', id=player.id) }}" 
                                           method="POST" class="flex-fill">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <button type="submit" class="btn btn-sm btn-outline-danger w-100" 
                                                 onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')">
                                             <i class="bi bi-trash"></i> Delete
@@ -445,6 +446,7 @@
                                                 </a>
                                                 <form action="{{ url_for('main.delete_player', id=player.id) }}" 
                                                       method="POST" class="d-inline">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                                     <button type="submit" class="btn btn-outline-danger btn-sm" 
                                                             onclick="return confirm('Delete {{ player.first_name }} {{ player.last_name }}?')"
                                                             title="Delete">
