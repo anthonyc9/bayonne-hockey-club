@@ -2046,12 +2046,36 @@ def edit_game(game_id):
             flash('Error updating game. Please try again.', 'danger')
             print(f"Error updating game: {str(e)}")
     
-    # Get existing goals and assists for the game
+    # Get existing goals and assists for the game and convert to dictionaries
     existing_goals = Goal.query.filter_by(game_id=game.id).all()
     existing_assists = Assist.query.filter_by(game_id=game.id).all()
     
+    # Convert to dictionaries for JSON serialization
+    goals_data = []
+    for goal in existing_goals:
+        goals_data.append({
+            'id': goal.id,
+            'scorer_id': goal.scorer_id,
+            'game_id': goal.game_id,
+            'period': goal.period,
+            'time_scored': goal.time_scored,
+            'goal_type': goal.goal_type
+        })
+    
+    assists_data = []
+    for assist in existing_assists:
+        assists_data.append({
+            'id': assist.id,
+            'assister_id': assist.assister_id,
+            'game_id': assist.game_id,
+            'goal_id': assist.goal_id,
+            'period': assist.period,
+            'time_assisted': assist.time_assisted,
+            'assist_type': assist.assist_type
+        })
+    
     return render_template("game_form.html", form=form, game=game, title="Edit Game", 
-                         existing_goals=existing_goals, existing_assists=existing_assists)
+                         existing_goals=goals_data, existing_assists=assists_data)
 
 
 @main.route("/game-tracker/<int:game_id>/delete", methods=["POST"])
