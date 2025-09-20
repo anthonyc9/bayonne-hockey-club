@@ -1972,9 +1972,10 @@ def edit_game(game_id):
             game.game_status = form.game_status.data
             game.notes = form.notes.data
             
-            # Delete existing goals and assists
-            Goal.query.filter_by(game_id=game.id).delete()
+            # Delete existing assists first (due to foreign key constraints)
             Assist.query.filter_by(game_id=game.id).delete()
+            # Then delete goals
+            Goal.query.filter_by(game_id=game.id).delete()
             
             # Process new goals from form data
             goal_index = 0
