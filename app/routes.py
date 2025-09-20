@@ -1972,6 +1972,71 @@ def edit_game(game_id):
             game.game_status = form.game_status.data
             game.notes = form.notes.data
             
+            # Delete existing goals and assists
+            Goal.query.filter_by(game_id=game.id).delete()
+            Assist.query.filter_by(game_id=game.id).delete()
+            
+            # Process new goals from form data
+            goal_index = 0
+            while f'goal_{goal_index}' in request.form:
+                goal_data = request.form.get(f'goal_{goal_index}')
+                try:
+                    goal_info = json.loads(goal_data)
+                    
+                    # Create the goal
+                    goal = Goal(
+                        scorer_id=goal_info['scorer_id'],
+                        game_id=game.id,
+                        period=1,  # Default to 1st period
+                        time_scored='',  # No time tracking
+                        goal_type='even_strength'  # Default goal type
+                    )
+                    db.session.add(goal)
+                    goal_index += 1
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"Error processing goal {goal_index}: {e}")
+                    goal_index += 1
+                    continue
+            
+            # Process new assists from form data
+            assist_index = 0
+            while f'assist_{assist_index}' in request.form:
+                assist_data = request.form.get(f'assist_{assist_index}')
+                try:
+                    assist_info = json.loads(assist_data)
+                    
+                    # Create the assist (we'll need to link it to a goal)
+                    # For simplicity, we'll create a dummy goal if none exists
+                    if not Goal.query.filter_by(game_id=game.id).first():
+                        dummy_goal = Goal(
+                            scorer_id=assist_info['assister_id'],  # Use assister as scorer for dummy
+                            game_id=game.id,
+                            period=1,
+                            time_scored='',
+                            goal_type='even_strength'
+                        )
+                        db.session.add(dummy_goal)
+                        db.session.flush()
+                        goal_id = dummy_goal.id
+                    else:
+                        # Use the first goal for all assists
+                        goal_id = Goal.query.filter_by(game_id=game.id).first().id
+                    
+                    assist = Assist(
+                        assister_id=assist_info['assister_id'],
+                        game_id=game.id,
+                        goal_id=goal_id,
+                        period=1,  # Default to 1st period
+                        time_assisted='',  # No time tracking
+                        assist_type='primary'  # Default to primary
+                    )
+                    db.session.add(assist)
+                    assist_index += 1
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"Error processing assist {assist_index}: {e}")
+                    assist_index += 1
+                    continue
+            
             db.session.commit()
             flash('Game updated successfully!', 'success')
             return redirect(url_for('main.view_game', game_id=game.id))
@@ -1981,7 +2046,12 @@ def edit_game(game_id):
             flash('Error updating game. Please try again.', 'danger')
             print(f"Error updating game: {str(e)}")
     
-    return render_template("game_form.html", form=form, game=game, title="Edit Game")
+    # Get existing goals and assists for the game
+    existing_goals = Goal.query.filter_by(game_id=game.id).all()
+    existing_assists = Assist.query.filter_by(game_id=game.id).all()
+    
+    return render_template("game_form.html", form=form, game=game, title="Edit Game", 
+                         existing_goals=existing_goals, existing_assists=existing_assists)
 
 
 @main.route("/game-tracker/<int:game_id>/delete", methods=["POST"])

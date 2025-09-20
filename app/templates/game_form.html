@@ -284,6 +284,35 @@ document.addEventListener('DOMContentLoaded', function() {
     if (gameStatus.value === 'completed') {
         goalsSection.style.display = 'block';
     }
+    
+    // Load team players if editing
+    const teamName = document.getElementById('team_name').value;
+    if (teamName) {
+        populatePlayerDropdowns(teamName);
+    }
+    
+    // Load existing goals and assists if editing
+    {% if existing_goals %}
+        const existingGoals = {{ existing_goals | tojson }};
+        goals = existingGoals.map(goal => ({
+            scorer_id: goal.scorer_id
+        }));
+        // Wait for team players to load before updating display
+        setTimeout(() => {
+            updateGoalsList();
+        }, 500);
+    {% endif %}
+    
+    {% if existing_assists %}
+        const existingAssists = {{ existing_assists | tojson }};
+        assists = existingAssists.map(assist => ({
+            assister_id: assist.assister_id
+        }));
+        // Wait for team players to load before updating display
+        setTimeout(() => {
+            updateAssistsList();
+        }, 500);
+    {% endif %}
 });
 
 function populatePlayerDropdowns(teamName) {
