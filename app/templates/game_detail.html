@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}{{ game.team_name }} vs {{ game.opponent_team }} - Game Details{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0">
+                <i class="bi bi-trophy"></i> {{ game.team_name }} vs {{ game.opponent_team }}
+            </h1>
+            <p class="text-muted mb-0">{{ game.game_date.strftime('%A, %B %d, %Y') }} at {{ game.rink_name }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('main.edit_game', game_id=game.id) }}" class="btn btn-outline-primary">
+                <i class="bi bi-pencil"></i> Edit Game
+            </a>
+            <a href="{{ url_for('main.game_tracker') }}" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to Games
+            </a>
+        </div>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="row">
+        <!-- Game Information -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Game Information</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <strong>Date:</strong><br>
+                            {{ game.game_date.strftime('%m/%d/%Y') }}
+                        </div>
+                        <div class="col-6">
+                            <strong>Status:</strong><br>
+                            {% if game.game_status == 'completed' %}
+                                <span class="badge bg-success">Completed</span>
+                            {% elif game.game_status == 'scheduled' %}
+                                <span class="badge bg-info">Scheduled</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Cancelled</span>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            <strong>Rink:</strong><br>
+                            {{ game.rink_name }}
+                        </div>
+                        <div class="col-6">
+                            <strong>Location:</strong><br>
+                            {{ game.rink_location or 'N/A' }}
+                        </div>
+                        <div class="col-12">
+                            <strong>Result:</strong><br>
+                            {% if game.result == 'Win' %}
+                                <span class="badge bg-success fs-6">Win</span>
+                            {% elif game.result == 'Loss' %}
+                                <span class="badge bg-danger fs-6">Loss</span>
+                            {% else %}
+                                <span class="badge bg-warning fs-6">Tie</span>
+                            {% endif %}
+                        </div>
+                        {% if game.notes %}
+                        <div class="col-12">
+                            <strong>Notes:</strong><br>
+                            <p class="mb-0">{{ game.notes }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Final Score</h6>
+                </div>
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="h2 text-primary">{{ game.badgers_score }}</div>
+                            <div class="text-muted">{{ game.team_name }}</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="h2 text-secondary">{{ game.opponent_score }}</div>
+                            <div class="text-muted">{{ game.opponent_team }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                            <i class="bi bi-plus-circle"></i> Add Goal
+                        </button>
+                        <a href="{{ url_for('main.game_statistics') }}?team={{ game.team_name }}" class="btn btn-info">
+                            <i class="bi bi-graph-up"></i> Team Statistics
+                        </a>
+                        <form action="{{ url_for('main.delete_game', game_id=game.id) }}" method="POST" class="d-grid">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <button type="submit" class="btn btn-outline-danger" 
+                                    onclick="return confirm('Delete this game and all its goals/assists?')">
+                                <i class="bi bi-trash"></i> Delete Game
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goals and Assists -->
+    <div class="card">
+        <div class="card-header">
+            <h6 class="mb-0"><i class="bi bi-target"></i> Goals and Assists</h6>
+        </div>
+        <div class="card-body">
+            {% if goals %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-header-custom">
+                            <tr>
+                                <th>Period</th>
+                                <th>Time</th>
+                                <th>Goal Scorer</th>
+                                <th>Assists</th>
+                                <th>Type</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for goal in goals %}
+                                <tr>
+                                    <td>
+                                        {% if goal.period == 1 %}
+                                            <span class="badge bg-primary">1st</span>
+                                        {% elif goal.period == 2 %}
+                                            <span class="badge bg-primary">2nd</span>
+                                        {% elif goal.period == 3 %}
+                                            <span class="badge bg-primary">3rd</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">OT</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ goal.time_scored or '-' }}</td>
+                                    <td>
+                                        <div class="fw-semibold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</div>
+                                        <small class="text-muted">#{{ goal.scorer.jersey_number or 'N/A' }}</small>
+                                    </td>
+                                    <td>
+                                        {% if goal.assists %}
+                                            {% for assist in goal.assists %}
+                                                <div class="small">
+                                                    {{ assist.assister.first_name }} {{ assist.assister.last_name }}
+                                                    <span class="text-muted">({{ assist.assist_type }})</span>
+                                                </div>
+                                            {% endfor %}
+                                        {% else %}
+                                            <span class="text-muted">No assists</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if goal.goal_type == 'power_play' %}
+                                            <span class="badge bg-warning">PP</span>
+                                        {% elif goal.goal_type == 'short_handed' %}
+                                            <span class="badge bg-danger">SH</span>
+                                        {% elif goal.goal_type == 'empty_net' %}
+                                            <span class="badge bg-info">EN</span>
+                                        {% else %}
+                                            <span class="badge bg-success">ES</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#addAssistModal"
+                                                    onclick="setGoalId({{ goal.id }})"
+                                                    title="Add Assist">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-target display-4 text-muted"></i>
+                    <div class="mt-2 text-muted">No goals recorded</div>
+                    <button class="btn btn-success mt-2" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                        <i class="bi bi-plus-circle"></i> Add First Goal
+                    </button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add Goal Modal -->
+<div class="modal fade" id="addGoalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Goal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ url_for('main.add_goal', game_id=game.id) }}">
+                    {{ csrf_token() }}
+                    <div class="mb-3">
+                        <label class="form-label">Scorer</label>
+                        <select name="scorer_id" class="form-select" required>
+                            <option value="">Select Player</option>
+                            {% for player in team_players %}
+                                <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }} #{{ player.jersey_number or 'N/A' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Period</label>
+                            <select name="period" class="form-select">
+                                <option value="1">1st Period</option>
+                                <option value="2">2nd Period</option>
+                                <option value="3">3rd Period</option>
+                                <option value="4">Overtime</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Time (e.g., 5:30)</label>
+                            <input type="text" name="time_scored" class="form-control" placeholder="5:30">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Goal Type</label>
+                            <select name="goal_type" class="form-select">
+                                <option value="even_strength">Even Strength</option>
+                                <option value="power_play">Power Play</option>
+                                <option value="short_handed">Short Handed</option>
+                                <option value="empty_net">Empty Net</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add Goal</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Assist Modal -->
+<div class="modal fade" id="addAssistModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Assist</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" id="assistForm">
+                    {{ csrf_token() }}
+                    <input type="hidden" name="goal_id" id="goalIdInput">
+                    <div class="mb-3">
+                        <label class="form-label">Assister</label>
+                        <select name="assister_id" class="form-select" required>
+                            <option value="">Select Player</option>
+                            {% for player in team_players %}
+                                <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }} #{{ player.jersey_number or 'N/A' }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Period</label>
+                            <select name="period" class="form-select">
+                                <option value="1">1st Period</option>
+                                <option value="2">2nd Period</option>
+                                <option value="3">3rd Period</option>
+                                <option value="4">Overtime</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Time (e.g., 5:30)</label>
+                            <input type="text" name="time_assisted" class="form-control" placeholder="5:30">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Assist Type</label>
+                            <select name="assist_type" class="form-select">
+                                <option value="primary">Primary Assist</option>
+                                <option value="secondary">Secondary Assist</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-success">Add Assist</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setGoalId(goalId) {
+    document.getElementById('goalIdInput').value = goalId;
+    document.getElementById('assistForm').action = "{{ url_for('main.add_assist', game_id=game.id, goal_id=0) }}".replace('0', goalId);
+}
+</script>
+{% endblock %}

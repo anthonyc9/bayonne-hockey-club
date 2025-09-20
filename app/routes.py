@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, make_response, send_file
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece
+from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece, Game, Goal, Assist
 from app.player_forms import PlayerForm
 
 from app.email_utils import send_password_reset_email
@@ -1744,3 +1744,401 @@ def remove_practice_plan_attachment(plan_id, file_id):
             print(f"Error removing attachment: {str(e)}")
     
     return redirect(url_for('main.view_practice_plan', plan_id=plan_id))
+
+
+### Game Tracker Routes ###
+
+@main.route("/game-tracker")
+@login_required
+def game_tracker():
+    """Main game tracker page - list all games."""
+    from app.forms import GameFilterForm
+    
+    # Get filter parameters
+    team_filter = request.args.get('team', '')
+    season_filter = request.args.get('season', '')
+    date_from = request.args.get('date_from', '')
+    date_to = request.args.get('date_to', '')
+    
+    # Start with base query
+    query = Game.query
+    
+    # Apply filters
+    if team_filter:
+        query = query.filter(Game.team_name == team_filter)
+    if season_filter:
+        # Filter by season if we add season field to Game model
+        pass
+    if date_from:
+        try:
+            from_date = datetime.strptime(date_from, '%Y-%m-%d').date()
+            query = query.filter(Game.game_date >= from_date)
+        except ValueError:
+            pass
+    if date_to:
+        try:
+            to_date = datetime.strptime(date_to, '%Y-%m-%d').date()
+            query = query.filter(Game.game_date <= to_date)
+        except ValueError:
+            pass
+    
+    # Get games ordered by date (most recent first)
+    games = query.order_by(Game.game_date.desc()).all()
+    
+    # Get unique teams for filter dropdown
+    teams = db.session.query(Game.team_name).distinct().filter(Game.team_name != '').all()
+    teams = [team[0] for team in teams]
+    
+    # Get unique seasons for filter dropdown (from players)
+    seasons = db.session.query(Player.season).distinct().filter(Player.season != None).order_by(Player.season.desc()).all()
+    seasons = [season[0] for season in seasons]
+    
+    # Create filter form
+    filter_form = GameFilterForm()
+    filter_form.team_filter.choices = [('', 'All Teams')] + [(team, team) for team in teams]
+    filter_form.season_filter.choices = [('', 'All Seasons')] + [(season, season) for season in seasons]
+    
+    return render_template("game_tracker.html", 
+                         games=games, 
+                         filter_form=filter_form,
+                         current_team=team_filter,
+                         current_season=season_filter,
+                         current_date_from=date_from,
+                         current_date_to=date_to)
+
+
+@main.route("/game-tracker/add", methods=["GET", "POST"])
+@login_required
+def add_game():
+    """Add a new game."""
+    from app.forms import GameForm
+    import json
+    
+    form = GameForm()
+    
+    # Populate team choices from players
+    teams = db.session.query(Player.team).distinct().filter(Player.team != '').filter(Player.team != None).all()
+    form.team_name.choices = [(team[0], team[0]) for team in teams]
+    
+    if form.validate_on_submit():
+        try:
+            game = Game(
+                game_date=form.game_date.data,
+                opponent_team=form.opponent_team.data,
+                rink_name=form.rink_name.data,
+                rink_location=form.rink_location.data,
+                team_name=form.team_name.data,
+                badgers_score=form.badgers_score.data,
+                opponent_score=form.opponent_score.data,
+                game_status=form.game_status.data,
+                notes=form.notes.data,
+                user_id=current_user.id
+            )
+            
+            db.session.add(game)
+            db.session.flush()  # Get the game ID without committing
+            
+            # Process goals from form data
+            goal_index = 0
+            while f'goal_{goal_index}' in request.form:
+                goal_data = request.form.get(f'goal_{goal_index}')
+                try:
+                    goal_info = json.loads(goal_data)
+                    
+                    # Create the goal
+                    goal = Goal(
+                        scorer_id=goal_info['scorer_id'],
+                        game_id=game.id,
+                        period=1,  # Default to 1st period
+                        time_scored='',  # No time tracking
+                        goal_type='even_strength'  # Default goal type
+                    )
+                    db.session.add(goal)
+                    goal_index += 1
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"Error processing goal {goal_index}: {e}")
+                    goal_index += 1
+                    continue
+            
+            # Process assists from form data
+            assist_index = 0
+            while f'assist_{assist_index}' in request.form:
+                assist_data = request.form.get(f'assist_{assist_index}')
+                try:
+                    assist_info = json.loads(assist_data)
+                    
+                    # Create the assist (we'll need to link it to a goal)
+                    # For simplicity, we'll create a dummy goal if none exists
+                    if not Goal.query.filter_by(game_id=game.id).first():
+                        dummy_goal = Goal(
+                            scorer_id=assist_info['assister_id'],  # Use assister as scorer for dummy
+                            game_id=game.id,
+                            period=1,
+                            time_scored='',
+                            goal_type='even_strength'
+                        )
+                        db.session.add(dummy_goal)
+                        db.session.flush()
+                        goal_id = dummy_goal.id
+                    else:
+                        # Use the first goal for all assists
+                        goal_id = Goal.query.filter_by(game_id=game.id).first().id
+                    
+                    assist = Assist(
+                        assister_id=assist_info['assister_id'],
+                        game_id=game.id,
+                        goal_id=goal_id,
+                        period=1,  # Default to 1st period
+                        time_assisted='',  # No time tracking
+                        assist_type='primary'  # Default to primary
+                    )
+                    db.session.add(assist)
+                    assist_index += 1
+                except (json.JSONDecodeError, KeyError) as e:
+                    print(f"Error processing assist {assist_index}: {e}")
+                    assist_index += 1
+                    continue
+            
+            db.session.commit()
+            flash('Game added successfully!', 'success')
+            return redirect(url_for('main.view_game', game_id=game.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding game. Please try again.', 'danger')
+            print(f"Error adding game: {str(e)}")
+    
+    return render_template("game_form.html", form=form, title="Add Game")
+
+
+@main.route("/api/team-players/<team_name>")
+@login_required
+def get_team_players(team_name):
+    """Get players for a specific team (AJAX endpoint)."""
+    try:
+        players = Player.query.filter_by(team=team_name).order_by(Player.last_name, Player.first_name).all()
+        player_data = []
+        for player in players:
+            player_data.append({
+                'id': player.id,
+                'name': f"{player.first_name} {player.last_name}",
+                'jersey_number': player.jersey_number or 'N/A'
+            })
+        return jsonify({'success': True, 'players': player_data})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@main.route("/game-tracker/<int:game_id>")
+@login_required
+def view_game(game_id):
+    """View a specific game with goals and assists."""
+    game = Game.query.get_or_404(game_id)
+    
+    # Get goals with assists
+    goals = Goal.query.filter_by(game_id=game_id).order_by(Goal.period, Goal.time_scored).all()
+    
+    # Get all players for the team for adding goals/assists
+    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
+    
+    return render_template("game_detail.html", 
+                         game=game, 
+                         goals=goals, 
+                         team_players=team_players)
+
+
+@main.route("/game-tracker/<int:game_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_game(game_id):
+    """Edit an existing game."""
+    from app.forms import GameForm
+    
+    game = Game.query.get_or_404(game_id)
+    form = GameForm(obj=game)
+    
+    # Populate team choices from players
+    teams = db.session.query(Player.team).distinct().filter(Player.team != '').filter(Player.team != None).all()
+    form.team_name.choices = [(team[0], team[0]) for team in teams]
+    
+    if form.validate_on_submit():
+        try:
+            game.game_date = form.game_date.data
+            game.opponent_team = form.opponent_team.data
+            game.rink_name = form.rink_name.data
+            game.rink_location = form.rink_location.data
+            game.team_name = form.team_name.data
+            game.badgers_score = form.badgers_score.data
+            game.opponent_score = form.opponent_score.data
+            game.game_status = form.game_status.data
+            game.notes = form.notes.data
+            
+            db.session.commit()
+            flash('Game updated successfully!', 'success')
+            return redirect(url_for('main.view_game', game_id=game.id))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error updating game. Please try again.', 'danger')
+            print(f"Error updating game: {str(e)}")
+    
+    return render_template("game_form.html", form=form, game=game, title="Edit Game")
+
+
+@main.route("/game-tracker/<int:game_id>/delete", methods=["POST"])
+@login_required
+def delete_game(game_id):
+    """Delete a game and all its goals/assists."""
+    game = Game.query.get_or_404(game_id)
+    
+    try:
+        db.session.delete(game)  # Cascade will handle goals and assists
+        db.session.commit()
+        flash('Game deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting game. Please try again.', 'danger')
+        print(f"Error deleting game: {str(e)}")
+    
+    return redirect(url_for('main.game_tracker'))
+
+
+@main.route("/game-tracker/<int:game_id>/add-goal", methods=["POST"])
+@login_required
+def add_goal(game_id):
+    """Add a goal to a game."""
+    from app.forms import GoalForm
+    
+    game = Game.query.get_or_404(game_id)
+    form = GoalForm()
+    
+    # Populate player choices for the team
+    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
+    form.scorer_id.choices = [(player.id, f"{player.first_name} {player.last_name}") for player in team_players]
+    
+    if form.validate_on_submit():
+        try:
+            goal = Goal(
+                scorer_id=form.scorer_id.data,
+                game_id=game_id,
+                period=form.period.data,
+                time_scored=form.time_scored.data,
+                goal_type=form.goal_type.data
+            )
+            
+            db.session.add(goal)
+            db.session.commit()
+            flash('Goal added successfully!', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding goal. Please try again.', 'danger')
+            print(f"Error adding goal: {str(e)}")
+    
+    return redirect(url_for('main.view_game', game_id=game_id))
+
+
+@main.route("/game-tracker/<int:game_id>/add-assist/<int:goal_id>", methods=["POST"])
+@login_required
+def add_assist(game_id, goal_id):
+    """Add an assist to a goal."""
+    from app.forms import AssistForm
+    
+    game = Game.query.get_or_404(game_id)
+    goal = Goal.query.get_or_404(goal_id)
+    form = AssistForm()
+    
+    # Populate player choices for the team
+    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
+    form.assister_id.choices = [(player.id, f"{player.first_name} {player.last_name}") for player in team_players]
+    form.goal_id.data = goal_id
+    
+    if form.validate_on_submit():
+        try:
+            assist = Assist(
+                assister_id=form.assister_id.data,
+                game_id=game_id,
+                goal_id=goal_id,
+                period=form.period.data,
+                time_assisted=form.time_assisted.data,
+                assist_type=form.assist_type.data
+            )
+            
+            db.session.add(assist)
+            db.session.commit()
+            flash('Assist added successfully!', 'success')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding assist. Please try again.', 'danger')
+            print(f"Error adding assist: {str(e)}")
+    
+    return redirect(url_for('main.view_game', game_id=game_id))
+
+
+@main.route("/game-tracker/statistics")
+@login_required
+def game_statistics():
+    """Display player statistics for goals and assists."""
+    from app.forms import GameFilterForm
+    
+    # Get filter parameters
+    team_filter = request.args.get('team', '')
+    season_filter = request.args.get('season', '')
+    
+    # Get players with their statistics
+    query = Player.query
+    
+    if team_filter:
+        query = query.filter(Player.team == team_filter)
+    if season_filter:
+        query = query.filter(Player.season == season_filter)
+    
+    players = query.order_by(Player.last_name, Player.first_name).all()
+    
+    # Calculate statistics for each player
+    player_stats = []
+    for player in players:
+        # Get goals scored
+        goals_scored = Goal.query.join(Game).filter(
+            Goal.scorer_id == player.id,
+            Game.team_name == player.team
+        ).count()
+        
+        # Get assists
+        assists = Assist.query.join(Game).filter(
+            Assist.assister_id == player.id,
+            Game.team_name == player.team
+        ).count()
+        
+        # Get games played
+        games_played = Game.query.filter_by(team_name=player.team).count()
+        
+        player_stats.append({
+            'player': player,
+            'goals': goals_scored,
+            'assists': assists,
+            'points': goals_scored + assists,
+            'games_played': games_played
+        })
+    
+    # Sort by points (goals + assists)
+    player_stats.sort(key=lambda x: x['points'], reverse=True)
+    
+    # Get unique teams for filter dropdown
+    teams = db.session.query(Player.team).distinct().filter(Player.team != '').filter(Player.team != None).all()
+    teams = [team[0] for team in teams]
+    
+    # Get unique seasons for filter dropdown
+    seasons = db.session.query(Player.season).distinct().filter(Player.season != None).order_by(Player.season.desc()).all()
+    seasons = [season[0] for season in seasons]
+    
+    # Create filter form
+    filter_form = GameFilterForm()
+    filter_form.team_filter.choices = [('', 'All Teams')] + [(team, team) for team in teams]
+    filter_form.season_filter.choices = [('', 'All Seasons')] + [(season, season) for season in seasons]
+    
+    return render_template("game_statistics.html", 
+                         player_stats=player_stats,
+                         filter_form=filter_form,
+                         current_team=team_filter,
+                         current_season=season_filter)

@@ -373,3 +373,105 @@ practice_plan_attachments = db.Table('practice_plan_attachments',
     db.Column('practice_plan_id', db.Integer, db.ForeignKey('practice_plan.id'), primary_key=True),
     db.Column('file_id', db.Integer, db.ForeignKey('file.id'), primary_key=True)
 )
+
+
+### Game Tracker Models ###
+
+class Game(db.Model):
+    """Model for storing game information."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Game Information
+    game_date = db.Column(db.Date, nullable=False)
+    opponent_team = db.Column(db.String(100), nullable=False)
+    rink_name = db.Column(db.String(100), nullable=False)
+    rink_location = db.Column(db.String(200))  # Optional: address or city
+    
+    # Team Information
+    team_name = db.Column(db.String(50), nullable=False)  # Which Badgers team played
+    
+    # Game Result
+    badgers_score = db.Column(db.Integer, nullable=False, default=0)
+    opponent_score = db.Column(db.Integer, nullable=False, default=0)
+    
+    # Game Status
+    game_status = db.Column(db.String(20), nullable=False, default='completed')  # scheduled, completed, cancelled
+    
+    # Additional Information
+    notes = db.Column(db.Text)
+    
+    # Relationships
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationships
+    goals = db.relationship('Goal', backref='game', lazy=True, cascade='all, delete-orphan')
+    assists = db.relationship('Assist', backref='game', lazy=True, cascade='all, delete-orphan')
+    
+    def __repr__(self):
+        return f"Game('{self.team_name}' vs '{self.opponent_team}' on {self.game_date})"
+    
+    @property
+    def result(self):
+        """Get the game result as a string."""
+        if self.badgers_score > self.opponent_score:
+            return "Win"
+        elif self.badgers_score < self.opponent_score:
+            return "Loss"
+        else:
+            return "Tie"
+
+
+class Goal(db.Model):
+    """Model for storing individual goals scored."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Goal Information
+    period = db.Column(db.Integer, nullable=False, default=1)  # 1, 2, 3, OT
+    time_scored = db.Column(db.String(10))  # e.g., "5:30", "12:45"
+    
+    # Player Information
+    scorer_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    
+    # Game Information
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
+    
+    # Goal Type (optional)
+    goal_type = db.Column(db.String(20))  # even_strength, power_play, short_handed, empty_net
+    
+    # Relationships
+    scorer = db.relationship('Player', backref='goals_scored', foreign_keys=[scorer_id])
+    
+    def __repr__(self):
+        return f"Goal(Player {self.scorer_id} in Game {self.game_id})"
+
+
+class Assist(db.Model):
+    """Model for storing individual assists."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    
+    # Assist Information
+    period = db.Column(db.Integer, nullable=False, default=1)  # 1, 2, 3, OT
+    time_assisted = db.Column(db.String(10))  # e.g., "5:30", "12:45"
+    
+    # Player Information
+    assister_id = db.Column(db.Integer, db.ForeignKey('player.id'), nullable=False)
+    
+    # Game Information
+    game_id = db.Column(db.Integer, db.ForeignKey('game.id'), nullable=False)
+    
+    # Goal Information (which goal this assist was for)
+    goal_id = db.Column(db.Integer, db.ForeignKey('goal.id'), nullable=False)
+    
+    # Assist Type
+    assist_type = db.Column(db.String(20), default='primary')  # primary, secondary
+    
+    # Relationships
+    assister = db.relationship('Player', backref='assists', foreign_keys=[assister_id])
+    goal = db.relationship('Goal', backref='assists')
+    
+    def __repr__(self):
+        return f"Assist(Player {self.assister_id} for Goal {self.goal_id})"
