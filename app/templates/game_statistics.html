@@ -84,12 +84,94 @@
     <!-- Player Statistics Table -->
     <div class="card">
         <div class="card-header">
-            <h6 class="mb-0"><i class="bi bi-people"></i> Player Statistics</h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-people"></i> Player Statistics</h6>
+                <!-- Mobile View Toggle -->
+                <div class="btn-group btn-group-sm d-md-none">
+                    <button class="btn btn-outline-primary" id="cardViewBtn" onclick="setMobileView('card')">
+                        <i class="bi bi-grid-3x3-gap"></i> Cards
+                    </button>
+                    <button class="btn btn-primary" id="tableViewBtn" onclick="setMobileView('table')">
+                        <i class="bi bi-table"></i> Table
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-body p-0">
             {% if player_stats %}
-                <div class="table-responsive">
-                    <table class="table table-hover table-sm mb-0">
+                <!-- Mobile Card View -->
+                <div id="mobileCardView" class="d-md-none p-3">
+                    {% for stat in player_stats %}
+                        <div class="card mb-3 player-card">
+                            <div class="card-body">
+                                <!-- Player Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                            {{ stat.player.first_name[0] if stat.player.first_name else 'P' }}{{ stat.player.last_name[0] if stat.player.last_name else 'L' }}
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-1 fw-bold">{{ stat.player.first_name }} {{ stat.player.last_name }}</h6>
+                                            <small class="text-muted">#{{ stat.player.jersey_number or 'N/A' }}</small>
+                                        </div>
+                                    </div>
+                                    <div class="text-end">
+                                        <span class="badge bg-info">{{ stat.player.team or 'No Team' }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Statistics -->
+                                <div class="row g-2 mb-3">
+                                    <div class="col-3">
+                                        <small class="text-muted">Games:</small><br>
+                                        <span class="fw-bold">{{ stat.games_played }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Goals:</small><br>
+                                        <span class="fw-bold text-success">{{ stat.goals }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Assists:</small><br>
+                                        <span class="fw-bold text-info">{{ stat.assists }}</span>
+                                    </div>
+                                    <div class="col-3">
+                                        <small class="text-muted">Points:</small><br>
+                                        <span class="fw-bold text-primary">{{ stat.points }}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Averages -->
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <small class="text-muted">Goals/Game:</small><br>
+                                        <span class="fw-bold">
+                                            {% if stat.games_played > 0 %}
+                                                {{ "%.2f"|format(stat.goals / stat.games_played) }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted">Points/Game:</small><br>
+                                        <span class="fw-bold">
+                                            {% if stat.games_played > 0 %}
+                                                {{ "%.2f"|format(stat.points / stat.games_played) }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Desktop Table View -->
+                <div id="desktopTableView" class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm mb-0">
                         <thead class="table-header-custom">
                             <tr>
                                 <th>Rank</th>
@@ -161,6 +243,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             {% else %}
                 <div class="text-center py-5">
@@ -246,4 +329,42 @@
     border-bottom: none;
 }
 </style>
+
+<script>
+// Mobile view toggle
+function setMobileView(view) {
+    const cardView = document.getElementById('mobileCardView');
+    const tableView = document.getElementById('desktopTableView');
+    const cardBtn = document.getElementById('cardViewBtn');
+    const tableBtn = document.getElementById('tableViewBtn');
+    
+    if (view === 'card') {
+        cardView.classList.remove('d-md-none');
+        tableView.classList.add('d-none');
+        cardBtn.classList.add('btn-primary');
+        cardBtn.classList.remove('btn-outline-primary');
+        tableBtn.classList.remove('btn-primary');
+        tableBtn.classList.add('btn-outline-primary');
+    } else {
+        cardView.classList.add('d-md-none');
+        tableView.classList.remove('d-none');
+        tableBtn.classList.add('btn-primary');
+        tableBtn.classList.remove('btn-outline-primary');
+        cardBtn.classList.remove('btn-primary');
+        cardBtn.classList.add('btn-outline-primary');
+    }
+    
+    // Store preference
+    localStorage.setItem('mobileStatsView', view);
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Restore mobile view preference
+    const savedView = localStorage.getItem('mobileStatsView') || 'card';
+    if (window.innerWidth < 768) {
+        setMobileView(savedView);
+    }
+});
+</script>
 {% endblock %}

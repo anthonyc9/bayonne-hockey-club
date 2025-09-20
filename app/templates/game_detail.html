@@ -137,52 +137,104 @@
     <!-- Goals and Assists -->
     <div class="card">
         <div class="card-header">
-            <h6 class="mb-0"><i class="bi bi-target"></i> Goals and Assists</h6>
+            <div class="d-flex justify-content-between align-items-center">
+                <h6 class="mb-0"><i class="bi bi-target"></i> Goals and Assists</h6>
+                <!-- Mobile View Toggle -->
+                <div class="btn-group btn-group-sm d-md-none">
+                    <button class="btn btn-outline-primary" id="cardViewBtn" onclick="setMobileView('card')">
+                        <i class="bi bi-grid-3x3-gap"></i> Cards
+                    </button>
+                    <button class="btn btn-primary" id="tableViewBtn" onclick="setMobileView('table')">
+                        <i class="bi bi-table"></i> Table
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-body">
             {% if goals %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-header-custom">
-                            <tr>
-                                <th>Goal Scorer</th>
-                                <th>Assists</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for goal in goals %}
-                                <tr>
-                                    <td>
-                                        <div class="fw-semibold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</div>
+                <!-- Mobile Card View -->
+                <div id="mobileCardView" class="d-md-none">
+                    {% for goal in goals %}
+                        <div class="card mb-3 goal-card">
+                            <div class="card-body">
+                                <!-- Goal Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</h6>
                                         <small class="text-muted">#{{ goal.scorer.jersey_number or 'N/A' }}</small>
-                                    </td>
-                                    <td>
-                                        {% if goal.assists %}
-                                            {% for assist in goal.assists %}
-                                                <div class="small">
-                                                    {{ assist.assister.first_name }} {{ assist.assister.last_name }}
-                                                </div>
-                                            {% endfor %}
-                                        {% else %}
-                                            <span class="text-muted">No assists</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-primary" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#addAssistModal"
-                                                    onclick="setGoalId({{ goal.id }})"
-                                                    title="Add Assist">
-                                                <i class="bi bi-plus"></i>
-                                            </button>
-                                        </div>
-                                    </td>
+                                    </div>
+                                    <button class="btn btn-outline-primary btn-sm" 
+                                            data-bs-toggle="modal" 
+                                            data-bs-target="#addAssistModal"
+                                            onclick="setGoalId({{ goal.id }})"
+                                            title="Add Assist">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Assists -->
+                                <div class="mb-2">
+                                    <small class="text-muted">Assists:</small>
+                                    {% if goal.assists %}
+                                        {% for assist in goal.assists %}
+                                            <div class="small">
+                                                {{ assist.assister.first_name }} {{ assist.assister.last_name }}
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <span class="text-muted">No assists</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Desktop Table View -->
+                <div id="desktopTableView" class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-header-custom">
+                                <tr>
+                                    <th>Goal Scorer</th>
+                                    <th>Assists</th>
+                                    <th>Actions</th>
                                 </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {% for goal in goals %}
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</div>
+                                            <small class="text-muted">#{{ goal.scorer.jersey_number or 'N/A' }}</small>
+                                        </td>
+                                        <td>
+                                            {% if goal.assists %}
+                                                {% for assist in goal.assists %}
+                                                    <div class="small">
+                                                        {{ assist.assister.first_name }} {{ assist.assister.last_name }}
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                                <span class="text-muted">No assists</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <button class="btn btn-outline-primary" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#addAssistModal"
+                                                        onclick="setGoalId({{ goal.id }})"
+                                                        title="Add Assist">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             {% else %}
                 <div class="text-center py-4">
@@ -287,5 +339,41 @@ function setGoalId(goalId) {
     document.getElementById('goalIdInput').value = goalId;
     document.getElementById('assistForm').action = "{{ url_for('main.add_assist', game_id=game.id, goal_id=0) }}".replace('0', goalId);
 }
+
+// Mobile view toggle
+function setMobileView(view) {
+    const cardView = document.getElementById('mobileCardView');
+    const tableView = document.getElementById('desktopTableView');
+    const cardBtn = document.getElementById('cardViewBtn');
+    const tableBtn = document.getElementById('tableViewBtn');
+    
+    if (view === 'card') {
+        cardView.classList.remove('d-md-none');
+        tableView.classList.add('d-none');
+        cardBtn.classList.add('btn-primary');
+        cardBtn.classList.remove('btn-outline-primary');
+        tableBtn.classList.remove('btn-primary');
+        tableBtn.classList.add('btn-outline-primary');
+    } else {
+        cardView.classList.add('d-md-none');
+        tableView.classList.remove('d-none');
+        tableBtn.classList.add('btn-primary');
+        tableBtn.classList.remove('btn-outline-primary');
+        cardBtn.classList.remove('btn-primary');
+        cardBtn.classList.add('btn-outline-primary');
+    }
+    
+    // Store preference
+    localStorage.setItem('mobileGoalView', view);
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Restore mobile view preference
+    const savedView = localStorage.getItem('mobileGoalView') || 'card';
+    if (window.innerWidth < 768) {
+        setMobileView(savedView);
+    }
+});
 </script>
 {% endblock %}
