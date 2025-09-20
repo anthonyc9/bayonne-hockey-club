@@ -145,29 +145,14 @@
                     <table class="table table-hover">
                         <thead class="table-header-custom">
                             <tr>
-                                <th>Period</th>
-                                <th>Time</th>
                                 <th>Goal Scorer</th>
                                 <th>Assists</th>
-                                <th>Type</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for goal in goals %}
                                 <tr>
-                                    <td>
-                                        {% if goal.period == 1 %}
-                                            <span class="badge bg-primary">1st</span>
-                                        {% elif goal.period == 2 %}
-                                            <span class="badge bg-primary">2nd</span>
-                                        {% elif goal.period == 3 %}
-                                            <span class="badge bg-primary">3rd</span>
-                                        {% else %}
-                                            <span class="badge bg-warning">OT</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ goal.time_scored or '-' }}</td>
                                     <td>
                                         <div class="fw-semibold">{{ goal.scorer.first_name }} {{ goal.scorer.last_name }}</div>
                                         <small class="text-muted">#{{ goal.scorer.jersey_number or 'N/A' }}</small>
@@ -177,22 +162,10 @@
                                             {% for assist in goal.assists %}
                                                 <div class="small">
                                                     {{ assist.assister.first_name }} {{ assist.assister.last_name }}
-                                                    <span class="text-muted">({{ assist.assist_type }})</span>
                                                 </div>
                                             {% endfor %}
                                         {% else %}
                                             <span class="text-muted">No assists</span>
-                                        {% endif %}
-                                    </td>
-                                    <td>
-                                        {% if goal.goal_type == 'power_play' %}
-                                            <span class="badge bg-warning">PP</span>
-                                        {% elif goal.goal_type == 'short_handed' %}
-                                            <span class="badge bg-danger">SH</span>
-                                        {% elif goal.goal_type == 'empty_net' %}
-                                            <span class="badge bg-info">EN</span>
-                                        {% else %}
-                                            <span class="badge bg-success">ES</span>
                                         {% endif %}
                                     </td>
                                     <td>
@@ -288,7 +261,7 @@
             </div>
             <div class="modal-body">
                 <form method="POST" id="assistForm">
-                    {{ csrf_token() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <input type="hidden" name="goal_id" id="goalIdInput">
                     <div class="mb-3">
                         <label class="form-label">Assister</label>
@@ -298,28 +271,6 @@
                                 <option value="{{ player.id }}">{{ player.first_name }} {{ player.last_name }} #{{ player.jersey_number or 'N/A' }}</option>
                             {% endfor %}
                         </select>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Period</label>
-                            <select name="period" class="form-select">
-                                <option value="1">1st Period</option>
-                                <option value="2">2nd Period</option>
-                                <option value="3">3rd Period</option>
-                                <option value="4">Overtime</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Time (e.g., 5:30)</label>
-                            <input type="text" name="time_assisted" class="form-control" placeholder="5:30">
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label">Assist Type</label>
-                            <select name="assist_type" class="form-select">
-                                <option value="primary">Primary Assist</option>
-                                <option value="secondary">Secondary Assist</option>
-                            </select>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

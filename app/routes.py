@@ -2135,36 +2135,35 @@ def add_goal(game_id):
 @login_required
 def add_assist(game_id, goal_id):
     """Add an assist to a goal."""
-    from app.forms import AssistForm
-    
     game = Game.query.get_or_404(game_id)
     goal = Goal.query.get_or_404(goal_id)
-    form = AssistForm()
     
-    # Populate player choices for the team
-    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
-    form.assister_id.choices = [(player.id, f"{player.first_name} {player.last_name}") for player in team_players]
-    form.goal_id.data = goal_id
-    
-    if form.validate_on_submit():
-        try:
-            assist = Assist(
-                assister_id=form.assister_id.data,
-                game_id=game_id,
-                goal_id=goal_id,
-                period=form.period.data,
-                time_assisted=form.time_assisted.data,
-                assist_type=form.assist_type.data
-            )
-            
-            db.session.add(assist)
-            db.session.commit()
-            flash('Assist added successfully!', 'success')
-            
-        except Exception as e:
-            db.session.rollback()
-            flash('Error adding assist. Please try again.', 'danger')
-            print(f"Error adding assist: {str(e)}")
+    try:
+        # Get form data directly
+        assister_id = request.form.get('assister_id')
+        
+        if not assister_id:
+            flash('Please select a player for the assist.', 'danger')
+            return redirect(url_for('main.view_game', game_id=game_id))
+        
+        # Create assist with default values
+        assist = Assist(
+            assister_id=assister_id,
+            game_id=game_id,
+            goal_id=goal_id,
+            period=1,  # Default to 1st period
+            time_assisted='',  # No time tracking
+            assist_type='primary'  # Default to primary
+        )
+        
+        db.session.add(assist)
+        db.session.commit()
+        flash('Assist added successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash('Error adding assist. Please try again.', 'danger')
+        print(f"Error adding assist: {str(e)}")
     
     return redirect(url_for('main.view_game', game_id=game_id))
 
