@@ -46,11 +46,80 @@
     {% if practice_plans %}
         <div class="card practice-plans-card">
             <div class="card-header">
-                <h6 class="mb-0"><i class="bi bi-list-ul"></i> Practice Plans</h6>
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-list-ul"></i> Practice Plans</h6>
+                    <!-- Mobile View Toggle -->
+                    <div class="btn-group btn-group-sm d-md-none">
+                        <button class="btn btn-outline-primary" id="cardViewBtn" onclick="setMobileView('card')">
+                            <i class="bi bi-grid-3x3-gap"></i> Cards
+                        </button>
+                        <button class="btn btn-primary" id="tableViewBtn" onclick="setMobileView('table')">
+                            <i class="bi bi-table"></i> Table
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0 practice-plans-table">
+                <!-- Mobile Card View -->
+                <div id="mobileCardView" class="d-md-none p-3">
+                    {% for plan in practice_plans %}
+                        <div class="card mb-3 practice-card">
+                            <div class="card-body">
+                                <!-- Practice Header -->
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h6 class="mb-1 fw-bold">{{ plan.title }}</h6>
+                                        <small class="text-muted">{{ plan.date.strftime('%A, %B %d, %Y') }}</small>
+                                    </div>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
+                                            <i class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><a class="dropdown-item" href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}">
+                                                <i class="bi bi-eye"></i> View
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="{{ url_for('main.edit_practice_plan', plan_id=plan.id) }}">
+                                                <i class="bi bi-pencil"></i> Edit
+                                            </a></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item text-danger" href="#" onclick="deletePracticePlan({{ plan.id }}, '{{ plan.title }}')">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                <!-- Focus Areas -->
+                                <div class="mb-3">
+                                    <div class="d-flex gap-2 flex-wrap">
+                                        <span class="badge bg-primary">{{ plan.primary_focus }}</span>
+                                        {% if plan.secondary_focus and plan.secondary_focus != 'N/A' %}
+                                            <span class="badge bg-secondary">{{ plan.secondary_focus }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions -->
+                                <div class="d-flex gap-2">
+                                    <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" 
+                                       class="btn btn-outline-info btn-sm flex-fill">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a href="{{ url_for('main.edit_practice_plan', plan_id=plan.id) }}" 
+                                       class="btn btn-outline-primary btn-sm flex-fill">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Desktop Table View -->
+                <div id="desktopTableView" class="d-none d-md-block">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0 practice-plans-table">
                         <thead class="table-header-custom">
                             <tr>
                                 <th>Date</th>
@@ -99,6 +168,7 @@
                             {% endfor %}
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -145,5 +215,41 @@ function deletePracticePlan(planId, planTitle) {
     document.getElementById('deletePracticePlanForm').action = "{{ url_for('main.delete_practice_plan', plan_id=0) }}".replace('0', planId);
     new bootstrap.Modal(document.getElementById('deletePracticePlanModal')).show();
 }
+
+// Mobile view toggle
+function setMobileView(view) {
+    const cardView = document.getElementById('mobileCardView');
+    const tableView = document.getElementById('desktopTableView');
+    const cardBtn = document.getElementById('cardViewBtn');
+    const tableBtn = document.getElementById('tableViewBtn');
+    
+    if (view === 'card') {
+        cardView.style.display = 'block';
+        tableView.style.display = 'none';
+        cardBtn.classList.add('btn-primary');
+        cardBtn.classList.remove('btn-outline-primary');
+        tableBtn.classList.remove('btn-primary');
+        tableBtn.classList.add('btn-outline-primary');
+    } else {
+        cardView.style.display = 'none';
+        tableView.style.display = 'block';
+        tableBtn.classList.add('btn-primary');
+        tableBtn.classList.remove('btn-outline-primary');
+        cardBtn.classList.remove('btn-primary');
+        cardBtn.classList.add('btn-outline-primary');
+    }
+    
+    // Store preference
+    localStorage.setItem('mobilePracticeView', view);
+}
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // Restore mobile view preference
+    const savedView = localStorage.getItem('mobilePracticeView') || 'card';
+    if (window.innerWidth < 768) {
+        setMobileView(savedView);
+    }
+});
 </script>
 {% endblock %}
