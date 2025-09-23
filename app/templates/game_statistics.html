@@ -339,15 +339,15 @@ function setMobileView(view) {
     const tableBtn = document.getElementById('tableViewBtn');
     
     if (view === 'card') {
-        cardView.classList.remove('d-md-none');
-        tableView.classList.add('d-none');
+        cardView.style.display = 'block';
+        tableView.style.display = 'none';
         cardBtn.classList.add('btn-primary');
         cardBtn.classList.remove('btn-outline-primary');
         tableBtn.classList.remove('btn-primary');
         tableBtn.classList.add('btn-outline-primary');
     } else {
-        cardView.classList.add('d-md-none');
-        tableView.classList.remove('d-none');
+        cardView.style.display = 'none';
+        tableView.style.display = 'block';
         tableBtn.classList.add('btn-primary');
         tableBtn.classList.remove('btn-outline-primary');
         cardBtn.classList.remove('btn-primary');
