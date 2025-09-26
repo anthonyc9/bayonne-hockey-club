@@ -453,17 +453,19 @@
 
     <!-- Sidebar Navigation -->
     <div class="sidebar" id="sidebar">
-        <img src="https://i0.wp.com/bayonnehockeyclub.com/wp-content/uploads/2024/10/CircleBadger_F1-1.png?fit=1960%2C1960&ssl=1" 
-             alt="Bayonne Hockey Club Logo" 
-             class="logo">
+        <a href="{{ url_for('main.dashboard') }}">
+            <img src="https://i0.wp.com/bayonnehockeyclub.com/wp-content/uploads/2024/10/CircleBadger_F1-1.png?fit=1960%2C1960&ssl=1" 
+                 alt="Bayonne Hockey Club Logo" 
+                 class="logo">
+        </a>
         
         <div class="nav-links">
             <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
             <a href="{{ url_for('main.roster') }}">Rosters</a>
+            <a href="{{ url_for('main.practice_plans') }}">Practice Plans</a>
             <a href="{{ url_for('main.game_tracker') }}">Game Tracker</a>
             <a href="{{ url_for('main.contacts') }}">Contacts</a>
             <a href="{{ url_for('main.files') }}">Files</a>
-            <a href="{{ url_for('main.practice_plans') }}">Practice Plans</a>
         </div>
     </div>
 
