@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, make_response, send_file
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece, Game, Goal, Assist
+from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece, Game, Goal, Assist, Contact
 from app.player_forms import PlayerForm
+from app.forms import ContactForm, ContactFilterForm
 
 from app.email_utils import send_password_reset_email
 from app import db, bcrypt
@@ -2240,3 +2241,112 @@ def game_statistics():
                          filter_form=filter_form,
                          current_team=team_filter,
                          current_season=season_filter)
+
+
+### CONTACT MANAGEMENT ROUTES ###
+
+@main.route("/contacts")
+@login_required
+def contacts():
+    """Display all team contacts."""
+    # Get filter parameters
+    age_group_filter = request.args.get('age_group_filter', '')
+    team_name_filter = request.args.get('team_name_filter', '')
+    
+    # Build query
+    query = Contact.query.filter_by(user_id=current_user.id)
+    
+    if age_group_filter:
+        query = query.filter_by(age_group=age_group_filter)
+    
+    if team_name_filter:
+        query = query.filter(Contact.team_name.ilike(f'%{team_name_filter}%'))
+    
+    contacts = query.order_by(Contact.team_name, Contact.contact_name).all()
+    
+    # Create filter form
+    filter_form = ContactFilterForm()
+    filter_form.age_group_filter.choices = [('', 'All Age Groups')] + [
+        ('8U', '8U'), ('10U', '10U'), ('12U', '12U'), 
+        ('14U', '14U'), ('16U', '16U'), ('18U', '18U')
+    ]
+    
+    # Set current filter values
+    filter_form.age_group_filter.data = age_group_filter
+    filter_form.team_name_filter.data = team_name_filter
+    
+    return render_template("contacts.html", contacts=contacts, filter_form=filter_form)
+
+
+@main.route("/contacts/add", methods=["GET", "POST"])
+@login_required
+def add_contact():
+    """Add a new team contact."""
+    form = ContactForm()
+    
+    if form.validate_on_submit():
+        contact = Contact(
+            team_name=form.team_name.data,
+            age_group=form.age_group.data,
+            contact_name=form.contact_name.data,
+            phone_number=form.phone_number.data,
+            email=form.email.data,
+            notes=form.notes.data,
+            user_id=current_user.id
+        )
+        
+        db.session.add(contact)
+        db.session.commit()
+        flash('Contact added successfully!', 'success')
+        return redirect(url_for('main.contacts'))
+    
+    return render_template("contact_form.html", form=form, title="Add Contact")
+
+
+@main.route("/contacts/<int:contact_id>")
+@login_required
+def view_contact(contact_id):
+    """View a specific contact."""
+    contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
+    return render_template("contact_detail.html", contact=contact)
+
+
+@main.route("/contacts/<int:contact_id>/edit", methods=["GET", "POST"])
+@login_required
+def edit_contact(contact_id):
+    """Edit a contact."""
+    contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
+    form = ContactForm(obj=contact)
+    
+    if form.validate_on_submit():
+        contact.team_name = form.team_name.data
+        contact.age_group = form.age_group.data
+        contact.contact_name = form.contact_name.data
+        contact.phone_number = form.phone_number.data
+        contact.email = form.email.data
+        contact.notes = form.notes.data
+        contact.updated_at = datetime.utcnow()
+        
+        db.session.commit()
+        flash('Contact updated successfully!', 'success')
+        return redirect(url_for('main.contacts'))
+    
+    return render_template("contact_form.html", form=form, contact=contact, title="Edit Contact")
+
+
+@main.route("/contacts/<int:contact_id>/delete", methods=["POST"])
+@login_required
+def delete_contact(contact_id):
+    """Delete a contact."""
+    contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
+    
+    try:
+        db.session.delete(contact)
+        db.session.commit()
+        flash('Contact deleted successfully!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting contact. Please try again.', 'danger')
+        print(f"Error deleting contact: {str(e)}")
+    
+    return redirect(url_for('main.contacts'))

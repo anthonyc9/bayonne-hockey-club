@@ -106,3 +106,28 @@ class GameFilterForm(FlaskForm):
     submit = SubmitField('Filter')
 
 
+class ContactForm(FlaskForm):
+    """Form for creating/editing team contacts."""
+    team_name = StringField('Team Name', validators=[DataRequired(), Length(max=100)])
+    age_group = SelectField('Age Group', validators=[DataRequired()], choices=[
+        ('8U', '8U'),
+        ('10U', '10U'),
+        ('12U', '12U'),
+        ('14U', '14U'),
+        ('16U', '16U'),
+        ('18U', '18U')
+    ])
+    contact_name = StringField('Contact Name', validators=[DataRequired(), Length(max=100)])
+    phone_number = StringField('Phone Number', validators=[Optional(), Length(max=20)])
+    email = StringField('Email', validators=[Optional(), Email(), Length(max=120)])
+    notes = TextAreaField('Notes', validators=[Optional()])
+    submit = SubmitField('Save Contact')
+
+
+class ContactFilterForm(FlaskForm):
+    """Form for filtering contacts."""
+    age_group_filter = SelectField('Age Group', choices=[('', 'All Age Groups')], default='')
+    team_name_filter = StringField('Team Name', validators=[Optional()])
+    submit = SubmitField('Filter')
+
+

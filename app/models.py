@@ -475,3 +475,31 @@ class Assist(db.Model):
     
     def __repr__(self):
         return f"Assist(Player {self.assister_id} for Goal {self.goal_id})"
+
+
+class Contact(db.Model):
+    """Model for storing team contacts for game scheduling."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Team Information
+    team_name = db.Column(db.String(100), nullable=False)
+    age_group = db.Column(db.String(20), nullable=False)  # 8U, 10U, 12U, 14U, 16U, 18U
+    
+    # Contact Information
+    contact_name = db.Column(db.String(100), nullable=False)
+    phone_number = db.Column(db.String(20))
+    email = db.Column(db.String(120))
+    
+    # Additional Information
+    notes = db.Column(db.Text)
+    
+    # User who created this contact
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    
+    # Relationships
+    user = db.relationship('User', backref='contacts')
+    
+    def __repr__(self):
+        return f"Contact('{self.team_name}' - {self.contact_name} ({self.age_group}))"
