@@ -294,6 +294,34 @@
     font-size: 1rem !important;
 }
 
+/* Practice info cards styling */
+.practice-info-card {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff) !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 15px !important;
+    padding: 1.5rem 1rem !important;
+    text-align: center;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+.practice-info-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border-color: #007bff !important;
+}
+
+.practice-info-card i {
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    transition: all 0.3s ease;
+}
+
+.practice-info-card:hover i {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
 /* Remove redundant buttons from header */
 .header-actions {
     display: none;
@@ -428,25 +456,9 @@
                 </ol>
             </nav>
             
-            <!-- Header Section -->
+            <!-- Header Section - Simplified -->
             <div class="mb-4">
-                <!-- Title and Metadata - Full Width, Left Aligned -->
-                <div class="mb-3">
-                    <h1 class="h2 mb-2 text-start">{{ practice_plan.title }}</h1>
-                    <div class="d-flex flex-wrap align-items-center gap-3 text-start metadata-mobile">
-                        <span class="text-muted">
-                            <i class="bi bi-calendar me-1"></i>
-                            {{ practice_plan.date.strftime('%A, %B %d, %Y') }}
-                        </span>
-                        {% if practice_plan.duration %}
-                            <span class="text-muted">
-                                <i class="bi bi-clock me-1"></i>
-                                {{ practice_plan.duration }}
-                            </span>
-                        {% endif %}
-                        <span class="badge bg-primary fs-6">{{ practice_plan.team.name }}</span>
-                    </div>
-                </div>
+                <h1 class="h2 mb-3 text-start">{{ practice_plan.title }}</h1>
                 
                 <!-- Action Buttons - Hidden on desktop, shown in sidebar -->
                 <div class="d-flex flex-wrap gap-2 justify-content-start btn-group-mobile d-lg-none">
@@ -484,6 +496,38 @@
                     <h5 class="mb-0"><i class="bi bi-info-circle"></i> Practice Plan Details</h5>
                 </div>
                 <div class="card-body">
+                    <!-- Practice Information Row -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <div class="practice-info-card">
+                                <div class="text-center">
+                                    <i class="bi bi-calendar-event text-primary mb-2" style="font-size: 2rem;"></i>
+                                    <h6 class="text-muted mb-1">Date</h6>
+                                    <p class="fw-bold mb-0">{{ practice_plan.date.strftime('%A, %B %d, %Y') }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="practice-info-card">
+                                <div class="text-center">
+                                    <i class="bi bi-clock text-success mb-2" style="font-size: 2rem;"></i>
+                                    <h6 class="text-muted mb-1">Duration</h6>
+                                    <p class="fw-bold mb-0">{{ practice_plan.duration if practice_plan.duration else 'Not specified' }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="practice-info-card">
+                                <div class="text-center">
+                                    <i class="bi bi-people text-info mb-2" style="font-size: 2rem;"></i>
+                                    <h6 class="text-muted mb-1">Team</h6>
+                                    <p class="fw-bold mb-0">{{ practice_plan.team.name }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Focus Areas Row -->
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="focus-card practice-plan-card primary-focus">
