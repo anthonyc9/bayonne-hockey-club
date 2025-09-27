@@ -5,6 +5,7 @@ from app.player_forms import PlayerForm
 from app.forms import ContactForm, ContactFilterForm
 
 from app.email_utils import send_password_reset_email
+from app.utils import resolve_file_path, get_file_debug_info
 from app import db, bcrypt
 from datetime import datetime
 from flask import current_app
@@ -1038,9 +1039,12 @@ def download_file(file_id):
     try:
         file = File.query.filter_by(id=file_id).first_or_404()
         
-        # Check if file exists
-        if not os.path.exists(file.file_path):
-            print(f"File not found at path: {file.file_path}")
+        # Resolve the actual file path
+        file_path = resolve_file_path(file)
+        
+        if not file_path:
+            debug_info = get_file_debug_info(file)
+            print(f"File not found. Debug info: {debug_info}")
             flash('File not found on disk. Please contact an administrator.', 'error')
             return redirect(url_for('main.files'))
         
@@ -1049,7 +1053,7 @@ def download_file(file_id):
         db.session.commit()
         
         return send_file(
-            file.file_path,
+            file_path,
             as_attachment=True,
             download_name=file.original_name,
             mimetype=file.mime_type
@@ -1069,9 +1073,12 @@ def preview_file(file_id):
     try:
         file = File.query.filter_by(id=file_id).first_or_404()
         
-        # Check if file exists
-        if not os.path.exists(file.file_path):
-            print(f"File not found at path: {file.file_path}")
+        # Resolve the actual file path
+        file_path = resolve_file_path(file)
+        
+        if not file_path:
+            debug_info = get_file_debug_info(file)
+            print(f"File not found. Debug info: {debug_info}")
             flash('File not found on disk. Please contact an administrator.', 'error')
             return redirect(url_for('main.files'))
         
@@ -1079,27 +1086,27 @@ def preview_file(file_id):
         if file.file_extension.lower() == 'pdf':
             # For PDFs, send file with inline disposition for browser preview
             return send_file(
-                file.file_path,
+                file_path,
                 as_attachment=False,  # Don't download, display in browser
                 mimetype='application/pdf'
             )
         elif file.is_image:
             # For images, send file inline
             return send_file(
-                file.file_path,
+                file_path,
                 as_attachment=False,
                 mimetype=file.mime_type
             )
         elif file.file_extension.lower() in ['txt', 'csv', 'json', 'xml', 'html', 'css', 'js']:
             # For text files, read and display content
             try:
-                with open(file.file_path, 'r', encoding='utf-8') as f:
+                with open(file_path, 'r', encoding='utf-8') as f:
                     content = f.read()
                 return render_template('file_preview.html', file=file, content=content)
             except UnicodeDecodeError:
                 # If UTF-8 fails, try other encodings
                 try:
-                    with open(file.file_path, 'r', encoding='latin-1') as f:
+                    with open(file_path, 'r', encoding='latin-1') as f:
                         content = f.read()
                     return render_template('file_preview.html', file=file, content=content)
                 except:
