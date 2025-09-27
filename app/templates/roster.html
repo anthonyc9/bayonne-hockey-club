@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                 <h1 class="h3 mb-0"><i class="bi bi-people"></i> Team Roster Management</h1>
-                <div class="d-flex gap-2">
+                <div class="d-flex gap-2 btn-group-mobile">
                     <button class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#bulkImportModal">
                         <i class="bi bi-upload me-2"></i>Bulk Import
                     </button>
@@ -334,6 +334,160 @@
                         {% endif %}
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile Card Layout for Roster -->
+            <div class="d-md-none">
+                <div class="mobile-table-card">
+                    {% if players %}
+                        {% for player in players %}
+                            <div class="mobile-row">
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Player</span>
+                                    <span class="mobile-row-value">
+                                        <div class="fw-bold">{{ player.first_name }} {{ player.last_name }}</div>
+                                        <small class="text-muted">{{ player.team }} • {{ player.position or 'No position' }}</small>
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Season</span>
+                                    <span class="mobile-row-value">{{ player.season or '-' }}</span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Birth Year</span>
+                                    <span class="mobile-row-value">{{ player.birth_year or '-' }}</span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Jersey</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.jersey_number %}
+                                            <span class="badge bg-success">#{{ player.jersey_number }}</span>
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                        {% if player.jersey_size %}
+                                            <br><small>{{ player.jersey_size }}</small>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">USA Hockey</span>
+                                    <span class="mobile-row-value">{{ player.usa_hockey_number or '-' }}</span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Father</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.dad_first_name or player.dad_last_name %}
+                                            <div class="fw-semibold">{{ player.dad_first_name or '' }} {{ player.dad_last_name or '' }}</div>
+                                            {% if player.dad_phone %}
+                                                <small><i class="bi bi-phone"></i> {{ player.dad_phone }}</small><br>
+                                            {% endif %}
+                                            {% if player.dad_email %}
+                                                <small><i class="bi bi-envelope"></i> {{ player.dad_email }}</small>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Mother</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.mom_first_name or player.mom_last_name %}
+                                            <div class="fw-semibold">{{ player.mom_first_name or '' }} {{ player.mom_last_name or '' }}</div>
+                                            {% if player.mom_phone %}
+                                                <small><i class="bi bi-phone"></i> {{ player.mom_phone }}</small><br>
+                                            {% endif %}
+                                            {% if player.mom_email %}
+                                                <small><i class="bi bi-envelope"></i> {{ player.mom_email }}</small>
+                                            {% endif %}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Address</span>
+                                    <span class="mobile-row-value">{{ player.address or '-' }}</span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Tuition</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.tuition %}
+                                            ${{ "%.2f"|format(player.tuition) }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Amount Paid</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.amount_paid %}
+                                            ${{ "%.2f"|format(player.amount_paid) }}
+                                        {% else %}
+                                            <span class="text-muted">$0.00</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Balance</span>
+                                    <span class="mobile-row-value">
+                                        {% set balance = (player.tuition or 0) - (player.amount_paid or 0) %}
+                                        {% if balance > 0 %}
+                                            <span class="badge bg-danger">${{ "%.2f"|format(balance) }}</span>
+                                        {% elif balance < 0 %}
+                                            <span class="badge bg-success">${{ "%.2f"|format(balance) }}</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Status</span>
+                                    <span class="mobile-row-value">
+                                        {% if player.paid %}
+                                            <span class="badge bg-success">Paid</span>
+                                        {% else %}
+                                            <span class="badge bg-warning">Unpaid</span>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                
+                                <div class="mobile-row-item">
+                                    <span class="mobile-row-label">Actions</span>
+                                    <span class="mobile-row-value">
+                                        <div class="d-flex gap-1">
+                                            <a href="{{ url_for('main.edit_player', player_id=player.id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-danger" onclick="deletePlayer({{ player.id }}, '{{ player.first_name }} {{ player.last_name }}')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                            <h5 class="text-muted mt-3">No players found</h5>
+                            <p class="text-muted">Try adjusting your filters or add a new player.</p>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
