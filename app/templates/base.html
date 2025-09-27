@@ -1052,13 +1052,38 @@
                 position: relative !important;
             }
 
-            /* Remove any left side highlights */
+            /* Force remove any left side highlights and initials */
             .mobile-row::before {
                 display: none !important;
+                content: none !important;
             }
 
             .mobile-row::after {
                 display: none !important;
+                content: none !important;
+            }
+
+            /* Force remove any avatar or initial elements */
+            .player-avatar,
+            .player-avatar *,
+            .badge.bg-primary.rounded-circle,
+            .badge.rounded-circle {
+                display: none !important;
+                visibility: hidden !important;
+            }
+
+            /* Force remove any left border or highlight */
+            .mobile-row {
+                border-left: none !important;
+                border-left-width: 0 !important;
+                background: rgba(22, 32, 63, 0.95) !important;
+            }
+
+            /* Ensure no pseudo-elements create highlights */
+            .mobile-row *::before,
+            .mobile-row *::after {
+                display: none !important;
+                content: none !important;
             }
 
             /* Removed player avatar styling */
