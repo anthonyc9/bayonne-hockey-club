@@ -605,18 +605,38 @@
                 box-shadow: 0 14px 26px rgba(5, 8, 20, 0.42);
             }
 
-            /* Mobile-first table improvements */
+            /* Mobile-first improvements - better spacing */
+            .layout-shell {
+                padding: 0.5rem !important;
+                gap: 1rem !important;
+            }
+
+            .card {
+                margin-bottom: 1rem;
+                border-radius: 16px !important;
+            }
+
+            .card-body {
+                padding: 1rem !important;
+            }
+
+            .card-header {
+                padding: 1rem !important;
+                border-radius: 16px 16px 0 0 !important;
+            }
+
+            /* Mobile table improvements */
             .table-responsive {
-                border-radius: 15px !important;
+                border-radius: 16px !important;
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
-                margin: 0 -1rem;
-                padding: 0 1rem;
+                margin: 0;
+                padding: 0;
             }
 
             .table {
-                font-size: 0.875rem;
-                min-width: 600px;
+                font-size: 0.9rem;
+                min-width: 500px;
             }
 
             .table th,
@@ -632,7 +652,7 @@
                 letter-spacing: 0.5px;
             }
 
-            /* Mobile card layouts for tables */
+            /* Enhanced mobile card layouts */
             .mobile-table-card {
                 display: block;
             }
@@ -645,34 +665,68 @@
                 display: block;
                 background: rgba(22, 32, 63, 0.95);
                 border: 1px solid rgba(161, 178, 212, 0.24);
-                border-radius: 12px;
-                margin-bottom: 0.75rem;
-                padding: 1rem;
+                border-radius: 16px;
+                margin-bottom: 1rem;
+                padding: 1.25rem;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             }
 
             .mobile-row-item {
                 display: flex;
                 justify-content: space-between;
-                align-items: center;
-                padding: 0.5rem 0;
-                border-bottom: 1px solid rgba(161, 178, 212, 0.1);
+                align-items: flex-start;
+                padding: 0.75rem 0;
+                border-bottom: 1px solid rgba(161, 178, 212, 0.15);
+                gap: 1rem;
             }
 
             .mobile-row-item:last-child {
                 border-bottom: none;
+                padding-bottom: 0;
+            }
+
+            .mobile-row-item:first-child {
+                padding-top: 0;
             }
 
             .mobile-row-label {
                 font-weight: 600;
                 color: rgba(236, 243, 255, 0.9);
-                font-size: 0.8rem;
+                font-size: 0.85rem;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
+                min-width: 80px;
+                flex-shrink: 0;
             }
 
             .mobile-row-value {
                 color: var(--text-primary);
                 font-weight: 500;
+                font-size: 0.95rem;
+                text-align: right;
+                flex: 1;
+            }
+
+            /* Better mobile spacing for all content */
+            .content-sections {
+                gap: 1rem !important;
+            }
+
+            .glass-panel {
+                padding: 1rem !important;
+            }
+
+            .page-header {
+                margin-bottom: 1.5rem !important;
+            }
+
+            .page-title h1 {
+                font-size: 1.75rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+
+            .page-title p {
+                font-size: 0.9rem !important;
             }
 
             /* Hide desktop tables on mobile */
@@ -686,29 +740,77 @@
             }
         }
 
-        /* Extra small screens */
+        /* Extra small screens - optimized for phones */
         @media (max-width: 576px) {
             .layout-shell {
-                padding: 0.75rem;
+                padding: 0.25rem !important;
+                gap: 0.75rem !important;
             }
 
-            .table-responsive {
-                margin: 0 -0.75rem;
-                padding: 0 0.75rem;
+            .glass-panel {
+                padding: 0.75rem !important;
+            }
+
+            .card {
+                margin-bottom: 0.75rem !important;
+                border-radius: 12px !important;
+            }
+
+            .card-body {
+                padding: 0.75rem !important;
+            }
+
+            .card-header {
+                padding: 0.75rem !important;
+            }
+
+            .mobile-row {
+                padding: 1rem !important;
+                margin-bottom: 0.75rem !important;
+                border-radius: 12px !important;
             }
 
             .mobile-row-item {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.25rem;
+                padding: 0.5rem 0;
             }
 
             .mobile-row-label {
                 font-size: 0.75rem;
+                min-width: auto;
+                margin-bottom: 0.25rem;
             }
 
             .mobile-row-value {
                 font-size: 0.9rem;
+                text-align: left;
+                width: 100%;
+            }
+
+            .page-title h1 {
+                font-size: 1.5rem !important;
+            }
+
+            .page-title p {
+                font-size: 0.85rem !important;
+            }
+
+            .content-sections {
+                gap: 0.75rem !important;
+            }
+
+            /* Better button spacing on mobile */
+            .btn {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.9rem !important;
+                margin-bottom: 0.5rem;
+            }
+
+            .btn-group-mobile .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
             }
         }
     </style>
