@@ -1067,9 +1067,22 @@
             .player-avatar,
             .player-avatar *,
             .badge.bg-primary.rounded-circle,
-            .badge.rounded-circle {
+            .badge.rounded-circle,
+            .avatar-sm,
+            .bg-primary.text-white.rounded-circle,
+            .d-flex.align-items-center.justify-content-center.me-3 {
                 display: none !important;
                 visibility: hidden !important;
+            }
+
+            /* Target specific Bootstrap avatar classes */
+            .avatar-sm.bg-primary.text-white.rounded-circle.d-flex.align-items-center.justify-content-center.me-3 {
+                display: none !important;
+                visibility: hidden !important;
+                width: 0 !important;
+                height: 0 !important;
+                margin: 0 !important;
+                padding: 0 !important;
             }
 
             /* Force remove any left border or highlight */
@@ -1084,6 +1097,14 @@
             .mobile-row *::after {
                 display: none !important;
                 content: none !important;
+            }
+
+            /* Catch any element with avatar classes */
+            [class*="avatar-sm"],
+            [class*="bg-primary"][class*="text-white"][class*="rounded-circle"],
+            [class*="me-3"] {
+                display: none !important;
+                visibility: hidden !important;
             }
 
             /* Removed player avatar styling */
