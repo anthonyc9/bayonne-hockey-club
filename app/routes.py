@@ -1066,6 +1066,32 @@ def download_file(file_id):
         return redirect(url_for('main.files'))
 
 
+@main.route("/files/test-preview/<int:file_id>")
+@login_required
+def test_preview_file(file_id):
+    """Test route to debug file preview issues."""
+    try:
+        file = File.query.filter_by(id=file_id).first_or_404()
+        file_path = resolve_file_path(file)
+        
+        if not file_path:
+            return f"File not found. Debug info: {get_file_debug_info(file)}"
+        
+        return f"""
+        <h1>File Preview Debug</h1>
+        <p><strong>File ID:</strong> {file.id}</p>
+        <p><strong>Original Name:</strong> {file.original_name}</p>
+        <p><strong>Resolved Path:</strong> {file_path}</p>
+        <p><strong>File Exists:</strong> {os.path.exists(file_path)}</p>
+        <p><strong>File Size:</strong> {os.path.getsize(file_path)} bytes</p>
+        <p><strong>MIME Type:</strong> {file.mime_type}</p>
+        <p><strong>Extension:</strong> {file.file_extension}</p>
+        <p><a href="{url_for('main.preview_file', file_id=file.id)}" target="_blank">Try Preview</a></p>
+        <p><a href="{url_for('main.download_file', file_id=file.id)}">Try Download</a></p>
+        """
+    except Exception as e:
+        return f"Error: {str(e)}"
+
 @main.route("/files/preview/<int:file_id>")
 @login_required
 def preview_file(file_id):
@@ -1085,18 +1111,65 @@ def preview_file(file_id):
         # Check if file type is supported for preview
         if file.file_extension.lower() == 'pdf':
             # For PDFs, send file with inline disposition for browser preview
-            return send_file(
-                file_path,
-                as_attachment=False,  # Don't download, display in browser
-                mimetype='application/pdf'
-            )
+            print(f"Previewing PDF: {file_path}")
+            print(f"File size: {os.path.getsize(file_path)} bytes")
+            try:
+                return send_file(
+                    file_path,
+                    as_attachment=False,  # Don't download, display in browser
+                    mimetype='application/pdf',
+                    conditional=True  # Enable conditional requests
+                )
+            except Exception as e:
+                print(f"Error serving PDF: {str(e)}")
+                # Try alternative approach - serve as binary with proper headers
+                try:
+                    from flask import Response
+                    with open(file_path, 'rb') as f:
+                        content = f.read()
+                    return Response(
+                        content,
+                        mimetype='application/pdf',
+                        headers={
+                            'Content-Disposition': 'inline; filename="' + file.original_name + '"',
+                            'Content-Length': str(len(content))
+                        }
+                    )
+                except Exception as e2:
+                    print(f"Alternative PDF serving also failed: {str(e2)}")
+                    flash('Error loading PDF preview. Please try downloading the file.', 'error')
+                    return redirect(url_for('main.files'))
         elif file.is_image:
             # For images, send file inline
-            return send_file(
-                file_path,
-                as_attachment=False,
-                mimetype=file.mime_type
-            )
+            print(f"Previewing image: {file_path}")
+            print(f"File size: {os.path.getsize(file_path)} bytes")
+            print(f"MIME type: {file.mime_type}")
+            try:
+                return send_file(
+                    file_path,
+                    as_attachment=False,
+                    mimetype=file.mime_type,
+                    conditional=True
+                )
+            except Exception as e:
+                print(f"Error serving image: {str(e)}")
+                # Try alternative approach - serve as binary with proper headers
+                try:
+                    from flask import Response
+                    with open(file_path, 'rb') as f:
+                        content = f.read()
+                    return Response(
+                        content,
+                        mimetype=file.mime_type,
+                        headers={
+                            'Content-Disposition': 'inline; filename="' + file.original_name + '"',
+                            'Content-Length': str(len(content))
+                        }
+                    )
+                except Exception as e2:
+                    print(f"Alternative image serving also failed: {str(e2)}")
+                    flash('Error loading image preview. Please try downloading the file.', 'error')
+                    return redirect(url_for('main.files'))
         elif file.file_extension.lower() in ['txt', 'csv', 'json', 'xml', 'html', 'css', 'js']:
             # For text files, read and display content
             try:
