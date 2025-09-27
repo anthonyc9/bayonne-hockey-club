@@ -4,83 +4,185 @@
 
 {% block extra_css %}
 <style>
+/* Complete redesign with professional color scheme */
 .practice-plan-card {
     height: 100%;
-    transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    transition: all 0.3s ease;
+    background: #ffffff !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
 }
 
 .practice-plan-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15) !important;
+    border-color: #007bff !important;
 }
 
 .practice-plan-icon {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #007bff !important;
 }
 
 .practice-plan-badge {
-    font-size: 0.9rem;
-    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px !important;
+    font-weight: 600;
 }
 
 .sidebar-card {
     height: fit-content;
+    background: #ffffff !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
 }
 
-/* Fix faded text issues */
+/* Professional text styling */
 .text-muted {
-    color: rgba(108, 117, 125, 0.9) !important;
+    color: #6c757d !important;
     font-weight: 500;
 }
 
 .practice-plan-card h6 {
-    color: rgba(108, 117, 125, 0.9) !important;
-    font-weight: 600;
+    color: #495057 !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
 }
 
-/* Improve drill piece styling */
+/* Drill piece redesign */
 .drill-piece-item {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border: 1px solid rgba(0, 0, 0, 0.1) !important;
-    border-left: 4px solid #0d6efd !important;
-    transition: all 0.2s ease;
+    background: #ffffff !important;
+    border: 2px solid #e9ecef !important;
+    border-left: 6px solid #28a745 !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
 }
 
 .drill-piece-item:hover {
-    transform: translateX(2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    border-left-color: #0a58ca !important;
+    transform: translateX(4px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15) !important;
+    border-left-color: #20c997 !important;
 }
 
 .drill-piece-item:nth-child(even) {
-    border-left-color: #6f42c1 !important;
+    border-left-color: #fd7e14 !important;
+}
+
+.drill-piece-item:nth-child(even):hover {
+    border-left-color: #ffc107 !important;
 }
 
 .drill-piece-item:nth-child(odd) {
-    border-left-color: #0d6efd !important;
+    border-left-color: #28a745 !important;
 }
 
 .drill-piece-item h6 {
-    color: #0d6efd !important;
-    font-weight: 600;
+    color: #212529 !important;
+    font-weight: 700;
+    font-size: 1.2rem;
+    margin-bottom: 0.75rem;
 }
 
 .drill-piece-item:nth-child(even) h6 {
-    color: #6f42c1 !important;
+    color: #fd7e14 !important;
 }
 
-/* Improve card headers */
+/* Card headers with professional styling */
 .card-header {
-    background: linear-gradient(135deg, rgba(13, 110, 253, 0.1), rgba(13, 110, 253, 0.05)) !important;
-    border-bottom: 1px solid rgba(13, 110, 253, 0.2) !important;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+    border-bottom: 3px solid #007bff !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 1.25rem !important;
 }
 
 .card-header h5, .card-header h6 {
-    color: #0d6efd !important;
+    color: #007bff !important;
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin: 0;
+}
+
+/* Badge styling */
+.badge {
     font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 20px !important;
+}
+
+.bg-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+}
+
+.bg-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800) !important;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 8px !important;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Focus cards styling */
+.focus-card {
+    background: linear-gradient(135deg, #f8f9fa, #ffffff) !important;
+    border: 2px solid #dee2e6 !important;
+    border-radius: 12px !important;
+    padding: 2rem !important;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.focus-card:hover {
+    border-color: #007bff !important;
+    box-shadow: 0 6px 20px rgba(0,123,255,0.15) !important;
+}
+
+.focus-card h6 {
+    color: #495057 !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+/* Time badges */
+.time-badge {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    color: white !important;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 20px !important;
+    font-size: 0.9rem;
+}
+
+/* Description text */
+.drill-description {
+    color: #495057 !important;
+    font-weight: 500;
+    line-height: 1.6;
+    font-size: 1rem;
 }
 
 /* Remove redundant buttons from header */
@@ -273,29 +375,29 @@
                     <h5 class="mb-0"><i class="bi bi-info-circle"></i> Practice Plan Details</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="text-center p-3 border rounded bg-light practice-plan-card">
-                                <div class="text-center mb-2">
-                                    <i class="bi bi-target practice-plan-icon text-primary"></i>
+                            <div class="focus-card practice-plan-card">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-bullseye practice-plan-icon"></i>
                                 </div>
-                                <h6 class="text-center fw-bold text-muted mb-2">Primary Focus</h6>
+                                <h6>Primary Focus</h6>
                                 <div>
                                     <span class="badge bg-primary practice-plan-badge">{{ practice_plan.primary_focus }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="text-center p-3 border rounded bg-light practice-plan-card">
-                                <div class="text-center mb-2">
-                                    <i class="bi bi-target practice-plan-icon text-secondary"></i>
+                            <div class="focus-card practice-plan-card">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-bullseye practice-plan-icon" style="color: #fd7e14 !important;"></i>
                                 </div>
-                                <h6 class="text-center fw-bold text-muted mb-2">Secondary Focus</h6>
+                                <h6>Secondary Focus</h6>
                                 <div>
                                     {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
-                                        <span class="badge bg-secondary practice-plan-badge">{{ practice_plan.secondary_focus }}</span>
+                                        <span class="badge bg-warning practice-plan-badge">{{ practice_plan.secondary_focus }}</span>
                                     {% else %}
-                                        <span class="text-muted">N/A</span>
+                                        <span class="text-muted fw-bold">N/A</span>
                                     {% endif %}
                                 </div>
                             </div>
@@ -313,25 +415,25 @@
                     {% if practice_plan.drill_pieces %}
                         <div class="drill-pieces-list">
                             {% for drill in practice_plan.drill_pieces|sort(attribute='order_index') %}
-                                <div class="drill-piece-item border rounded p-3 mb-3 {% if loop.index % 2 == 0 %}bg-light{% endif %}">
+                                <div class="drill-piece-item p-4">
                                     <div class="row align-items-start">
                                         <div class="col-md-2 col-sm-3">
                                             <div class="text-center">
-                                                <div class="badge bg-primary fs-6 mb-2">{{ drill.time }}</div>
-                                                <div class="text-muted small">#{{ loop.index }}</div>
+                                                <div class="time-badge mb-2">{{ drill.time }}</div>
+                                                <div class="text-muted small fw-bold">#{{ loop.index }}</div>
                                             </div>
                                         </div>
                                         <div class="col-md-10 col-sm-9">
-                                            <h6 class="fw-bold mb-2">{{ drill.drill_name }}</h6>
+                                            <h6 class="mb-3">{{ drill.drill_name }}</h6>
                                             {% if drill.description %}
-                                                <p class="mb-2 text-dark" style="font-weight: 500; line-height: 1.5;">{{ drill.description }}</p>
+                                                <p class="mb-3 drill-description">{{ drill.description }}</p>
                                             {% else %}
-                                                <p class="mb-2 text-muted" style="font-style: italic; font-weight: 500;"><em>No description provided</em></p>
+                                                <p class="mb-3 text-muted fw-bold"><em>No description provided</em></p>
                                             {% endif %}
                                             {% if drill.link_attachment %}
-                                                <div class="mt-2">
-                                                    <a href="{{ drill.link_attachment }}" target="_blank" class="btn btn-sm btn-outline-primary">
-                                                        <i class="bi bi-link-45deg me-1"></i> View Link/Attachment
+                                                <div class="mt-3">
+                                                    <a href="{{ drill.link_attachment }}" target="_blank" class="btn btn-outline-primary btn-sm">
+                                                        <i class="bi bi-link-45deg me-2"></i> View Link/Attachment
                                                     </a>
                                                 </div>
                                             {% endif %}
@@ -342,50 +444,50 @@
                         </div>
                     {% else %}
                         <!-- Fallback to legacy structure if no drill pieces -->
-                        <div class="row g-3">
+                        <div class="row g-4">
                             <div class="col-md-4">
-                                <div class="h-100 p-3 border rounded bg-light">
-                                    <div class="text-center mb-2">
-                                        <i class="bi bi-clock text-warning fs-4"></i>
+                                <div class="focus-card practice-plan-card">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-clock text-warning" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h6 class="text-center fw-bold text-muted mb-2">Warm Up</h6>
+                                    <h6>Warm Up</h6>
                                     <div class="text-center">
                                         {% if practice_plan.warm_up %}
-                                            <p class="mb-0">{{ practice_plan.warm_up }}</p>
+                                            <p class="mb-0 drill-description">{{ practice_plan.warm_up }}</p>
                                         {% else %}
-                                            <span class="text-muted">Not specified</span>
+                                            <span class="text-muted fw-bold">Not specified</span>
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="col-md-4">
-                                <div class="h-100 p-3 border rounded bg-light">
-                                    <div class="text-center mb-2">
-                                        <i class="bi bi-list-ul text-primary fs-4"></i>
+                                <div class="focus-card practice-plan-card">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-list-ul text-primary" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h6 class="text-center fw-bold text-muted mb-2">Main Content</h6>
+                                    <h6>Main Content</h6>
                                     <div class="text-center">
                                         {% if practice_plan.main_content %}
-                                            <p class="mb-0">{{ practice_plan.main_content }}</p>
+                                            <p class="mb-0 drill-description">{{ practice_plan.main_content }}</p>
                                         {% else %}
-                                            <span class="text-muted">Not specified</span>
+                                            <span class="text-muted fw-bold">Not specified</span>
                                         {% endif %}
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="col-md-4">
-                                <div class="h-100 p-3 border rounded bg-light">
-                                    <div class="text-center mb-2">
-                                        <i class="bi bi-snow text-info fs-4"></i>
+                                <div class="focus-card practice-plan-card">
+                                    <div class="text-center mb-3">
+                                        <i class="bi bi-snow text-info" style="font-size: 2.5rem;"></i>
                                     </div>
-                                    <h6 class="text-center fw-bold text-muted mb-2">Cool Down</h6>
+                                    <h6>Cool Down</h6>
                                     <div class="text-center">
                                         {% if practice_plan.cool_down %}
-                                            <p class="mb-0">{{ practice_plan.cool_down }}</p>
+                                            <p class="mb-0 drill-description">{{ practice_plan.cool_down }}</p>
                                         {% else %}
-                                            <span class="text-muted">Not specified</span>
+                                            <span class="text-muted fw-bold">Not specified</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -401,34 +503,34 @@
                     <h5 class="mb-0"><i class="bi bi-gear"></i> Additional Information</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-3">
+                    <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="h-100 p-3 border rounded bg-light">
-                                <div class="text-center mb-2">
-                                    <i class="bi bi-tools text-info fs-4"></i>
+                            <div class="focus-card practice-plan-card">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-tools text-info" style="font-size: 2.5rem;"></i>
                                 </div>
-                                <h6 class="text-center fw-bold text-muted mb-2">Equipment Needed</h6>
+                                <h6>Equipment Needed</h6>
                                 <div class="text-center">
                                     {% if practice_plan.equipment_needed %}
-                                        <p class="mb-0">{{ practice_plan.equipment_needed }}</p>
+                                        <p class="mb-0 drill-description">{{ practice_plan.equipment_needed }}</p>
                                     {% else %}
-                                        <span class="text-muted">Not specified</span>
+                                        <span class="text-muted fw-bold">Not specified</span>
                                     {% endif %}
                                 </div>
                             </div>
                         </div>
                         
                         <div class="col-md-6">
-                            <div class="h-100 p-3 border rounded bg-light">
-                                <div class="text-center mb-2">
-                                    <i class="bi bi-sticky text-success fs-4"></i>
+                            <div class="focus-card practice-plan-card">
+                                <div class="text-center mb-3">
+                                    <i class="bi bi-sticky text-success" style="font-size: 2.5rem;"></i>
                                 </div>
-                                <h6 class="text-center fw-bold text-muted mb-2">Additional Notes</h6>
+                                <h6>Additional Notes</h6>
                                 <div class="text-center">
                                     {% if practice_plan.additional_notes %}
-                                        <p class="mb-0">{{ practice_plan.additional_notes }}</p>
+                                        <p class="mb-0 drill-description">{{ practice_plan.additional_notes }}</p>
                                     {% else %}
-                                        <span class="text-muted">None</span>
+                                        <span class="text-muted fw-bold">None</span>
                                     {% endif %}
                                 </div>
                             </div>
