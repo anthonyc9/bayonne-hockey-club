@@ -364,17 +364,6 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
 }
 
-.focus-description {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 1px solid #e9ecef;
-}
-
-.focus-description p {
-    font-size: 0.9rem;
-    line-height: 1.4;
-    margin: 0;
-}
 
 /* Remove redundant buttons from header */
 .header-actions {
@@ -585,27 +574,21 @@
                     <div class="row g-4">
                         <div class="col-md-6">
                             <div class="focus-area-card primary-focus">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h6 class="mb-0">Primary Focus</h6>
+                                <div class="text-center">
+                                    <h6 class="mb-3">Primary Focus</h6>
                                     <span class="badge bg-primary focus-badge">{{ practice_plan.primary_focus }}</span>
-                                </div>
-                                <div class="focus-description">
-                                    <p class="text-muted mb-0">The main skill or concept to be emphasized during this practice session.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="focus-area-card secondary-focus">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h6 class="mb-0">Secondary Focus</h6>
+                                <div class="text-center">
+                                    <h6 class="mb-3">Secondary Focus</h6>
                                     {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
                                         <span class="badge bg-warning focus-badge">{{ practice_plan.secondary_focus }}</span>
                                     {% else %}
                                         <span class="text-muted fw-bold">N/A</span>
                                     {% endif %}
-                                </div>
-                                <div class="focus-description">
-                                    <p class="text-muted mb-0">Additional skills or concepts to be reinforced during practice.</p>
                                 </div>
                             </div>
                         </div>
