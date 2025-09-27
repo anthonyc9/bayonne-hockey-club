@@ -605,37 +605,64 @@
                 box-shadow: 0 14px 26px rgba(5, 8, 20, 0.42);
             }
 
-            /* Mobile-first improvements - better spacing */
-            .layout-shell {
-                padding: 0.5rem !important;
-                gap: 1rem !important;
-            }
+        /* Mobile-first improvements - better spacing */
+        .layout-shell {
+            padding: 0.5rem !important;
+            gap: 1rem !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
 
-            .card {
-                margin-bottom: 1rem;
-                border-radius: 16px !important;
-            }
+        .card {
+            margin-bottom: 1rem;
+            border-radius: 16px !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
 
-            .card-body {
-                padding: 1rem !important;
-            }
+        .card-body {
+            padding: 1rem !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
 
-            .card-header {
-                padding: 1rem !important;
-                border-radius: 16px 16px 0 0 !important;
-            }
+        .card-header {
+            padding: 1rem !important;
+            border-radius: 16px 16px 0 0 !important;
+            max-width: 100% !important;
+        }
 
-            /* Fix mobile card truncation */
-            .mobile-table-card {
-                padding: 0 0.5rem !important;
-                margin: 0 !important;
-            }
+        /* Fix mobile card truncation */
+        .mobile-table-card {
+            padding: 0 0.5rem !important;
+            margin: 0 !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
 
-            .mobile-row {
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-                width: 100% !important;
-            }
+        .mobile-row {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Prevent viewport bleeding on tablets */
+        .container-fluid {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Fix tables on mobile */
+        .table-responsive {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+        }
+
+        .table {
+            max-width: 100% !important;
+        }
 
             /* Mobile table improvements */
             .table-responsive {
@@ -754,26 +781,45 @@
 
         /* Extra small screens - optimized for phones */
         @media (max-width: 576px) {
+            /* Prevent viewport bleeding */
+            body {
+                overflow-x: hidden !important;
+            }
+
+            .container-fluid {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+                max-width: 100% !important;
+            }
+
             .layout-shell {
                 padding: 0.25rem !important;
                 gap: 0.75rem !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
             }
 
             .glass-panel {
                 padding: 0.75rem !important;
+                max-width: 100% !important;
             }
 
             .card {
                 margin-bottom: 0.75rem !important;
                 border-radius: 12px !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
             }
 
             .card-body {
                 padding: 0.75rem !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
             }
 
             .card-header {
                 padding: 0.75rem !important;
+                max-width: 100% !important;
             }
 
             .mobile-row {
@@ -783,12 +829,63 @@
                 margin-left: 0 !important;
                 margin-right: 0 !important;
                 width: 100% !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
             }
 
             /* Ensure mobile cards have proper spacing */
             .mobile-table-card {
                 padding: 0 0.25rem !important;
                 margin: 0 !important;
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            /* Fix all tables on mobile */
+            .table-responsive {
+                max-width: 100% !important;
+                overflow-x: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            .table {
+                max-width: 100% !important;
+                table-layout: fixed !important;
+            }
+
+            /* Fix forms on mobile */
+            .form-control, .form-select {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Fix buttons on mobile */
+            .btn {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Fix modals on mobile */
+            .modal-dialog {
+                margin: 0.5rem !important;
+                max-width: calc(100% - 1rem) !important;
+            }
+
+            .modal-content {
+                max-width: 100% !important;
+            }
+
+            /* Fix navigation on mobile */
+            .navbar {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+
+            /* Fix any content that might bleed */
+            * {
+                max-width: 100% !important;
+                box-sizing: border-box !important;
             }
 
             .mobile-row-item {
