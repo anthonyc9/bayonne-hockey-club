@@ -1038,7 +1038,7 @@
                 margin-bottom: 0.5rem;
             }
 
-            /* Mobile roster improvements */
+            /* Mobile roster improvements - clean design */
             .mobile-row {
                 background: rgba(22, 32, 63, 0.95) !important;
                 border: 2px solid rgba(161, 178, 212, 0.6) !important;
@@ -1049,16 +1049,19 @@
                 margin-left: 0 !important;
                 margin-right: 0 !important;
                 width: 100% !important;
+                position: relative !important;
             }
 
-            .player-avatar .badge {
-                font-size: 0.8rem;
-                width: 2.5rem;
-                height: 2.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
+            /* Remove any left side highlights */
+            .mobile-row::before {
+                display: none !important;
             }
+
+            .mobile-row::after {
+                display: none !important;
+            }
+
+            /* Removed player avatar styling */
 
             .info-item {
                 background: rgba(255, 255, 255, 0.05);
