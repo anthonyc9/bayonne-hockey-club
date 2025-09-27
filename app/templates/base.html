@@ -1140,6 +1140,12 @@
                 color: rgba(236, 243, 255, 0.8) !important;
                 background: transparent !important;
                 transition: all 0.3s ease !important;
+                width: 2rem !important;
+                height: 2rem !important;
+                padding: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
             }
 
             .expand-toggle:hover {
@@ -1154,6 +1160,10 @@
 
             .expand-toggle[aria-expanded="true"] {
                 transform: rotate(180deg) !important;
+            }
+
+            .expand-toggle i {
+                font-size: 0.8rem !important;
             }
         }
     </style>
