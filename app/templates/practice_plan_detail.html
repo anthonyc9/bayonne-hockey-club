@@ -145,14 +145,18 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Focus cards styling */
+/* Focus cards styling - reduced padding */
 .focus-card {
     background: linear-gradient(135deg, #f8f9fa, #ffffff) !important;
     border: 2px solid #dee2e6 !important;
     border-radius: 12px !important;
-    padding: 2rem !important;
+    padding: 1.25rem !important;
     text-align: center;
     transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .focus-card:hover {
@@ -167,14 +171,19 @@
     margin-bottom: 1rem;
 }
 
-/* Time badges */
+/* Time badges - rounded edge boxes */
 .time-badge {
     background: linear-gradient(135deg, #007bff, #0056b3) !important;
     color: white !important;
     font-weight: 700;
-    padding: 0.5rem 1rem;
-    border-radius: 20px !important;
-    font-size: 0.9rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 25px !important;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
+    border: 2px solid rgba(255, 255, 255, 0.2) !important;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
 }
 
 /* Description text */
@@ -183,6 +192,36 @@
     font-weight: 500;
     line-height: 1.6;
     font-size: 1rem;
+}
+
+/* Attachment button redesign */
+.attachment-btn {
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
+    border: 2px solid #17a2b8 !important;
+    color: white !important;
+    border-radius: 25px !important;
+    padding: 0.5rem 1.25rem !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 8px rgba(23, 162, 184, 0.3) !important;
+}
+
+.attachment-btn:hover {
+    background: linear-gradient(135deg, #138496, #117a8b) !important;
+    border-color: #138496 !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.4) !important;
+    text-decoration: none !important;
+}
+
+.attachment-btn i {
+    font-size: 1rem !important;
 }
 
 /* Remove redundant buttons from header */
@@ -432,8 +471,8 @@
                                             {% endif %}
                                             {% if drill.link_attachment %}
                                                 <div class="mt-3">
-                                                    <a href="{{ drill.link_attachment }}" target="_blank" class="btn btn-outline-primary btn-sm">
-                                                        <i class="bi bi-link-45deg me-2"></i> View Link/Attachment
+                                                    <a href="{{ drill.link_attachment }}" target="_blank" class="attachment-btn">
+                                                        <i class="bi bi-link-45deg"></i> View Link/Attachment
                                                     </a>
                                                 </div>
                                             {% endif %}
