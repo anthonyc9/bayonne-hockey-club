@@ -1133,6 +1133,28 @@
                 padding: 0.75rem;
                 margin-top: 0.5rem;
             }
+
+            /* Expand toggle button styling */
+            .expand-toggle {
+                border: 1px solid rgba(161, 178, 212, 0.4) !important;
+                color: rgba(236, 243, 255, 0.8) !important;
+                background: transparent !important;
+                transition: all 0.3s ease !important;
+            }
+
+            .expand-toggle:hover {
+                background: rgba(161, 178, 212, 0.1) !important;
+                border-color: rgba(161, 178, 212, 0.6) !important;
+                color: var(--text-primary) !important;
+            }
+
+            .expand-toggle:focus {
+                box-shadow: 0 0 0 0.2rem rgba(161, 178, 212, 0.25) !important;
+            }
+
+            .expand-toggle[aria-expanded="true"] {
+                transform: rotate(180deg) !important;
+            }
         }
     </style>
 </head>

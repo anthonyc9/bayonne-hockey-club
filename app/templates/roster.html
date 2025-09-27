@@ -352,6 +352,9 @@
                                         </div>
                                     </div>
                                     <div class="d-flex gap-1">
+                                        <button class="btn btn-sm btn-outline-secondary expand-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#contact{{ player.id }}" aria-expanded="false">
+                                            <i class="bi bi-chevron-down"></i>
+                                        </button>
                                         <a href="{{ url_for('main.edit_player', player_id=player.id) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-pencil"></i>
                                         </a>
@@ -406,9 +409,6 @@
                                 
                                 <!-- Contact Info (Collapsible) -->
                                 <div class="contact-info">
-                                    <button class="btn btn-link btn-sm p-0 text-start w-100" type="button" data-bs-toggle="collapse" data-bs-target="#contact{{ player.id }}" aria-expanded="false">
-                                        <i class="bi bi-chevron-down me-1"></i> Contact Info
-                                    </button>
                                     <div class="collapse" id="contact{{ player.id }}">
                                         <div class="mt-2">
                                             {% if player.dad_first_name or player.dad_last_name %}
