@@ -1088,9 +1088,111 @@ def test_preview_file(file_id):
         <p><strong>Extension:</strong> {file.file_extension}</p>
         <p><a href="{url_for('main.preview_file', file_id=file.id)}" target="_blank">Try Preview</a></p>
         <p><a href="{url_for('main.download_file', file_id=file.id)}">Try Download</a></p>
+        <p><a href="{url_for('main.simple_preview', file_id=file.id)}" target="_blank">Try Simple Preview</a></p>
+        <p><a href="{url_for('main.iframe_preview', file_id=file.id)}" target="_blank">Try Iframe Preview</a></p>
         """
     except Exception as e:
         return f"Error: {str(e)}"
+
+@main.route("/files/simple-preview/<int:file_id>")
+@login_required
+def simple_preview(file_id):
+    """Simple file preview without complex logic."""
+    try:
+        file = File.query.filter_by(id=file_id).first_or_404()
+        file_path = resolve_file_path(file)
+        
+        if not file_path:
+            return "File not found", 404
+        
+        # Force no caching
+        from flask import Response
+        with open(file_path, 'rb') as f:
+            content = f.read()
+        
+        response = Response(
+            content,
+            mimetype=file.mime_type,
+            headers={
+                'Content-Disposition': 'inline; filename="' + file.original_name + '"',
+                'Content-Length': str(len(content)),
+                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                'Pragma': 'no-cache',
+                'Expires': '0'
+            }
+        )
+        return response
+    except Exception as e:
+        return f"Error: {str(e)}", 500
+
+@main.route("/files/iframe-preview/<int:file_id>")
+@login_required
+def iframe_preview(file_id):
+    """Iframe-based file preview."""
+    try:
+        file = File.query.filter_by(id=file_id).first_or_404()
+        file_path = resolve_file_path(file)
+        
+        if not file_path:
+            return "File not found", 404
+        
+        # Create a simple HTML page with iframe
+        if file.file_extension.lower() == 'pdf':
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Preview: {file.original_name}</title>
+                <style>
+                    body {{ margin: 0; padding: 0; }}
+                    iframe {{ width: 100vw; height: 100vh; border: none; }}
+                </style>
+            </head>
+            <body>
+                <iframe src="{url_for('main.simple_preview', file_id=file.id)}" 
+                        type="application/pdf">
+                    <p>Your browser does not support PDFs. 
+                    <a href="{url_for('main.download_file', file_id=file.id)}">Download the PDF</a></p>
+                </iframe>
+            </body>
+            </html>
+            """
+        elif file.is_image:
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Preview: {file.original_name}</title>
+                <style>
+                    body {{ margin: 0; padding: 0; text-align: center; }}
+                    img {{ max-width: 100vw; max-height: 100vh; }}
+                </style>
+            </head>
+            <body>
+                <img src="{url_for('main.simple_preview', file_id=file.id)}" 
+                     alt="{file.original_name}">
+            </body>
+            </html>
+            """
+        else:
+            return f"""
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>Preview: {file.original_name}</title>
+                <style>
+                    body {{ margin: 0; padding: 20px; font-family: Arial, sans-serif; }}
+                </style>
+            </head>
+            <body>
+                <h2>File Preview: {file.original_name}</h2>
+                <p>This file type cannot be previewed in the browser.</p>
+                <p><a href="{url_for('main.download_file', file_id=file.id)}">Download File</a></p>
+            </body>
+            </html>
+            """
+    except Exception as e:
+        return f"Error: {str(e)}", 500
 
 @main.route("/files/preview/<int:file_id>")
 @login_required
@@ -1114,12 +1216,17 @@ def preview_file(file_id):
             print(f"Previewing PDF: {file_path}")
             print(f"File size: {os.path.getsize(file_path)} bytes")
             try:
-                return send_file(
+                response = send_file(
                     file_path,
                     as_attachment=False,  # Don't download, display in browser
                     mimetype='application/pdf',
-                    conditional=True  # Enable conditional requests
+                    conditional=False  # Disable conditional requests to prevent 304
                 )
+                # Add cache-busting headers
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                return response
             except Exception as e:
                 print(f"Error serving PDF: {str(e)}")
                 # Try alternative approach - serve as binary with proper headers
@@ -1145,12 +1252,17 @@ def preview_file(file_id):
             print(f"File size: {os.path.getsize(file_path)} bytes")
             print(f"MIME type: {file.mime_type}")
             try:
-                return send_file(
+                response = send_file(
                     file_path,
                     as_attachment=False,
                     mimetype=file.mime_type,
-                    conditional=True
+                    conditional=False  # Disable conditional requests to prevent 304
                 )
+                # Add cache-busting headers
+                response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                response.headers['Pragma'] = 'no-cache'
+                response.headers['Expires'] = '0'
+                return response
             except Exception as e:
                 print(f"Error serving image: {str(e)}")
                 # Try alternative approach - serve as binary with proper headers
