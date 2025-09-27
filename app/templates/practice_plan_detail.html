@@ -21,16 +21,42 @@
 }
 
 .practice-plan-icon {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
     color: #007bff !important;
+    filter: drop-shadow(0 4px 8px rgba(0, 123, 255, 0.3));
+    transition: all 0.3s ease;
+}
+
+.focus-card:hover .practice-plan-icon {
+    transform: scale(1.1) rotate(5deg);
+    filter: drop-shadow(0 6px 12px rgba(0, 123, 255, 0.4));
+}
+
+.practice-plan-icon.secondary {
+    color: #fd7e14 !important;
+    filter: drop-shadow(0 4px 8px rgba(253, 126, 20, 0.3));
+}
+
+.focus-card:hover .practice-plan-icon.secondary {
+    filter: drop-shadow(0 6px 12px rgba(253, 126, 20, 0.4));
 }
 
 .practice-plan-badge {
-    font-size: 1rem;
-    padding: 0.75rem 1.5rem;
-    border-radius: 25px !important;
-    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 1rem 2rem;
+    border-radius: 30px !important;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2) !important;
+    border: 2px solid rgba(255,255,255,0.3) !important;
+    transition: all 0.3s ease;
+}
+
+.focus-card:hover .practice-plan-badge {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3) !important;
 }
 
 .sidebar-card {
@@ -145,30 +171,74 @@
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
 }
 
-/* Focus cards styling - reduced padding */
+/* Enhanced focus cards with visual appeal */
 .focus-card {
-    background: linear-gradient(135deg, #f8f9fa, #ffffff) !important;
-    border: 2px solid #dee2e6 !important;
-    border-radius: 12px !important;
-    padding: 1.25rem !important;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa) !important;
+    border: 3px solid transparent !important;
+    border-radius: 20px !important;
+    padding: 2rem 1.5rem !important;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1) !important;
+}
+
+.focus-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #28a745, #fd7e14, #dc3545);
+    border-radius: 20px 20px 0 0;
 }
 
 .focus-card:hover {
+    transform: translateY(-8px) scale(1.02) !important;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2) !important;
     border-color: #007bff !important;
-    box-shadow: 0 6px 20px rgba(0,123,255,0.15) !important;
+}
+
+.focus-card.primary-focus {
+    background: linear-gradient(135deg, #e3f2fd, #ffffff) !important;
+    border-color: #007bff !important;
+}
+
+.focus-card.secondary-focus {
+    background: linear-gradient(135deg, #fff3e0, #ffffff) !important;
+    border-color: #fd7e14 !important;
 }
 
 .focus-card h6 {
-    color: #495057 !important;
-    font-weight: 700;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+    color: #2c3e50 !important;
+    font-weight: 800;
+    font-size: 1.3rem;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.focus-card h6::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: linear-gradient(90deg, #007bff, #28a745);
+    border-radius: 2px;
+}
+
+.focus-card.secondary-focus h6::after {
+    background: linear-gradient(90deg, #fd7e14, #ffc107);
 }
 
 /* Time badges - rounded edge boxes */
@@ -416,27 +486,27 @@
                 <div class="card-body">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="focus-card practice-plan-card">
+                            <div class="focus-card practice-plan-card primary-focus">
                                 <div class="text-center mb-3">
                                     <i class="bi bi-bullseye practice-plan-icon"></i>
                                 </div>
-                                <h6>Primary Focus</h6>
+                                <h6 class="mb-4">Primary Focus</h6>
                                 <div>
                                     <span class="badge bg-primary practice-plan-badge">{{ practice_plan.primary_focus }}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="focus-card practice-plan-card">
+                            <div class="focus-card practice-plan-card secondary-focus">
                                 <div class="text-center mb-3">
-                                    <i class="bi bi-bullseye practice-plan-icon" style="color: #fd7e14 !important;"></i>
+                                    <i class="bi bi-bullseye practice-plan-icon secondary"></i>
                                 </div>
-                                <h6>Secondary Focus</h6>
+                                <h6 class="mb-4">Secondary Focus</h6>
                                 <div>
                                     {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
                                         <span class="badge bg-warning practice-plan-badge">{{ practice_plan.secondary_focus }}</span>
                                     {% else %}
-                                        <span class="text-muted fw-bold">N/A</span>
+                                        <span class="text-muted fw-bold fs-5">N/A</span>
                                     {% endif %}
                                 </div>
                             </div>
