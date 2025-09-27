@@ -604,6 +604,112 @@
                 display: grid;
                 box-shadow: 0 14px 26px rgba(5, 8, 20, 0.42);
             }
+
+            /* Mobile-first table improvements */
+            .table-responsive {
+                border-radius: 15px !important;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                margin: 0 -1rem;
+                padding: 0 1rem;
+            }
+
+            .table {
+                font-size: 0.875rem;
+                min-width: 600px;
+            }
+
+            .table th,
+            .table td {
+                padding: 0.75rem 0.5rem;
+                white-space: nowrap;
+            }
+
+            .table th {
+                font-size: 0.8rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            /* Mobile card layouts for tables */
+            .mobile-table-card {
+                display: block;
+            }
+
+            .mobile-table-card .table {
+                display: none;
+            }
+
+            .mobile-table-card .mobile-row {
+                display: block;
+                background: rgba(22, 32, 63, 0.95);
+                border: 1px solid rgba(161, 178, 212, 0.24);
+                border-radius: 12px;
+                margin-bottom: 0.75rem;
+                padding: 1rem;
+            }
+
+            .mobile-row-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0.5rem 0;
+                border-bottom: 1px solid rgba(161, 178, 212, 0.1);
+            }
+
+            .mobile-row-item:last-child {
+                border-bottom: none;
+            }
+
+            .mobile-row-label {
+                font-weight: 600;
+                color: rgba(236, 243, 255, 0.9);
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .mobile-row-value {
+                color: var(--text-primary);
+                font-weight: 500;
+            }
+
+            /* Hide desktop tables on mobile */
+            .d-none.d-md-block {
+                display: none !important;
+            }
+
+            /* Show mobile layouts */
+            .d-md-none {
+                display: block !important;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 576px) {
+            .layout-shell {
+                padding: 0.75rem;
+            }
+
+            .table-responsive {
+                margin: 0 -0.75rem;
+                padding: 0 0.75rem;
+            }
+
+            .mobile-row-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+
+            .mobile-row-label {
+                font-size: 0.75rem;
+            }
+
+            .mobile-row-value {
+                font-size: 0.9rem;
+            }
         }
     </style>
 </head>
