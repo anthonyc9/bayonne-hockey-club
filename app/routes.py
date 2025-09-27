@@ -1090,6 +1090,7 @@ def test_preview_file(file_id):
         <p><a href="{url_for('main.download_file', file_id=file.id)}">Try Download</a></p>
         <p><a href="{url_for('main.simple_preview', file_id=file.id)}" target="_blank">Try Simple Preview</a></p>
         <p><a href="{url_for('main.iframe_preview', file_id=file.id)}" target="_blank">Try Iframe Preview</a></p>
+        <p><a href="{url_for('main.basic_test', file_id=file.id)}" target="_blank">Try Basic Test</a></p>
         """
     except Exception as e:
         return f"Error: {str(e)}"
@@ -1099,10 +1100,18 @@ def test_preview_file(file_id):
 def simple_preview(file_id):
     """Simple file preview without complex logic."""
     try:
+        print(f"=== SIMPLE PREVIEW DEBUG START ===")
+        print(f"File ID: {file_id}")
+        print(f"Current user: {current_user}")
+        
         file = File.query.filter_by(id=file_id).first_or_404()
+        print(f"File found: {file.original_name}")
+        
         file_path = resolve_file_path(file)
+        print(f"Resolved path: {file_path}")
         
         if not file_path:
+            print("File not found on disk")
             return "File not found", 404
         
         # Force no caching
@@ -1124,6 +1133,26 @@ def simple_preview(file_id):
         return response
     except Exception as e:
         return f"Error: {str(e)}", 500
+
+@main.route("/files/basic-test/<int:file_id>")
+@login_required
+def basic_test(file_id):
+    """Basic test route to verify routing works."""
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Basic Test - File {file_id}</title>
+    </head>
+    <body>
+        <h1>Basic Test Route Working!</h1>
+        <p>File ID: {file_id}</p>
+        <p>Current User: {current_user}</p>
+        <p>Time: {datetime.now()}</p>
+        <p><a href="{url_for('main.files')}">Back to Files</a></p>
+    </body>
+    </html>
+    """
 
 @main.route("/files/iframe-preview/<int:file_id>")
 @login_required
@@ -1199,10 +1228,16 @@ def iframe_preview(file_id):
 def preview_file(file_id):
     """Preview a file in the browser (for supported formats)."""
     try:
+        print(f"=== PREVIEW DEBUG START ===")
+        print(f"File ID: {file_id}")
+        print(f"Current user: {current_user}")
+        
         file = File.query.filter_by(id=file_id).first_or_404()
+        print(f"File found: {file.original_name}")
         
         # Resolve the actual file path
         file_path = resolve_file_path(file)
+        print(f"Resolved path: {file_path}")
         
         if not file_path:
             debug_info = get_file_debug_info(file)
