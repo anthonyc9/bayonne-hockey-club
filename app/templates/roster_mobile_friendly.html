@@ -19,55 +19,6 @@
                 </div>
             </div>
             
-            <!-- Key Metrics Dashboard -->
-            <div class="row g-3 mb-4">
-                <div class="col-md col-6">
-                    <div class="card bg-primary text-white stats-card-mobile">
-                        <div class="card-body text-center py-3">
-                            <h4 class="mb-0">{{ players|length }}</h4>
-                            <small>Total Players</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md col-6">
-                    <div class="card bg-danger text-white stats-card-mobile">
-                        <div class="card-body text-center py-3">
-                            <h4 class="mb-0">{{ players|rejectattr('paid_tuition')|list|length }}</h4>
-                            <small>Unpaid Tuition</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md col-6">
-                    <div class="card bg-warning text-white stats-card-mobile">
-                        <div class="card-body text-center py-3">
-                            <h4 class="mb-0">{{ players|rejectattr('signed_waiver')|list|length }}</h4>
-                            <small>Missing Waivers</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md col-6">
-                    <div class="card bg-info text-white stats-card-mobile">
-                        <div class="card-body text-center py-3">
-                            <h4 class="mb-0">{{ players|rejectattr('birth_certificate')|list|length }}</h4>
-                            <small>Missing Birth Certs</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md col-12">
-                    <div class="card bg-secondary text-white stats-card-mobile">
-                        <div class="card-body text-center py-3">
-                            {% set missing_usa_hockey = [] %}
-                            {% for player in players %}
-                                {% if not player.usa_hockey_number or player.usa_hockey_number == '' %}
-                                    {% set _ = missing_usa_hockey.append(player) %}
-                                {% endif %}
-                            {% endfor %}
-                            <h4 class="mb-0">{{ missing_usa_hockey|length }}</h4>
-                            <small>Missing USA Hockey #</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -133,7 +84,7 @@
                     </a>
                     <a href="{{ url_for('main.export_roster', team=current_team, season=current_season, paid=current_paid if current_paid else None, search=search) }}" 
                        class="btn btn-success d-none d-md-inline-block">
-                        <i class="bi bi-download"></i> Export
+                        <i class="bi bi-download me-2"></i>Export
                     </a>
                 </div>
             </form>

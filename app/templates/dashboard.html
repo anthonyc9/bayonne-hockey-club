@@ -1,263 +1,339 @@
 {% extends "base.html" %}
 
+{% block title %}Dashboard • Bayonne Hockey Club{% endblock %}
+
 {% block content %}
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-0">Dashboard</h1>
-            <p class="text-muted">Bayonne Hockey Club | Coach's Portal</p>
+<section class="glass-panel">
+    <header class="page-header">
+        <div class="page-title">
+            <h1>Dashboard</h1>
+            <p>Bayonne Hockey Club • Coaches Portal</p>
         </div>
-    </div>
+    </header>
 
-    <!-- Practice Schedule -->
-    <div class="card mb-4">
-        <div class="card-header">
-            <h5 class="card-title mb-0">
-                <i class="bi bi-calendar-event me-2"></i>
-                Practice Schedule
-            </h5>
-        </div>
-        <div class="card-body">
-            <!-- Mobile Cards View -->
-            <div class="d-md-none">
-                <!-- Monday -->
-                <div class="card border-danger mb-3">
-                    <div class="card-header bg-danger text-white">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Monday
-                        </h6>
+    <div class="content-sections">
+        <article class="card">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-calendar-event" style="font-size: 1.5rem; color: #4fb7ff;"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-success fs-6">10U</span>
-                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wednesday 8U -->
-                <div class="card border-warning mb-3">
-                    <div class="card-header bg-warning text-dark">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Wednesday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-info fs-6">8U</span>
-                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
-                        </div>
-                        <div class="small text-muted">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Special times: 6:00-7:00 PM on 9/3 & 9/10
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Wednesday Learn to Play -->
-                <div class="card border-warning mb-3">
-                    <div class="card-header bg-warning text-dark">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Wednesday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="badge bg-secondary fs-6">Learn to Play</span>
-                            <span class="text-muted fw-bold">6:00 PM - 7:00 PM</span>
-                        </div>
-                        <div class="small text-muted">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Starting 9/17 through 11/5 only
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Thursday -->
-                <div class="card border-primary mb-3">
-                    <div class="card-header bg-primary text-white">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Thursday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-primary fs-6">12U</span>
-                            <span class="text-muted fw-bold">7:00 PM - 8:00 PM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Saturday 8U -->
-                <div class="card border-success mb-3">
-                    <div class="card-header bg-success text-white">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Saturday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-warning text-dark fs-6">8U</span>
-                            <span class="text-muted fw-bold">7:30 AM - 8:30 AM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Saturday 10U -->
-                <div class="card border-success mb-3">
-                    <div class="card-header bg-success text-white">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Saturday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-success fs-6">10U</span>
-                            <span class="text-muted fw-bold">8:45 AM - 10:00 AM</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Saturday 12U -->
-                <div class="card border-success mb-3">
-                    <div class="card-header bg-success text-white">
-                        <h6 class="card-title mb-0">
-                            <i class="bi bi-calendar-day me-2"></i>
-                            Saturday
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="badge bg-primary fs-6">12U</span>
-                            <span class="text-muted fw-bold">10:15 AM - 11:30 AM</span>
-                        </div>
+                    <div>
+                        <h5 class="mb-0">Practice Schedule</h5>
+                        <small class="text-muted">Upcoming ice slots across all programs</small>
                     </div>
                 </div>
             </div>
+            <div class="card-body">
+                <div class="d-md-none d-grid gap-3">
+                    <div class="card bg-transparent border border-light border-opacity-10 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Monday</span>
+                                <span class="fw-semibold">7:00 PM – 8:00 PM</span>
+                            </div>
+                            <div class="text-muted">10U Practice</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-warning border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-info">Wednesday</span>
+                                <span class="fw-semibold">7:00 PM – 8:00 PM</span>
+                            </div>
+                            <div class="text-muted">8U Practice • 6:00–7:00 PM on 9/3 & 9/10</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-warning border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-secondary">Wednesday</span>
+                                <span class="fw-semibold">6:00 PM – 7:00 PM</span>
+                            </div>
+                            <div class="text-muted">Learn to Play • 9/17 through 11/5</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-primary border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">Thursday</span>
+                                <span class="fw-semibold">7:00 PM – 8:00 PM</span>
+                            </div>
+                            <div class="text-muted">12U Practice</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-success border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-warning text-dark">Saturday</span>
+                                <span class="fw-semibold">7:30 AM – 8:30 AM</span>
+                            </div>
+                            <div class="text-muted">8U Practice</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-success border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-success">Saturday</span>
+                                <span class="fw-semibold">8:45 AM – 10:00 AM</span>
+                            </div>
+                            <div class="text-muted">10U Practice</div>
+                        </div>
+                    </div>
+                    <div class="card bg-transparent border border-success border-opacity-25 shadow-sm">
+                        <div class="card-body d-flex flex-column gap-2">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="badge bg-primary">Saturday</span>
+                                <span class="fw-semibold">10:15 AM – 11:30 AM</span>
+                            </div>
+                            <div class="text-muted">12U Practice</div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Desktop Table View -->
-            <div class="d-none d-md-block">
-                <div class="table-responsive">
-                    <table class="table table-sm table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Day</th>
-                                <th>Team</th>
-                                <th>Time</th>
-                                <th>Notes</th>
+                <div class="d-none d-md-block">
+                    <div class="table-responsive rounded-4 border border-light border-opacity-10" style="border-radius: 20px; overflow: hidden;">
+                        <table class="table align-middle mb-0 table-striped" style="border-radius: 20px; overflow: hidden;">
+                            <thead>
+                                <tr class="text-uppercase small" style="color: rgba(236,243,255,0.9);">
+                                    <th class="py-3" style="border-top-left-radius: 20px;">Day</th>
+                                    <th class="py-3">Program</th>
+                                    <th class="py-3">Ice Time</th>
+                                    <th class="py-3" style="border-top-right-radius: 20px;">Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="fw-semibold">Monday</td>
+                                    <td><span class="badge bg-success">10U</span></td>
+                                    <td>7:00 PM – 8:00 PM</td>
+                                    <td class="text-muted">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Wednesday</td>
+                                    <td><span class="badge bg-info">8U</span></td>
+                                    <td>7:00 PM – 8:00 PM</td>
+                                    <td class="text-muted">6:00–7:00 PM on 9/3 & 9/10</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Wednesday</td>
+                                    <td><span class="badge bg-secondary">Learn to Play</span></td>
+                                    <td>6:00 PM – 7:00 PM</td>
+                                    <td class="text-muted">9/17 through 11/5 only</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Thursday</td>
+                                    <td><span class="badge bg-primary">12U</span></td>
+                                    <td>7:00 PM – 8:00 PM</td>
+                                    <td class="text-muted">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Saturday</td>
+                                    <td><span class="badge bg-warning text-dark">8U</span></td>
+                                    <td>7:30 AM – 8:30 AM</td>
+                                    <td class="text-muted">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Saturday</td>
+                                    <td><span class="badge bg-success">10U</span></td>
+                                    <td>8:45 AM – 10:00 AM</td>
+                                    <td class="text-muted">—</td>
+                                </tr>
+                                <tr>
+                                    <td class="fw-semibold">Saturday</td>
+                                    <td><span class="badge bg-primary">12U</span></td>
+                                    <td>10:15 AM – 11:30 AM</td>
+                                    <td class="text-muted">—</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Latest Game Results Section -->
+        <article class="card">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-trophy" style="font-size: 1.5rem; color: #2fba7f;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Latest Game Results</h5>
+                        <small class="text-muted">Recent game outcomes by team</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if latest_games %}
+                    <div class="row g-3">
+                        {% for team, games in latest_games.items() %}
+                            {% if games %}
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card bg-transparent border border-light border-opacity-10">
+                                    <div class="card-body">
+                                        <h6 class="card-title mb-3">{{ team }} Team</h6>
+                                        <div class="d-grid gap-2">
+                                            {% for game in games %}
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <div class="fw-semibold">{{ game.opponent_team }}</div>
+                                                    <small class="text-muted">{{ game.game_date.strftime('%m/%d') }}</small>
+                                                </div>
+                                                <div class="text-end">
+                                                    <div class="fw-bold">
+                                                        {% if game.badgers_score > game.opponent_score %}
+                                                            <span class="text-success">{{ game.badgers_score }}-{{ game.opponent_score }}</span>
+                                                        {% elif game.badgers_score < game.opponent_score %}
+                                                            <span class="text-danger">{{ game.badgers_score }}-{{ game.opponent_score }}</span>
+                                                        {% else %}
+                                                            <span class="text-warning">{{ game.badgers_score }}-{{ game.opponent_score }}</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <small class="text-muted">
+                                                        {% if game.badgers_score > game.opponent_score %}W{% elif game.badgers_score < game.opponent_score %}L{% else %}T{% endif %}
+                                                    </small>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-trophy text-muted" style="font-size: 2rem;"></i>
+                        <p class="text-muted mt-2">No game results yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+
+        <!-- Latest Practice Plans Section -->
+        <article class="card">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-journal-richtext" style="font-size: 1.5rem; color: #4fb7ff;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Latest Practice Plans</h5>
+                        <small class="text-muted">Recently added practice sessions</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if latest_practice_plans %}
+                    <div class="row g-3">
+                        {% for plan in latest_practice_plans %}
+                        <div class="col-12 col-md-6 col-lg-4">
+                            <div class="card bg-transparent border border-light border-opacity-10">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ plan.title }}</h6>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <span class="badge bg-primary">{{ plan.team.name if plan.team else 'General' }}</span>
+                                        <small class="text-muted">{{ plan.date.strftime('%m/%d/%Y') }}</small>
+                                    </div>
+                                    <p class="card-text text-muted small">{{ plan.primary_focus }}</p>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <small class="text-muted">{{ plan.duration or '60 min' }}</small>
+                                        <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" class="btn btn-outline-light btn-sm">
+                                            <i class="bi bi-eye me-1"></i>View
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-journal-richtext text-muted" style="font-size: 2rem;"></i>
+                        <p class="text-muted mt-2">No practice plans yet</p>
+                    </div>
+                {% endif %}
+            </div>
+        </article>
+
+        <article class="card">
+            <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                        <i class="bi bi-table" style="font-size: 1.5rem; color: #94a3b8;"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-0">Team Overview</h5>
+                        <small class="text-muted">Comprehensive team statistics and performance</small>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive rounded-4 border border-light border-opacity-10" style="border-radius: 20px; overflow: hidden;">
+                    <table class="table align-middle mb-0 table-striped" style="border-radius: 20px; overflow: hidden;">
+                        <thead>
+                            <tr class="text-uppercase small text-muted">
+                                <th class="py-3" style="border-top-left-radius: 20px;">Team</th>
+                                <th class="py-3">Players</th>
+                                <th class="py-3">Record</th>
+                                <th class="py-3">Unpaid</th>
+                                <th class="py-3" style="border-top-right-radius: 20px;">Next Practice</th>
                             </tr>
                         </thead>
                         <tbody>
+                            {% for team, count in team_counts %}
+                            {% set stats = team_stats.get(team, {}) %}
                             <tr>
-                                <td><strong>Monday</strong></td>
-                                <td><span class="badge bg-success">10U</span></td>
-                                <td>7:00 PM - 8:00 PM</td>
-                                <td>-</td>
+                                <td class="fw-semibold">{{ team }}</td>
+                                <td>
+                                    <span class="badge bg-primary" style="min-width: 54px; background-color: #e24c77 !important;">{{ count }}</span>
+                                </td>
+                                <td>
+                                    {% if stats.wins is defined and stats.losses is defined and stats.ties is defined %}
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-success">{{ stats.wins }}W</span>
+                                            <span class="badge bg-danger">{{ stats.losses }}L</span>
+                                            {% if stats.ties > 0 %}
+                                                <span class="badge bg-warning">{{ stats.ties }}T</span>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">No games</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge bg-danger">{{ stats.unpaid_count }}</span>
+                                            <small class="text-muted">unpaid</small>
+                                        </div>
+                                    {% else %}
+                                        <span class="badge bg-success">All Paid</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if stats.next_practice %}
+                                        <div>
+                                            <div class="fw-semibold">{{ stats.next_practice.title }}</div>
+                                            <small class="text-muted">{{ stats.next_practice.date.strftime('%m/%d/%Y') }}</small>
+                                            {% if stats.next_practice.duration %}
+                                                <br><small class="text-muted">{{ stats.next_practice.duration }}</small>
+                                            {% endif %}
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">No upcoming practices</span>
+                                    {% endif %}
+                                </td>
                             </tr>
-                            <tr>
-                                <td><strong>Wednesday</strong></td>
-                                <td><span class="badge bg-info">8U</span></td>
-                                <td>7:00 PM - 8:00 PM</td>
-                                <td>6:00-7:00 PM on 9/3 & 9/10</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Wednesday</strong></td>
-                                <td><span class="badge bg-secondary">Learn to Play</span></td>
-                                <td>6:00 PM - 7:00 PM</td>
-                                <td>9/17 through 11/5 only</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Thursday</strong></td>
-                                <td><span class="badge bg-primary">12U</span></td>
-                                <td>7:00 PM - 8:00 PM</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Saturday</strong></td>
-                                <td><span class="badge bg-warning text-dark">8U</span></td>
-                                <td>7:30 AM - 8:30 AM</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Saturday</strong></td>
-                                <td><span class="badge bg-success">10U</span></td>
-                                <td>8:45 AM - 10:00 AM</td>
-                                <td>-</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Saturday</strong></td>
-                                <td><span class="badge bg-primary">12U</span></td>
-                                <td>10:15 AM - 11:30 AM</td>
-                                <td>-</td>
-                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </article>
     </div>
-
-    <!-- Stat Boxes -->
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h4 class="card-title h5">Total Players</h4>
-                    <p class="h2 mb-0 text-primary">{{ total_players }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h4 class="card-title h5">Unpaid Players</h4>
-                    <p class="h2 mb-0 text-danger">{{ unpaid_count }}</p>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4">
-            <div class="card">
-                <div class="card-body text-center">
-                    <h4 class="card-title h5">Total Teams</h4>
-                    <p class="h2 mb-0 text-success">{{ team_counts|length }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Team Overview -->
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title mb-0">Team Overview</h5>
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Team</th>
-                            <th>Players</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for team, count in team_counts %}
-                        <tr>
-                            <td>{{ team }}</td>
-                            <td>{{ count }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-</div>
+</section>
 {% endblock %}

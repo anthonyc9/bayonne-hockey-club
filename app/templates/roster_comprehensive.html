@@ -19,57 +19,6 @@
                 </div>
             </div>
             
-            <!-- Stats Cards -->
-            <div class="row g-3 mb-4">
-                <div class="col-md-2">
-                    <div class="card bg-primary text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ players|length }}</h3>
-                            <small>Total Players</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card bg-success text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ players|selectattr('paid_tuition')|list|length }}</h3>
-                            <small>Paid Tuition</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card bg-warning text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ players|rejectattr('paid_tuition')|list|length }}</h3>
-                            <small>Unpaid Tuition</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card bg-info text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ teams|length }}</h3>
-                            <small>Teams</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card bg-secondary text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ players|selectattr('signed_waiver')|list|length }}</h3>
-                            <small>Waivers Signed</small>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-2">
-                    <div class="card bg-dark text-white">
-                        <div class="card-body text-center">
-                            <h3 class="mb-0">{{ players|selectattr('birth_certificate')|list|length }}</h3>
-                            <small>Birth Certs</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -135,7 +84,7 @@
                     </a>
                     <a href="{{ url_for('main.export_roster', team=current_team, season=current_season, paid=current_paid, search=search) }}" 
                        class="btn btn-success">
-                        <i class="bi bi-download"></i> Export
+                        <i class="bi bi-download me-2"></i>Export
                     </a>
                 </div>
             </form>

@@ -209,16 +209,54 @@ def reset_password(token):
 @login_required
 def dashboard():
     """Displays the user dashboard."""
-    # Get counts for dashboard stats
-    total_players = Player.query.count()
+    # Get team counts for overview
     team_counts = db.session.query(Player.team, db.func.count(Player.id)).group_by(Player.team).all()
-    unpaid_count = Player.query.filter_by(paid=False).count()
+    
+    # Get latest game results for each team (last 3 games per team)
+    latest_games = {}
+    for team, _ in team_counts:
+        games = Game.query.filter_by(team_name=team).order_by(Game.game_date.desc()).limit(3).all()
+        latest_games[team] = games
+    
+    # Get latest practice plans (last 5) with team information
+    latest_practice_plans = db.session.query(PracticePlan).join(Team).order_by(PracticePlan.date.desc()).limit(5).all()
+    
+    # Get team statistics for enhanced overview
+    team_stats = {}
+    for team, count in team_counts:
+        # Get recent games for this team
+        recent_games = Game.query.filter_by(team_name=team).order_by(Game.game_date.desc()).limit(5).all()
+        
+        # Calculate win/loss record
+        wins = sum(1 for game in recent_games if game.badgers_score > game.opponent_score)
+        losses = sum(1 for game in recent_games if game.badgers_score < game.opponent_score)
+        ties = sum(1 for game in recent_games if game.badgers_score == game.opponent_score)
+        
+        # Get unpaid players count for this team
+        unpaid_count = Player.query.filter_by(team=team, paid=False).count()
+        
+        # Get next practice plan for this team (future practices)
+        team_obj = Team.query.filter_by(name=team).first()
+        next_practice = None
+        if team_obj:
+            next_practice = PracticePlan.query.filter_by(team_id=team_obj.id).filter(PracticePlan.date >= datetime.now().date()).order_by(PracticePlan.date.asc()).first()
+        
+        team_stats[team] = {
+            'player_count': count,
+            'unpaid_count': unpaid_count,
+            'wins': wins,
+            'losses': losses,
+            'ties': ties,
+            'next_practice': next_practice
+        }
     
     return render_template("dashboard.html", 
                          name=current_user.username,
-                         total_players=total_players,
                          team_counts=team_counts,
-                         unpaid_count=unpaid_count)
+                         latest_games=latest_games,
+                         latest_practice_plans=latest_practice_plans,
+                         team_stats=team_stats,
+                         current_date=datetime.now().date())
 
 ### Player Management Routes ###
 @main.route("/roster")
