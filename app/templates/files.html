@@ -631,9 +631,12 @@ function initializeFileUpload() {
     }
     
     // Click to upload on main drop zone
-    dropZone.addEventListener('click', function() {
-        new bootstrap.Modal(document.getElementById('uploadModal')).show();
-    });
+    const dropZone = document.getElementById('modalDropZone');
+    if (dropZone) {
+        dropZone.addEventListener('click', function() {
+            new bootstrap.Modal(document.getElementById('uploadModal')).show();
+        });
+    }
 }
 
 function uploadFiles(files) {
