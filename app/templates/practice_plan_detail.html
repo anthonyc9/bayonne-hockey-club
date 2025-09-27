@@ -322,6 +322,60 @@
     filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
 }
 
+/* Focus area cards - clean design */
+.focus-area-card {
+    background: linear-gradient(135deg, #ffffff, #f8f9fa) !important;
+    border: 2px solid #e9ecef !important;
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease;
+    height: 100%;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08) !important;
+}
+
+.focus-area-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15) !important;
+    border-color: #007bff !important;
+}
+
+.focus-area-card.primary-focus:hover {
+    border-color: #007bff !important;
+}
+
+.focus-area-card.secondary-focus:hover {
+    border-color: #fd7e14 !important;
+}
+
+.focus-area-card h6 {
+    color: #2c3e50 !important;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.focus-badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px !important;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+}
+
+.focus-description {
+    margin-top: 0.75rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.focus-description p {
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin: 0;
+}
+
 /* Remove redundant buttons from header */
 .header-actions {
     display: none;
@@ -530,28 +584,28 @@
                     <!-- Focus Areas Row -->
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <div class="focus-card practice-plan-card primary-focus">
-                                <div class="text-center mb-3">
-                                    <i class="bi bi-bullseye practice-plan-icon"></i>
+                            <div class="focus-area-card primary-focus">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="mb-0">Primary Focus</h6>
+                                    <span class="badge bg-primary focus-badge">{{ practice_plan.primary_focus }}</span>
                                 </div>
-                                <h6 class="mb-4">Primary Focus</h6>
-                                <div>
-                                    <span class="badge bg-primary practice-plan-badge">{{ practice_plan.primary_focus }}</span>
+                                <div class="focus-description">
+                                    <p class="text-muted mb-0">The main skill or concept to be emphasized during this practice session.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <div class="focus-card practice-plan-card secondary-focus">
-                                <div class="text-center mb-3">
-                                    <i class="bi bi-bullseye practice-plan-icon secondary"></i>
-                                </div>
-                                <h6 class="mb-4">Secondary Focus</h6>
-                                <div>
+                            <div class="focus-area-card secondary-focus">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h6 class="mb-0">Secondary Focus</h6>
                                     {% if practice_plan.secondary_focus and practice_plan.secondary_focus != 'N/A' %}
-                                        <span class="badge bg-warning practice-plan-badge">{{ practice_plan.secondary_focus }}</span>
+                                        <span class="badge bg-warning focus-badge">{{ practice_plan.secondary_focus }}</span>
                                     {% else %}
-                                        <span class="text-muted fw-bold fs-5">N/A</span>
+                                        <span class="text-muted fw-bold">N/A</span>
                                     {% endif %}
+                                </div>
+                                <div class="focus-description">
+                                    <p class="text-muted mb-0">Additional skills or concepts to be reinforced during practice.</p>
                                 </div>
                             </div>
                         </div>
