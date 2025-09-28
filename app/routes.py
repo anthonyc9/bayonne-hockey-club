@@ -2084,7 +2084,7 @@ def add_game():
     
     # Populate team choices from players
     teams = db.session.query(Player.team).distinct().filter(Player.team != '').filter(Player.team != None).all()
-    form.team_name.choices = [(team[0], team[0]) for team in teams]
+    form.team_name.choices = [(team[0], f"{team[0]} Badgers") for team in teams]
     
     if form.validate_on_submit():
         try:
@@ -2224,7 +2224,7 @@ def edit_game(game_id):
     
     # Populate team choices from players
     teams = db.session.query(Player.team).distinct().filter(Player.team != '').filter(Player.team != None).all()
-    form.team_name.choices = [(team[0], team[0]) for team in teams]
+    form.team_name.choices = [(team[0], f"{team[0]} Badgers") for team in teams]
     
     if form.validate_on_submit():
         try:
