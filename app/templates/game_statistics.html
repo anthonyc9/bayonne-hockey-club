@@ -116,7 +116,7 @@
                                         </div>
                                     </div>
                                     <div class="text-end">
-                                        <span class="badge bg-info">{{ stat.player.team or 'No Team' }}</span>
+                                        <span class="badge bg-info">{{ stat.player.team or 'No Team' }}{% if stat.player.team %} Badgers{% endif %}</span>
                                     </div>
                                 </div>
                                 
@@ -213,7 +213,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <span class="badge bg-info">{{ stat.player.team or 'No Team' }}</span>
+                                        <span class="badge bg-info">{{ stat.player.team or 'No Team' }}{% if stat.player.team %} Badgers{% endif %}</span>
                                     </td>
                                     <td>{{ stat.games_played }}</td>
                                     <td>
