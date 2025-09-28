@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, IntegerField, TextAreaField, SelectField, HiddenField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange, Optional
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange, Optional, InputRequired
 from app.models import User, Player
 
 class RegistrationForm(FlaskForm):
@@ -39,8 +39,8 @@ class GameForm(FlaskForm):
     rink_name = StringField('Rink Name', validators=[DataRequired(), Length(max=100)])
     rink_location = StringField('Rink Location', validators=[Optional(), Length(max=200)])
     team_name = SelectField('Team', validators=[DataRequired()], choices=[])
-    badgers_score = IntegerField('Badgers Score', validators=[DataRequired(), NumberRange(min=0)])
-    opponent_score = IntegerField('Opponent Score', validators=[DataRequired(), NumberRange(min=0)])
+    badgers_score = IntegerField('Badgers Score', validators=[InputRequired(), NumberRange(min=0)])
+    opponent_score = IntegerField('Opponent Score', validators=[InputRequired(), NumberRange(min=0)])
     game_status = SelectField('Game Status', choices=[
         ('scheduled', 'Scheduled'),
         ('completed', 'Completed'),
