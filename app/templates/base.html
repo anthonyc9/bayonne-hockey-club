@@ -1283,6 +1283,11 @@
                     <a class="nav-link {% if 'files' in request.endpoint %}active{% endif %}" href="{{ url_for('main.files') }}">
                         <i class="bi bi-folder2-open"></i> <span>Files</span>
                     </a>
+                    
+                    <!-- Logout -->
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}" style="margin-top: 1rem; border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1rem;">
+                        <i class="bi bi-box-arrow-right"></i> <span>Logout</span>
+                    </a>
                 </nav>
             </div>
         </aside>
