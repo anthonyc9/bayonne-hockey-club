@@ -399,70 +399,74 @@
                     </div>
                     <div class="flex-grow-1">
                         <h3 class="mb-1 fw-bold text-secondary">Team Overview</h3>
-                        <p class="mb-0 text-muted fs-6">Comprehensive team statistics and performance</p>
+                        <p class="mb-0 text-muted fs-6">Team roster size and payment status</p>
                     </div>
                 </div>
             </div>
             <div class="card-body">
-                <div class="table-responsive rounded-4 border border-light border-opacity-10" style="border-radius: 20px; overflow: hidden;">
-                    <table class="table align-middle mb-0 table-striped" style="border-radius: 20px; overflow: hidden;">
-                        <thead>
-                            <tr class="text-uppercase small text-muted">
-                                <th class="py-3" style="border-top-left-radius: 20px;">Team</th>
-                                <th class="py-3">Players</th>
-                                <th class="py-3">Record</th>
-                                <th class="py-3">Unpaid</th>
-                                <th class="py-3" style="border-top-right-radius: 20px;">Next Practice</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for team, count in team_counts %}
-                            {% set stats = team_stats.get(team, {}) %}
-                            <tr>
-                                <td class="fw-semibold">{{ team }}</td>
-                                <td>
-                                    <span class="badge bg-primary" style="min-width: 54px; background-color: #e24c77 !important;">{{ count }}</span>
-                                </td>
-                                <td>
-                                    {% if stats.wins is defined and stats.losses is defined and stats.ties is defined %}
-                                        <div class="d-flex gap-2">
-                                            <span class="badge bg-success">{{ stats.wins }}W</span>
-                                            <span class="badge bg-danger">{{ stats.losses }}L</span>
-                                            {% if stats.ties > 0 %}
-                                                <span class="badge bg-warning">{{ stats.ties }}T</span>
+                <!-- Desktop Table -->
+                <div class="d-none d-md-block">
+                    <div class="table-responsive rounded-4 border border-light border-opacity-10" style="border-radius: 20px; overflow: hidden;">
+                        <table class="table align-middle mb-0 table-striped" style="border-radius: 20px; overflow: hidden;">
+                            <thead>
+                                <tr class="text-uppercase small text-muted">
+                                    <th class="py-3" style="border-top-left-radius: 20px;">Team</th>
+                                    <th class="py-3">Players</th>
+                                    <th class="py-3" style="border-top-right-radius: 20px;">Payment Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for team, count in team_counts %}
+                                {% set stats = team_stats.get(team, {}) %}
+                                <tr>
+                                    <td class="fw-semibold">{{ team }} Badgers</td>
+                                    <td>
+                                        <span class="badge bg-primary" style="min-width: 54px; background-color: #e24c77 !important;">{{ count }}</span>
+                                    </td>
+                                    <td>
+                                        {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
+                                            <div class="d-flex align-items-center gap-2">
+                                                <span class="badge bg-danger">{{ stats.unpaid_count }} unpaid</span>
+                                            </div>
+                                        {% else %}
+                                            <span class="badge bg-success">All Paid</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Mobile Cards -->
+                <div class="d-md-none">
+                    <div class="mobile-table-card">
+                        {% for team, count in team_counts %}
+                        {% set stats = team_stats.get(team, {}) %}
+                        <div class="mobile-row">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <div>
+                                    <h6 class="mb-1 fw-bold">{{ team }} Badgers</h6>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="d-flex align-items-center gap-1">
+                                            <i class="bi bi-people text-primary" style="font-size: 0.8rem;"></i>
+                                            <span class="badge bg-primary" style="background-color: #e24c77 !important;">{{ count }} players</span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-1">
+                                            <i class="bi bi-credit-card text-success" style="font-size: 0.8rem;"></i>
+                                            {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
+                                                <span class="badge bg-danger">{{ stats.unpaid_count }} unpaid</span>
+                                            {% else %}
+                                                <span class="badge bg-success">All Paid</span>
                                             {% endif %}
                                         </div>
-                                    {% else %}
-                                        <span class="text-muted">No games</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="badge bg-danger">{{ stats.unpaid_count }}</span>
-                                            <small class="text-muted">unpaid</small>
-                                        </div>
-                                    {% else %}
-                                        <span class="badge bg-success">All Paid</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if stats.next_practice %}
-                                        <div>
-                                            <div class="fw-semibold">{{ stats.next_practice.title }}</div>
-                                            <small class="text-muted">{{ stats.next_practice.date.strftime('%m/%d/%Y') }}</small>
-                                            {% if stats.next_practice.duration %}
-                                                <br><small class="text-muted">{{ stats.next_practice.duration }}</small>
-                                            {% endif %}
-                                        </div>
-                                    {% else %}
-                                        <span class="text-muted">No upcoming practices</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                 </div>
             </div>
         </article>
