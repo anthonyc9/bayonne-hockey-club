@@ -1166,6 +1166,84 @@
                 font-size: 0.8rem !important;
             }
         }
+
+        /* Enhanced Dashboard Typography */
+        .card-header h3 {
+            font-size: 1.5rem !important;
+            font-weight: 700 !important;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .card-header p {
+            font-size: 0.875rem !important;
+            color: rgba(148, 163, 184, 0.8) !important;
+            line-height: 1.4;
+        }
+
+        /* Icon container enhancements */
+        .card-header .d-flex[style*="width: 48px"] {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header:hover .d-flex[style*="width: 48px"] {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Dashboard section spacing */
+        .content-sections > article.card {
+            margin-bottom: 2rem;
+        }
+
+        .content-sections > article.card:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Mobile dashboard typography adjustments */
+        @media (max-width: 768px) {
+            .card-header h3 {
+                font-size: 1.3rem !important;
+            }
+            
+            .card-header p {
+                font-size: 0.8rem !important;
+            }
+            
+            .card-header .d-flex[style*="width: 48px"] {
+                width: 42px !important;
+                height: 42px !important;
+            }
+            
+            .card-header .d-flex[style*="width: 48px"] i {
+                font-size: 1.5rem !important;
+            }
+        }
+
+        /* Improve visual hierarchy for content */
+        .page-title h1 {
+            font-size: 2.5rem !important;
+            font-weight: 800 !important;
+            letter-spacing: -0.05em;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .page-title p {
+            font-size: 1.1rem !important;
+            font-weight: 500 !important;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-title h1 {
+                font-size: 2rem !important;
+            }
+            
+            .page-title p {
+                font-size: 1rem !important;
+            }
+        }
     </style>
 </head>
 <body>
