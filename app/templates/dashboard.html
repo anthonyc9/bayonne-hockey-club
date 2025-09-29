@@ -360,18 +360,31 @@
                     <div class="row g-3">
                         {% for plan in latest_practice_plans %}
                         <div class="col-12 col-md-6 col-lg-4">
-                            <div class="card bg-transparent border border-light border-opacity-10">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ plan.title }}</h6>
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <span class="badge bg-primary">{{ plan.team.name if plan.team else 'General' }}</span>
-                                        <small class="text-muted">{{ plan.date.strftime('%m/%d/%Y') }}</small>
+                            <div class="card bg-transparent border border-light border-opacity-10 h-100">
+                                <div class="card-body d-flex flex-column">
+                                    <!-- Header with team and date -->
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <span class="badge bg-primary" style="background-color: #e24c77 !important;">{{ plan.team.name if plan.team else 'General' }} Badgers</span>
+                                        <small class="text-muted fw-semibold">{{ plan.date.strftime('%m/%d') }}</small>
                                     </div>
-                                    <p class="card-text text-muted small">{{ plan.primary_focus }}</p>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <small class="text-muted">{{ plan.duration or '60 min' }}</small>
+                                    
+                                    <!-- Practice plan title -->
+                                    <h6 class="card-title fw-bold mb-2 text-white">{{ plan.title }}</h6>
+                                    
+                                    <!-- Primary focus -->
+                                    <div class="mb-3 flex-grow-1">
+                                        <div class="text-muted small mb-1">Focus:</div>
+                                        <div class="badge bg-info text-dark">{{ plan.primary_focus or 'General Practice' }}</div>
+                                    </div>
+                                    
+                                    <!-- Bottom section with duration and view button -->
+                                    <div class="d-flex justify-content-between align-items-center mt-auto">
+                                        <div class="d-flex align-items-center text-muted">
+                                            <i class="bi bi-clock me-1" style="font-size: 0.8rem;"></i>
+                                            <small>{{ plan.duration or '60 min' }}</small>
+                                        </div>
                                         <a href="{{ url_for('main.view_practice_plan', plan_id=plan.id) }}" class="btn btn-outline-light btn-sm">
-                                            <i class="bi bi-eye me-1"></i>View
+                                            <i class="bi bi-eye"></i>
                                         </a>
                                     </div>
                                 </div>
