@@ -441,32 +441,28 @@
 
                 <!-- Mobile Cards -->
                 <div class="d-md-none">
-                    <div class="mobile-table-card">
-                        {% for team, count in team_counts %}
-                        {% set stats = team_stats.get(team, {}) %}
-                        <div class="mobile-row">
-                            <div class="d-flex align-items-center justify-content-between mb-3">
-                                <div>
-                                    <h6 class="mb-1 fw-bold">{{ team }} Badgers</h6>
-                                    <div class="d-flex align-items-center gap-3">
-                                        <div class="d-flex align-items-center gap-1">
-                                            <i class="bi bi-people text-primary" style="font-size: 0.8rem;"></i>
-                                            <span class="badge bg-primary" style="background-color: #e24c77 !important;">{{ count }} players</span>
-                                        </div>
-                                        <div class="d-flex align-items-center gap-1">
-                                            <i class="bi bi-credit-card text-success" style="font-size: 0.8rem;"></i>
-                                            {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
-                                                <span class="badge bg-danger">{{ stats.unpaid_count }} unpaid</span>
-                                            {% else %}
-                                                <span class="badge bg-success">All Paid</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
+                    {% for team, count in team_counts %}
+                    {% set stats = team_stats.get(team, {}) %}
+                    <div class="card bg-transparent border border-light border-opacity-10 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="mb-2 fw-bold">{{ team }} Badgers</h6>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="bi bi-people text-primary" style="font-size: 0.8rem;"></i>
+                                    <span class="badge bg-primary" style="background-color: #e24c77 !important;">{{ count }} players</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="bi bi-credit-card text-success" style="font-size: 0.8rem;"></i>
+                                    {% if stats.unpaid_count is defined and stats.unpaid_count > 0 %}
+                                        <span class="badge bg-danger">{{ stats.unpaid_count }} unpaid</span>
+                                    {% else %}
+                                        <span class="badge bg-success">All Paid</span>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
-                        {% endfor %}
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </article>
