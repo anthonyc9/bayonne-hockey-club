@@ -292,17 +292,34 @@ def roster():
         if season_filter and season_filter != '':  # Add season filter
             query = query.filter(Player.season == season_filter)  # Keep as string
             print(f"After season filter '{season_filter}': {query.count()} players")
-        if payment_filter is not None:
-            query = query.filter(Player.paid == (payment_filter.lower() == 'true'))
+        # Only apply payment filter when an explicit value is chosen
+        if payment_filter and payment_filter != '' and payment_filter != 'None':
+            query = query.filter(Player.paid_tuition == (payment_filter.lower() == 'true'))
             print(f"After payment filter '{payment_filter}': {query.count()} players")
         if search:
             search_term = f"%{search}%"
             query = query.filter(
                 db.or_(
+                    # Player name
                     Player.first_name.ilike(search_term),
                     Player.last_name.ilike(search_term),
+                    # Parent/guardian names (legacy + new fields)
                     Player.guardian_first_name.ilike(search_term),
-                    Player.guardian_last_name.ilike(search_term)
+                    Player.guardian_last_name.ilike(search_term),
+                    Player.dad_first_name.ilike(search_term),
+                    Player.dad_last_name.ilike(search_term),
+                    Player.mom_first_name.ilike(search_term),
+                    Player.mom_last_name.ilike(search_term),
+                    # Contact info
+                    Player.dad_phone.ilike(search_term),
+                    Player.dad_email.ilike(search_term),
+                    Player.mom_phone.ilike(search_term),
+                    Player.mom_email.ilike(search_term),
+                    # Address fields
+                    Player.address.ilike(search_term),
+                    Player.city.ilike(search_term),
+                    Player.state.ilike(search_term),
+                    Player.zip_code.ilike(search_term)
                 )
             )
             print(f"After search '{search}': {query.count()} players")
@@ -356,7 +373,7 @@ def export_roster():
         if season_filter and season_filter != '':
             query = query.filter(Player.season == season_filter)  # Keep as string
         if payment_filter and payment_filter != '' and payment_filter != 'None':
-            query = query.filter(Player.paid == (payment_filter.lower() == 'true'))
+            query = query.filter(Player.paid_tuition == (payment_filter.lower() == 'true'))
         if search:
             search_term = f"%{search}%"
             query = query.filter(
@@ -364,7 +381,19 @@ def export_roster():
                     Player.first_name.ilike(search_term),
                     Player.last_name.ilike(search_term),
                     Player.guardian_first_name.ilike(search_term),
-                    Player.guardian_last_name.ilike(search_term)
+                    Player.guardian_last_name.ilike(search_term),
+                    Player.dad_first_name.ilike(search_term),
+                    Player.dad_last_name.ilike(search_term),
+                    Player.mom_first_name.ilike(search_term),
+                    Player.mom_last_name.ilike(search_term),
+                    Player.dad_phone.ilike(search_term),
+                    Player.dad_email.ilike(search_term),
+                    Player.mom_phone.ilike(search_term),
+                    Player.mom_email.ilike(search_term),
+                    Player.address.ilike(search_term),
+                    Player.city.ilike(search_term),
+                    Player.state.ilike(search_term),
+                    Player.zip_code.ilike(search_term)
                 )
             )
 
