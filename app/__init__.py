@@ -32,6 +32,10 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = database_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     
+    # UAT flag for gated UI rollouts
+    # Set env var UAT_UI=true to enable the redesigned mobile UI in UAT
+    app.config['UAT_UI'] = os.environ.get('UAT_UI', 'false').lower() in ['1', 'true', 'yes', 'on']
+    
     # Email Configuration
     app.config['MAIL_SERVER'] = os.environ.get('MAIL_SERVER', 'smtp.gmail.com')
     app.config['MAIL_PORT'] = int(os.environ.get('MAIL_PORT', 587))
@@ -75,5 +79,10 @@ def create_app():
 
         # Create all database tables
         db.create_all()
+
+        # Expose UAT flag to all templates
+        @app.context_processor
+        def inject_uat_flag():
+            return {"is_uat_ui": app.config.get('UAT_UI', False)}
 
     return app

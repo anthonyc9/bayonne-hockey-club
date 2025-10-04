@@ -1,0 +1,216 @@
+/* UAT-only mobile tab bar and helpers */
+
+body.uat .mobile-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem env(safe-area-inset-bottom);
+  background: rgba(8, 12, 24, 0.86);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1030;
+}
+/* UAT readability: ensure sufficient contrast for light theme */
+body.uat .btn-primary {
+  background-color: #e11d48 !important;
+  color: #ffffff !important;
+}
+
+body.uat .btn-outline-light {
+  border-color: rgba(2, 6, 23, 0.2) !important;
+  color: #0f172a !important;
+}
+
+body.uat .card-title,
+body.uat h1,
+body.uat h2,
+body.uat h3,
+body.uat h4 {
+  color: #0f172a !important;
+}
+
+/* Cards look washed out in bright mode; give clear borders and spacing */
+body.uat .card.h-100 {
+  background: #ffffff !important;
+  border: 1px solid rgba(2, 6, 23, 0.08) !important;
+}
+
+/* Make primary CTA buttons large and full-width inside cards */
+body.uat .card .btn-primary.flex-fill {
+  padding: 0.95rem 1rem !important;
+  font-weight: 700 !important;
+}
+
+/* Dropdown button visibility */
+body.uat .btn-outline-light.btn-sm {
+  border-color: rgba(2,6,23,0.1) !important;
+  color: #334155 !important;
+  background: #ffffff !important;
+}
+
+/* Modal background to light */
+body.uat .modal-content {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(2,6,23,0.08) !important;
+}
+
+/* Stretched link helper for clickable cards */
+.stretched-link::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+}
+
+body.uat .mobile-tabbar .tab-item {
+  display: grid;
+  place-items: center;
+  gap: 0.2rem;
+  padding: 0.35rem 0.25rem;
+  color: rgba(235, 241, 255, 0.8);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+body.uat .mobile-tabbar .tab-item i {
+  font-size: 1.1rem;
+}
+
+/* Bright UAT theme: light surfaces, bold accent red similar to examples */
+body.uat {
+  --uat-bg: #ffffff;
+  --uat-surface: #ffffff;
+  --uat-border: rgba(0,0,0,0.08);
+  --uat-text: #0f172a;
+  --uat-muted: #475569;
+  --uat-accent: #e11d48; /* vivid red */
+}
+
+body.uat {
+  color: var(--uat-text) !important;
+  background: var(--uat-bg) !important;
+}
+
+/* Flatten glass and dark gradients in UAT on small screens */
+@media (max-width: 992px) {
+  body.uat .glass-panel,
+  body.uat .sidebar {
+    background: var(--uat-surface) !important;
+    border: 1px solid var(--uat-border) !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04) !important;
+    backdrop-filter: none !important;
+  }
+
+  body.uat .sidebar {
+    border-radius: 16px !important;
+  }
+
+  body.uat .nav-link {
+    color: var(--uat-text) !important;
+  }
+
+  body.uat .nav-link.active {
+    background: var(--uat-accent) !important;
+    color: #fff !important;
+    box-shadow: none !important;
+  }
+
+  body.uat .page-title h1,
+  body.uat .card-header h2,
+  body.uat .card-header h3 {
+    color: var(--uat-text) !important;
+  }
+
+  body.uat .text-muted,
+  body.uat .small,
+  body.uat small {
+    color: var(--uat-muted) !important;
+  }
+
+  body.uat .card,
+  body.uat .table,
+  body.uat .alert {
+    background: var(--uat-surface) !important;
+    color: var(--uat-text) !important;
+    border: 1px solid var(--uat-border) !important;
+  }
+
+  body.uat .btn-primary {
+    background: var(--uat-accent) !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  body.uat .table thead th,
+  body.uat .table td,
+  body.uat .table th {
+    color: var(--uat-text) !important;
+  }
+}
+/* Top App Bar for UAT mobile */
+body.uat .top-appbar {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  display: grid;
+  grid-template-columns: 48px 1fr 48px;
+  align-items: center;
+  gap: 0.5rem;
+  height: 56px;
+  padding: 0 0.5rem env(safe-area-inset-top) 0.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid var(--uat-border);
+}
+
+body.uat .top-appbar .appbar-title {
+  font-weight: 800;
+  color: var(--uat-text);
+}
+
+body.uat .icon-btn {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--uat-text);
+}
+
+/* Make layout more app-like on mobile UAT: hide sticky sidebar until toggled */
+@media (max-width: 992px) {
+  body.uat .sidebar {
+    transform: translateY(-120%);
+  }
+  body.uat .sidebar.open {
+    transform: translateY(0);
+  }
+  body.uat .mobile-toggle {
+    display: grid !important;
+    background: var(--uat-accent) !important;
+  }
+}
+
+body.uat .mobile-tabbar .tab-item.active {
+  color: #ffffff;
+}
+
+/* Ensure main content isn't hidden behind the tab bar */
+@media (max-width: 992px) {
+  body.uat .layout-shell {
+    padding-bottom: 4.5rem !important;
+  }
+}
+
+/* Make login page spacing work with tab bar when shown there in future */
+@media (max-width: 576px) {
+  body.uat main.auth-card {
+    margin-bottom: 4rem;
+  }
+}
+

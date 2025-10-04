@@ -62,13 +62,13 @@ class GameAssistForm(FlaskForm):
 
 class GoalForm(FlaskForm):
     """Form for adding goals to a game."""
-    scorer_id = SelectField('Scorer', validators=[DataRequired()], choices=[])
+    scorer_id = SelectField('Scorer', validators=[DataRequired()], choices=[], coerce=int)
     period = SelectField('Period', choices=[
         (1, '1st Period'),
         (2, '2nd Period'),
         (3, '3rd Period'),
         (4, 'Overtime')
-    ], default=1)
+    ], default=1, coerce=int)
     time_scored = StringField('Time Scored (e.g., 5:30)', validators=[Optional(), Length(max=10)])
     goal_type = SelectField('Goal Type', choices=[
         ('even_strength', 'Even Strength'),
@@ -81,14 +81,14 @@ class GoalForm(FlaskForm):
 
 class AssistForm(FlaskForm):
     """Form for adding assists to a goal."""
-    assister_id = SelectField('Assister', validators=[DataRequired()], choices=[])
+    assister_id = SelectField('Assister', validators=[DataRequired()], choices=[], coerce=int)
     goal_id = HiddenField('Goal ID', validators=[DataRequired()])
     period = SelectField('Period', choices=[
         (1, '1st Period'),
         (2, '2nd Period'),
         (3, '3rd Period'),
         (4, 'Overtime')
-    ], default=1)
+    ], default=1, coerce=int)
     time_assisted = StringField('Time Assisted (e.g., 5:30)', validators=[Optional(), Length(max=10)])
     assist_type = SelectField('Assist Type', choices=[
         ('primary', 'Primary Assist'),

@@ -257,7 +257,7 @@
             </div>
             <div class="modal-body">
                 <form method="POST" action="{{ url_for('main.add_goal', game_id=game.id) }}">
-                    {{ csrf_token() }}
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="mb-3">
                         <label class="form-label">Scorer</label>
                         <select name="scorer_id" class="form-select" required>
