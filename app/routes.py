@@ -2218,7 +2218,12 @@ def add_game():
 def get_team_players(team_name):
     """Get players for a specific team (AJAX endpoint)."""
     try:
-        players = Player.query.filter_by(team=team_name).order_by(Player.last_name, Player.first_name).all()
+        players = Player.query.filter(
+            db.or_(
+                Player.team == team_name,
+                Player.extra_teams.ilike(f'%"{team_name}"%')
+            )
+        ).order_by(Player.last_name, Player.first_name).all()
         player_data = []
         for player in players:
             player_data.append({
@@ -2240,8 +2245,13 @@ def view_game(game_id):
     # Get goals with assists
     goals = Goal.query.filter_by(game_id=game_id).order_by(Goal.period, Goal.time_scored).all()
     
-    # Get all players for the team for adding goals/assists
-    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
+    # Get all players for the team for adding goals/assists (include additional teams)
+    team_players = Player.query.filter(
+        db.or_(
+            Player.team == game.team_name,
+            Player.extra_teams.ilike(f'%"{game.team_name}"%')
+        )
+    ).order_by(Player.last_name, Player.first_name).all()
     
     return render_template("game_detail.html", 
                          game=game, 
@@ -2408,8 +2418,13 @@ def add_goal(game_id):
     game = Game.query.get_or_404(game_id)
     form = GoalForm()
     
-    # Populate player choices for the team
-    team_players = Player.query.filter_by(team=game.team_name).order_by(Player.last_name, Player.first_name).all()
+    # Populate player choices for the team, including those with additional teams
+    team_players = Player.query.filter(
+        db.or_(
+            Player.team == game.team_name,
+            Player.extra_teams.ilike(f'%"{game.team_name}"%')
+        )
+    ).order_by(Player.last_name, Player.first_name).all()
     form.scorer_id.choices = [(player.id, f"{player.first_name} {player.last_name}") for player in team_players]
     
     if form.validate_on_submit():
