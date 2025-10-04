@@ -1249,6 +1249,14 @@
                 box-shadow: none !important;
             }
         }
+
+        /* Ensure Bootstrap modals sit above their backdrop to remain interactive */
+        .modal {
+            z-index: 1065 !important;
+        }
+        .modal-backdrop {
+            z-index: 1060 !important;
+        }
     </style>
     {% if is_uat_ui %}
     <!-- Ensure UAT overrides load after inline styles -->
