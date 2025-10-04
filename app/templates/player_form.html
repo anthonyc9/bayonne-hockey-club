@@ -134,6 +134,11 @@
                                     {% endfor %}
                                 {% endif %}
                             </div>
+                            <div class="col-12 mt-3">
+                                <label class="form-label">{{ form.additional_teams.label }}</label>
+                                {{ form.additional_teams(class="form-select", multiple=true) }}
+                                <div class="form-text">Use for rare cases where a player appears on two teams.</div>
+                            </div>
                         </div>
 
                         <!-- Jersey and Equipment -->

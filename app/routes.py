@@ -605,6 +605,13 @@ def edit_player(id):
             player.team = form.team.data
             player.position = form.position.data
             
+            # Additional teams stored as JSON string (non-breaking enhancement)
+            try:
+                import json as _json
+                player.extra_teams = _json.dumps(form.additional_teams.data or [])
+            except Exception:
+                player.extra_teams = None
+            
             # Jersey and Equipment
             player.jersey_number = form.jersey_number.data
             player.jersey_size = form.jersey_size.data

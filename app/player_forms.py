@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, DateField, SelectField, BooleanField, IntegerField, FloatField, TextAreaField
+from wtforms import StringField, DateField, SelectField, BooleanField, IntegerField, FloatField, TextAreaField, SelectMultipleField
 from wtforms.validators import DataRequired, Length, Optional, Email, NumberRange, Regexp
 from datetime import datetime
 
@@ -14,6 +14,21 @@ class PlayerForm(FlaskForm):
     # Team and Position
     team = SelectField('Team', choices=[
         ('', 'Select Team'),
+        ('8U', '8U'),
+        ('10U', '10U'),
+        ('12U', '12U'),
+        ('14U', '14U'),
+        ('16U', '16U'),
+        ('18U', '18U'),
+        ('Mite', 'Mite'),
+        ('Squirt', 'Squirt'),
+        ('Peewee', 'Peewee'),
+        ('Bantam', 'Bantam'),
+        ('Midget', 'Midget'),
+        ('Learn to Play', 'Learn to Play')
+    ], validators=[Optional()])
+    # Additional teams (rare cases). Stored separately to avoid breaking existing data.
+    additional_teams = SelectMultipleField('Additional Teams (optional)', choices=[
         ('8U', '8U'),
         ('10U', '10U'),
         ('12U', '12U'),

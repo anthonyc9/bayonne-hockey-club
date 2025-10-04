@@ -54,6 +54,8 @@ class Player(db.Model):
     birth_year = db.Column(db.String(10))  # Year only as string
     team = db.Column(db.String(30))
     position = db.Column(db.String(30))
+    # Optional additional teams (JSON-encoded list of team names) for rare multi-team cases
+    extra_teams = db.Column(db.Text)
     
     # Jersey and Equipment Information
     jersey_number = db.Column(db.String(10))
@@ -108,6 +110,15 @@ class Player(db.Model):
     @property
     def guardian_full_name(self):
         return f"{self.guardian_first_name} {self.guardian_last_name}"
+
+    @property
+    def extra_teams_list(self):
+        """Return additional teams as a Python list (parsed from JSON text)."""
+        try:
+            import json
+            return json.loads(self.extra_teams) if self.extra_teams else []
+        except Exception:
+            return []
 
 
 class Folder(db.Model):
