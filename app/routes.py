@@ -2500,7 +2500,13 @@ def game_statistics():
     query = Player.query
     
     if team_filter:
-        query = query.filter(Player.team == team_filter)
+        # Include players whose primary team matches or who list it in additional teams
+        query = query.filter(
+            db.or_(
+                Player.team == team_filter,
+                Player.extra_teams.ilike(f'%"{team_filter}"%')
+            )
+        )
     if season_filter:
         query = query.filter(Player.season == season_filter)
     
@@ -2508,21 +2514,41 @@ def game_statistics():
     
     # Calculate statistics for each player
     player_stats = []
+    
+    def get_player_team_names(p: Player):
+        names = set()
+        if p.team:
+            names.add(p.team)
+        try:
+            import json as _json
+            extra = _json.loads(p.extra_teams) if p.extra_teams else []
+            for t in extra:
+                if t:
+                    names.add(t)
+        except Exception:
+            pass
+        return list(names)
+    
     for player in players:
+        # Determine which teams to count stats for
+        teams_to_count = [team_filter] if team_filter else get_player_team_names(player)
+        if not teams_to_count:
+            teams_to_count = [player.team] if player.team else []
+        
         # Get goals scored
         goals_scored = Goal.query.join(Game).filter(
             Goal.scorer_id == player.id,
-            Game.team_name == player.team
+            Game.team_name.in_(teams_to_count)
         ).count()
         
         # Get assists
         assists = Assist.query.join(Game).filter(
             Assist.assister_id == player.id,
-            Game.team_name == player.team
+            Game.team_name.in_(teams_to_count)
         ).count()
         
         # Get games played
-        games_played = Game.query.filter_by(team_name=player.team).count()
+        games_played = Game.query.filter(Game.team_name.in_(teams_to_count)).count()
         
         player_stats.append({
             'player': player,
