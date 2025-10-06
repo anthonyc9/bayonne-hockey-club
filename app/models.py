@@ -514,6 +514,25 @@ class Contact(db.Model):
     
     # Relationships
     user = db.relationship('User', backref='contacts')
+    contact_people = db.relationship('ContactPerson', backref='contact', lazy=True, cascade='all, delete-orphan')
     
     def __repr__(self):
         return f"Contact('{self.team_name}' ({self.age_group}))"
+
+
+class ContactPerson(db.Model):
+    """Additional contact person linked to a team contact (e.g., extra coach/manager)."""
+    id = db.Column(db.Integer, primary_key=True)
+    created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Contact person details
+    role = db.Column(db.String(20), nullable=False)  # coach, manager, other
+    full_name = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120))
+
+    # Relationship to Contact
+    contact_id = db.Column(db.Integer, db.ForeignKey('contact.id'), nullable=False)
+
+    def __repr__(self):
+        return f"ContactPerson('{self.full_name}' as {self.role})"

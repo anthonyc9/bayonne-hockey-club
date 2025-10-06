@@ -1,8 +1,9 @@
 from flask import Blueprint, jsonify, request, render_template, redirect, url_for, flash, make_response, send_file
 from flask_login import login_user, logout_user, current_user, login_required
-from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece, Game, Goal, Assist, Contact
+from app.models import User, PreApprovedEmails, Player, Folder, File, PasswordResetToken, PlayerDocument, Team, PracticePlan, DrillPiece, Game, Goal, Assist, Contact, ContactPerson
 from app.player_forms import PlayerForm
 from app.forms import ContactForm, ContactFilterForm
+from app.forms import ContactPersonForm
 
 from app.email_utils import send_password_reset_email
 from app.utils import resolve_file_path, get_file_debug_info
@@ -2727,7 +2728,8 @@ def add_contact():
 def view_contact(contact_id):
     """View a specific contact."""
     contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
-    return render_template("contact_detail.html", contact=contact)
+    add_person_form = ContactPersonForm()
+    return render_template("contact_detail.html", contact=contact, add_person_form=add_person_form)
 
 
 @main.route("/contacts/<int:contact_id>/edit", methods=["GET", "POST"])
@@ -2754,6 +2756,45 @@ def edit_contact(contact_id):
         return redirect(url_for('main.contacts'))
     
     return render_template("contact_form.html", form=form, contact=contact, title="Edit Contact")
+
+
+@main.route("/contacts/<int:contact_id>/people/add", methods=["POST"])
+@login_required
+def add_contact_person(contact_id):
+    """Add an additional contact person (coach/manager/other) to a contact."""
+    contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
+    form = ContactPersonForm()
+    if form.validate_on_submit():
+        person = ContactPerson(
+            role=form.role.data,
+            full_name=form.full_name.data,
+            email=form.email.data,
+            contact_id=contact.id
+        )
+        db.session.add(person)
+        db.session.commit()
+        flash('Additional contact added.', 'success')
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash(f"{field}: {error}", 'danger')
+    return redirect(url_for('main.view_contact', contact_id=contact.id))
+
+
+@main.route("/contacts/<int:contact_id>/people/<int:person_id>/delete", methods=["POST"])
+@login_required
+def delete_contact_person(contact_id, person_id):
+    """Delete an additional contact person from a contact."""
+    contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
+    person = ContactPerson.query.filter_by(id=person_id, contact_id=contact.id).first_or_404()
+    try:
+        db.session.delete(person)
+        db.session.commit()
+        flash('Contact person deleted.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('Error deleting contact person.', 'danger')
+    return redirect(url_for('main.view_contact', contact_id=contact.id))
 
 
 @main.route("/contacts/<int:contact_id>/delete", methods=["POST"])

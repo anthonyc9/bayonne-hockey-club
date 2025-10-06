@@ -139,3 +139,10 @@ class ContactBulkImportForm(FlaskForm):
     submit = SubmitField('Import Contacts')
 
 
+class ContactPersonForm(FlaskForm):
+    role = SelectField('Role', choices=[('coach', 'Coach'), ('manager', 'Manager'), ('other', 'Other')], validators=[DataRequired()])
+    full_name = StringField('Full Name', validators=[DataRequired(), Length(max=100)])
+    email = StringField('Email', validators=[Optional(), Email(), Length(max=120)])
+    submit = SubmitField('Add Contact')
+
+
