@@ -497,11 +497,14 @@ class Contact(db.Model):
     # Team Information
     team_name = db.Column(db.String(100), nullable=False)
     age_group = db.Column(db.String(20), nullable=False)  # 8U, 10U, 12U, 14U, 16U, 18U
+    color = db.Column(db.String(50))
+    division = db.Column(db.String(50))
     
     # Contact Information
-    contact_name = db.Column(db.String(100), nullable=False)
-    phone_number = db.Column(db.String(20))
-    email = db.Column(db.String(120))
+    coach_full_name = db.Column(db.String(100))
+    coach_email = db.Column(db.String(120))
+    manager_full_name = db.Column(db.String(100))
+    manager_email = db.Column(db.String(120))
     
     # Additional Information
     notes = db.Column(db.Text)
@@ -513,4 +516,4 @@ class Contact(db.Model):
     user = db.relationship('User', backref='contacts')
     
     def __repr__(self):
-        return f"Contact('{self.team_name}' - {self.contact_name} ({self.age_group}))"
+        return f"Contact('{self.team_name}' ({self.age_group}))"

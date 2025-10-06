@@ -1712,6 +1712,80 @@ def bulk_action():
     
     return redirect(url_for('main.roster'))
 
+
+# Contacts bulk import
+@main.route("/contacts/bulk-import", methods=["POST"])
+@login_required
+def bulk_import_contacts():
+    """Handle bulk import of contacts from CSV."""
+    try:
+        file = request.files.get('csv_file')
+        if not file:
+            flash('No file uploaded.', 'danger')
+            return redirect(url_for('main.contacts'))
+
+        stream = StringIO(file.stream.read().decode("UTF8"), newline=None)
+        csv_reader = csv.DictReader(stream)
+
+        imported_count = 0
+        error_count = 0
+        errors = []
+
+        for row_num, row in enumerate(csv_reader, start=2):
+            try:
+                team_name = (row.get('team_name') or '').strip()
+                age_group = (row.get('age_group') or '').strip()
+                if not team_name or not age_group:
+                    raise ValueError('team_name and age_group are required')
+
+                contact = Contact(
+                    team_name=team_name,
+                    age_group=age_group,
+                    color=(row.get('color') or '').strip() or None,
+                    division=(row.get('division') or '').strip() or None,
+                    coach_full_name=(row.get('coach_full_name') or '').strip() or None,
+                    coach_email=(row.get('coach_email') or '').strip() or None,
+                    manager_full_name=(row.get('manager_full_name') or '').strip() or None,
+                    manager_email=(row.get('manager_email') or '').strip() or None,
+                    notes=(row.get('notes') or '').strip() or None,
+                    user_id=current_user.id
+                )
+
+                db.session.add(contact)
+                imported_count += 1
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+                error_count += 1
+
+        if imported_count > 0:
+            db.session.commit()
+            flash(f'Successfully imported {imported_count} contacts!', 'success')
+        if error_count > 0:
+            flash(f'{error_count} rows had errors. Showing first 10.', 'warning')
+            for error in errors[:10]:
+                flash(error, 'danger')
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error processing CSV file: {str(e)}', 'danger')
+
+    return redirect(url_for('main.contacts'))
+
+
+@main.route("/contacts/download-template")
+@login_required
+def download_contacts_template():
+    """Provide a CSV template for contacts bulk import."""
+    from io import StringIO as _StringIO
+    import csv as _csv
+    output = _StringIO()
+    writer = _csv.writer(output)
+    writer.writerow(['team_name', 'age_group', 'color', 'division', 'coach_full_name', 'coach_email', 'manager_full_name', 'manager_email', 'notes'])
+    response = make_response(output.getvalue())
+    response.headers['Content-Disposition'] = 'attachment; filename=contacts_template.csv'
+    response.headers['Content-Type'] = 'text/csv'
+    return response
+
 ### Practice Plans Routes ###
 
 @main.route("/practice-plans")
@@ -2604,7 +2678,7 @@ def contacts():
     if team_name_filter:
         query = query.filter(Contact.team_name.ilike(f'%{team_name_filter}%'))
     
-    contacts = query.order_by(Contact.team_name, Contact.contact_name).all()
+    contacts = query.order_by(Contact.team_name, Contact.coach_full_name).all()
     
     # Create filter form
     filter_form = ContactFilterForm()
@@ -2630,9 +2704,12 @@ def add_contact():
         contact = Contact(
             team_name=form.team_name.data,
             age_group=form.age_group.data,
-            contact_name=form.contact_name.data,
-            phone_number=form.phone_number.data,
-            email=form.email.data,
+            color=form.color.data,
+            division=form.division.data,
+            coach_full_name=form.coach_full_name.data,
+            coach_email=form.coach_email.data,
+            manager_full_name=form.manager_full_name.data,
+            manager_email=form.manager_email.data,
             notes=form.notes.data,
             user_id=current_user.id
         )
@@ -2663,9 +2740,12 @@ def edit_contact(contact_id):
     if form.validate_on_submit():
         contact.team_name = form.team_name.data
         contact.age_group = form.age_group.data
-        contact.contact_name = form.contact_name.data
-        contact.phone_number = form.phone_number.data
-        contact.email = form.email.data
+        contact.color = form.color.data
+        contact.division = form.division.data
+        contact.coach_full_name = form.coach_full_name.data
+        contact.coach_email = form.coach_email.data
+        contact.manager_full_name = form.manager_full_name.data
+        contact.manager_email = form.manager_email.data
         contact.notes = form.notes.data
         contact.updated_at = datetime.utcnow()
         

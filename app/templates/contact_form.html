@@ -69,38 +69,74 @@
                                     </div>
                                 {% endif %}
                             </div>
+
+                            <div class="col-md-6">
+                                {{ form.color.label(class="form-label") }}
+                                {{ form.color(class="form-control", placeholder="e.g., Blue") }}
+                                {% if form.color.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.color.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ form.division.label(class="form-label") }}
+                                {{ form.division(class="form-control", placeholder="e.g., A, B, Gold") }}
+                                {% if form.division.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.division.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
                             
                             <!-- Contact Information -->
                             <div class="col-md-6">
-                                {{ form.contact_name.label(class="form-label") }}
-                                {{ form.contact_name(class="form-control") }}
-                                {% if form.contact_name.errors %}
+                                {{ form.coach_full_name.label(class="form-label") }}
+                                {{ form.coach_full_name(class="form-control") }}
+                                {% if form.coach_full_name.errors %}
                                     <div class="text-danger small">
-                                        {% for error in form.contact_name.errors %}
+                                        {% for error in form.coach_full_name.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
                             </div>
-                            
+
                             <div class="col-md-6">
-                                {{ form.phone_number.label(class="form-label") }}
-                                {{ form.phone_number(class="form-control", placeholder="(555) 123-4567") }}
-                                {% if form.phone_number.errors %}
+                                {{ form.coach_email.label(class="form-label") }}
+                                {{ form.coach_email(class="form-control", placeholder="coach@team.com") }}
+                                {% if form.coach_email.errors %}
                                     <div class="text-danger small">
-                                        {% for error in form.phone_number.errors %}
+                                        {% for error in form.coach_email.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
                                 {% endif %}
                             </div>
-                            
-                            <div class="col-12">
-                                {{ form.email.label(class="form-label") }}
-                                {{ form.email(class="form-control", placeholder="contact@team.com") }}
-                                {% if form.email.errors %}
+
+                            <div class="col-md-6">
+                                {{ form.manager_full_name.label(class="form-label") }}
+                                {{ form.manager_full_name(class="form-control") }}
+                                {% if form.manager_full_name.errors %}
                                     <div class="text-danger small">
-                                        {% for error in form.email.errors %}
+                                        {% for error in form.manager_full_name.errors %}
+                                            {{ error }}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6">
+                                {{ form.manager_email.label(class="form-label") }}
+                                {{ form.manager_email(class="form-control", placeholder="manager@team.com") }}
+                                {% if form.manager_email.errors %}
+                                    <div class="text-danger small">
+                                        {% for error in form.manager_email.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>

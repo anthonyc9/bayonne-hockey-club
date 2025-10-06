@@ -10,7 +10,7 @@
             <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
                 <div>
                     <h1 class="h3 mb-0">{{ contact.team_name }}</h1>
-                    <p class="text-muted mb-0">{{ contact.contact_name }} • {{ contact.age_group }}</p>
+                    <p class="text-muted mb-0">{{ contact.age_group }}{% if contact.division %} • {{ contact.division }}{% endif %}{% if contact.color %} • {{ contact.color }}{% endif %}</p>
                 </div>
                 <div class="d-flex gap-2">
                     <a href="{{ url_for('main.edit_contact', contact_id=contact.id) }}" class="btn btn-outline-primary">
@@ -54,28 +54,14 @@
                             <span class="badge bg-info fs-6">{{ contact.age_group }}</span>
                         </div>
                         <div class="col-md-6">
-                            <strong>Contact Name:</strong><br>
-                            <span class="fs-5">{{ contact.contact_name }}</span>
+                            <strong>Coach:</strong><br>
+                            <span class="fs-6">{{ contact.coach_full_name or 'Not provided' }}</span>
+                            {% if contact.coach_email %}<div><a href="mailto:{{ contact.coach_email }}" class="text-decoration-none"><i class="bi bi-envelope"></i> {{ contact.coach_email }}</a></div>{% endif %}
                         </div>
                         <div class="col-md-6">
-                            <strong>Phone Number:</strong><br>
-                            {% if contact.phone_number %}
-                                <a href="tel:{{ contact.phone_number }}" class="text-decoration-none fs-5">
-                                    <i class="bi bi-telephone"></i> {{ contact.phone_number }}
-                                </a>
-                            {% else %}
-                                <span class="text-muted">Not provided</span>
-                            {% endif %}
-                        </div>
-                        <div class="col-12">
-                            <strong>Email:</strong><br>
-                            {% if contact.email %}
-                                <a href="mailto:{{ contact.email }}" class="text-decoration-none fs-5">
-                                    <i class="bi bi-envelope"></i> {{ contact.email }}
-                                </a>
-                            {% else %}
-                                <span class="text-muted">Not provided</span>
-                            {% endif %}
+                            <strong>Manager:</strong><br>
+                            <span class="fs-6">{{ contact.manager_full_name or 'Not provided' }}</span>
+                            {% if contact.manager_email %}<div><a href="mailto:{{ contact.manager_email }}" class="text-decoration-none"><i class="bi bi-envelope"></i> {{ contact.manager_email }}</a></div>{% endif %}
                         </div>
                         {% if contact.notes %}
                             <div class="col-12">
@@ -98,14 +84,14 @@
                 </div>
                 <div class="card-body">
                     <div class="d-grid gap-2">
-                        {% if contact.phone_number %}
-                            <a href="tel:{{ contact.phone_number }}" class="btn btn-success">
-                                <i class="bi bi-telephone"></i> Call {{ contact.contact_name }}
+                        {% if contact.coach_email %}
+                            <a href="mailto:{{ contact.coach_email }}" class="btn btn-primary">
+                                <i class="bi bi-envelope"></i> Email Coach
                             </a>
                         {% endif %}
-                        {% if contact.email %}
-                            <a href="mailto:{{ contact.email }}" class="btn btn-primary">
-                                <i class="bi bi-envelope"></i> Email {{ contact.contact_name }}
+                        {% if contact.manager_email %}
+                            <a href="mailto:{{ contact.manager_email }}" class="btn btn-primary">
+                                <i class="bi bi-envelope"></i> Email Manager
                             </a>
                         {% endif %}
                         <a href="{{ url_for('main.edit_contact', contact_id=contact.id) }}" class="btn btn-outline-primary">

@@ -12,10 +12,13 @@
                     <h1><i class="bi bi-people"></i> Team Contacts</h1>
                     <p class="text-muted mb-0">Manage contacts from other teams for game scheduling</p>
                 </div>
-                <div>
+                <div class="d-flex gap-2">
                     <a href="{{ url_for('main.add_contact') }}" class="btn btn-primary">
                         <i class="bi bi-plus-circle"></i> Add Contact
                     </a>
+                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#contactImportModal">
+                        <i class="bi bi-upload"></i> Import Contacts
+                    </button>
                 </div>
             </div>
         </div>
@@ -83,7 +86,7 @@
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div>
                                         <h6 class="mb-1 fw-bold">{{ contact.team_name }}</h6>
-                                        <small class="text-muted">{{ contact.contact_name }} • {{ contact.age_group }}</small>
+                                        <small class="text-muted">{{ contact.age_group }}{% if contact.division %} • {{ contact.division }}{% endif %}{% if contact.color %} • {{ contact.color }}{% endif %}</small>
                                     </div>
                                     <div class="dropdown">
                                         <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="dropdown">
@@ -106,14 +109,14 @@
                                 
                                 <!-- Contact Info -->
                                 <div class="mb-3">
-                                    {% if contact.phone_number %}
+                                    {% if contact.coach_full_name or contact.coach_email %}
                                         <div class="small mb-1">
-                                            <i class="bi bi-telephone"></i> {{ contact.phone_number }}
+                                            <i class="bi bi-person-badge"></i> Coach: {{ contact.coach_full_name or '—' }}{% if contact.coach_email %} • {{ contact.coach_email }}{% endif %}
                                         </div>
                                     {% endif %}
-                                    {% if contact.email %}
+                                    {% if contact.manager_full_name or contact.manager_email %}
                                         <div class="small mb-1">
-                                            <i class="bi bi-envelope"></i> {{ contact.email }}
+                                            <i class="bi bi-briefcase"></i> Manager: {{ contact.manager_full_name or '—' }}{% if contact.manager_email %} • {{ contact.manager_email }}{% endif %}
                                         </div>
                                     {% endif %}
                                 </div>
@@ -141,10 +144,11 @@
                             <thead class="table-header-custom">
                                 <tr>
                                     <th>Team Name</th>
-                                    <th>Contact Name</th>
                                     <th>Age Group</th>
-                                    <th>Phone</th>
-                                    <th>Email</th>
+                                    <th>Division</th>
+                                    <th>Color</th>
+                                    <th>Coach</th>
+                                    <th>Manager</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -157,24 +161,25 @@
                                                 <small class="text-muted">{{ contact.notes[:50] }}{% if contact.notes|length > 50 %}...{% endif %}</small>
                                             {% endif %}
                                         </td>
-                                        <td>{{ contact.contact_name }}</td>
+                                        <td><span class="badge bg-info">{{ contact.age_group }}</span></td>
+                                        <td>{{ contact.division or '-' }}</td>
+                                        <td>{{ contact.color or '-' }}</td>
                                         <td>
-                                            <span class="badge bg-info">{{ contact.age_group }}</span>
-                                        </td>
-                                        <td>
-                                            {% if contact.phone_number %}
-                                                <a href="tel:{{ contact.phone_number }}" class="text-decoration-none">
-                                                    <i class="bi bi-telephone"></i> {{ contact.phone_number }}
-                                                </a>
+                                            {% if contact.coach_full_name or contact.coach_email %}
+                                                <div>
+                                                    {{ contact.coach_full_name or '-' }}
+                                                    {% if contact.coach_email %}<br><a href="mailto:{{ contact.coach_email }}" class="text-decoration-none"><i class="bi bi-envelope"></i> {{ contact.coach_email }}</a>{% endif %}
+                                                </div>
                                             {% else %}
                                                 <span class="text-muted">-</span>
                                             {% endif %}
                                         </td>
                                         <td>
-                                            {% if contact.email %}
-                                                <a href="mailto:{{ contact.email }}" class="text-decoration-none">
-                                                    <i class="bi bi-envelope"></i> {{ contact.email }}
-                                                </a>
+                                            {% if contact.manager_full_name or contact.manager_email %}
+                                                <div>
+                                                    {{ contact.manager_full_name or '-' }}
+                                                    {% if contact.manager_email %}<br><a href="mailto:{{ contact.manager_email }}" class="text-decoration-none"><i class="bi bi-envelope"></i> {{ contact.manager_email }}</a>{% endif %}
+                                                </div>
                                             {% else %}
                                                 <span class="text-muted">-</span>
                                             {% endif %}
@@ -213,6 +218,43 @@
             </a>
         </div>
     {% endif %}
+</div>
+
+<!-- Contact Bulk Import Modal -->
+<div class="modal fade" id="contactImportModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bulk Import Contacts</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i>
+                    Upload a CSV file with contact data. Download the template below for the format.
+                </div>
+                <div class="mb-3">
+                    <a href="{{ url_for('main.download_contacts_template') }}" class="btn btn-outline-primary">
+                        <i class="bi bi-download"></i> Download CSV Template (Contacts)
+                    </a>
+                </div>
+                <form action="{{ url_for('main.bulk_import_contacts') }}" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="mb-3">
+                        <label class="form-label">CSV File</label>
+                        <input type="file" name="csv_file" class="form-control" accept=".csv" required>
+                        <div class="form-text">Columns: team_name, age_group, color, division, coach_full_name, coach_email, manager_full_name, manager_email, notes</div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-upload"></i> Import Contacts
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- Delete Contact Modal -->

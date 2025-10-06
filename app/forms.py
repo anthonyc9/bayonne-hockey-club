@@ -117,9 +117,12 @@ class ContactForm(FlaskForm):
         ('16U', '16U'),
         ('18U', '18U')
     ])
-    contact_name = StringField('Contact Name', validators=[DataRequired(), Length(max=100)])
-    phone_number = StringField('Phone Number', validators=[Optional(), Length(max=20)])
-    email = StringField('Email', validators=[Optional(), Email(), Length(max=120)])
+    color = StringField('Color', validators=[Optional(), Length(max=50)])
+    division = StringField('Division', validators=[Optional(), Length(max=50)])
+    coach_full_name = StringField('Coach Full Name', validators=[Optional(), Length(max=100)])
+    coach_email = StringField('Coach Email', validators=[Optional(), Email(), Length(max=120)])
+    manager_full_name = StringField('Manager Full Name', validators=[Optional(), Length(max=100)])
+    manager_email = StringField('Manager Email', validators=[Optional(), Email(), Length(max=120)])
     notes = TextAreaField('Notes', validators=[Optional()])
     submit = SubmitField('Save Contact')
 
@@ -129,5 +132,10 @@ class ContactFilterForm(FlaskForm):
     age_group_filter = SelectField('Age Group', choices=[('', 'All Age Groups')], default='')
     team_name_filter = StringField('Team Name', validators=[Optional()])
     submit = SubmitField('Filter')
+
+
+class ContactBulkImportForm(FlaskForm):
+    csv_file = FileField('CSV File', validators=[FileRequired()])
+    submit = SubmitField('Import Contacts')
 
 
