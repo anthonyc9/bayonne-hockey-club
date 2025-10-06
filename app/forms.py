@@ -117,8 +117,8 @@ class ContactForm(FlaskForm):
         ('16U', '16U'),
         ('18U', '18U')
     ])
-    color = StringField('Color', validators=[Optional(), Length(max=50)])
     division = StringField('Division', validators=[Optional(), Length(max=50)])
+    color = StringField('Color', validators=[Optional(), Length(max=50)])
     coach_full_name = StringField('Coach Full Name', validators=[Optional(), Length(max=100)])
     coach_email = StringField('Coach Email', validators=[Optional(), Email(), Length(max=120)])
     manager_full_name = StringField('Manager Full Name', validators=[Optional(), Length(max=100)])

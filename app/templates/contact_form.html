@@ -71,11 +71,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                {{ form.color.label(class="form-label") }}
-                                {{ form.color(class="form-control", placeholder="e.g., Blue") }}
-                                {% if form.color.errors %}
+                                {{ form.division.label(class="form-label") }}
+                                {{ form.division(class="form-control", placeholder="e.g., A, B, Gold") }}
+                                {% if form.division.errors %}
                                     <div class="text-danger small">
-                                        {% for error in form.color.errors %}
+                                        {% for error in form.division.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>
@@ -83,11 +83,11 @@
                             </div>
 
                             <div class="col-md-6">
-                                {{ form.division.label(class="form-label") }}
-                                {{ form.division(class="form-control", placeholder="e.g., A, B, Gold") }}
-                                {% if form.division.errors %}
+                                {{ form.color.label(class="form-label") }}
+                                {{ form.color(class="form-control", placeholder="e.g., Blue") }}
+                                {% if form.color.errors %}
                                     <div class="text-danger small">
-                                        {% for error in form.division.errors %}
+                                        {% for error in form.color.errors %}
                                             {{ error }}
                                         {% endfor %}
                                     </div>

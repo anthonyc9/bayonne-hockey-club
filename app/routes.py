@@ -1741,8 +1741,8 @@ def bulk_import_contacts():
                 contact = Contact(
                     team_name=team_name,
                     age_group=age_group,
-                    color=(row.get('color') or '').strip() or None,
                     division=(row.get('division') or '').strip() or None,
+                    color=(row.get('color') or '').strip() or None,
                     coach_full_name=(row.get('coach_full_name') or '').strip() or None,
                     coach_email=(row.get('coach_email') or '').strip() or None,
                     manager_full_name=(row.get('manager_full_name') or '').strip() or None,
@@ -1780,7 +1780,7 @@ def download_contacts_template():
     import csv as _csv
     output = _StringIO()
     writer = _csv.writer(output)
-    writer.writerow(['team_name', 'age_group', 'color', 'division', 'coach_full_name', 'coach_email', 'manager_full_name', 'manager_email', 'notes'])
+    writer.writerow(['team_name', 'age_group', 'division', 'color', 'coach_full_name', 'coach_email', 'manager_full_name', 'manager_email', 'notes'])
     response = make_response(output.getvalue())
     response.headers['Content-Disposition'] = 'attachment; filename=contacts_template.csv'
     response.headers['Content-Type'] = 'text/csv'
