@@ -165,7 +165,66 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Additional Contacts (optional) -->
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-people"></i> Additional Contacts</h6>
+                </div>
+                <div class="card-body">
+                    <div id="additionalContactsContainer">
+                        {% for entry in form.additional_contacts %}
+                            <div class="row g-2 align-items-end mb-2 additional-contact-item">
+                                <div class="col-md-3">
+                                    {{ entry.form.role.label(class="form-label") }}
+                                    {{ entry.form.role(class="form-select") }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ entry.form.full_name.label(class="form-label") }}
+                                    {{ entry.form.full_name(class="form-control") }}
+                                </div>
+                                <div class="col-md-4">
+                                    {{ entry.form.email.label(class="form-label") }}
+                                    {{ entry.form.email(class="form-control") }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="addAdditionalContact()">
+                        <i class="bi bi-plus"></i> Add Another Contact
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 {% endblock %}
+
+<script>
+function addAdditionalContact() {
+    const container = document.getElementById('additionalContactsContainer');
+    const index = container.querySelectorAll('.additional-contact-item').length;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'row g-2 align-items-end mb-2 additional-contact-item';
+    wrapper.innerHTML = `
+        <div class="col-md-3">
+            <label class="form-label" for="additional_contacts-${index}-role">Role</label>
+            <select class="form-select" id="additional_contacts-${index}-role" name="additional_contacts-${index}-role">
+                <option value="coach">Coach</option>
+                <option value="manager">Manager</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="additional_contacts-${index}-full_name">Full Name</label>
+            <input class="form-control" id="additional_contacts-${index}-full_name" name="additional_contacts-${index}-full_name" />
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="additional_contacts-${index}-email">Email</label>
+            <input class="form-control" id="additional_contacts-${index}-email" name="additional_contacts-${index}-email" />
+        </div>
+    `;
+    container.appendChild(wrapper);
+}
+</script>

@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileRequired
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, IntegerField, TextAreaField, SelectField, HiddenField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField, IntegerField, TextAreaField, SelectField, HiddenField, FieldList
+from wtforms import Form as NoCsrfBaseForm
+from wtforms import FormField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError, NumberRange, Optional, InputRequired
 from app.models import User, Player
 
@@ -124,7 +126,19 @@ class ContactForm(FlaskForm):
     manager_full_name = StringField('Manager Full Name', validators=[Optional(), Length(max=100)])
     manager_email = StringField('Manager Email', validators=[Optional(), Email(), Length(max=120)])
     notes = TextAreaField('Notes', validators=[Optional()])
+    # Filled only on Add/Edit screens for multiple contacts
+    # Using a nested form without CSRF to collect additional contacts
     submit = SubmitField('Save Contact')
+
+
+class ContactPersonEntryForm(NoCsrfBaseForm):
+    role = SelectField('Role', choices=[('coach', 'Coach'), ('manager', 'Manager'), ('other', 'Other')], default='coach')
+    full_name = StringField('Full Name', [Length(max=100)])
+    email = StringField('Email', [Optional(), Email(), Length(max=120)])
+
+
+# Extend ContactForm to include FieldList after nested form is defined
+ContactForm.additional_contacts = FieldList(FormField(ContactPersonEntryForm), min_entries=0)
 
 
 class ContactFilterForm(FlaskForm):

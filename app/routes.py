@@ -2716,6 +2716,21 @@ def add_contact():
         )
         
         db.session.add(contact)
+        db.session.flush()
+
+        # Persist any additional contacts from the FieldList
+        # WTForms FieldList names follow additional_contacts-<index>-<field>
+        added_any = False
+        for key in list(request.form.keys()):
+            if key.startswith('additional_contacts-') and key.endswith('-full_name'):
+                prefix = key.rsplit('-', 1)[0]
+                role = request.form.get(prefix + '-role', '').strip()
+                full_name = request.form.get(prefix + '-full_name', '').strip()
+                email = request.form.get(prefix + '-email', '').strip()
+                if role and full_name:
+                    db.session.add(ContactPerson(role=role, full_name=full_name, email=email or None, contact_id=contact.id))
+                    added_any = True
+
         db.session.commit()
         flash('Contact added successfully!', 'success')
         return redirect(url_for('main.contacts'))
@@ -2728,8 +2743,7 @@ def add_contact():
 def view_contact(contact_id):
     """View a specific contact."""
     contact = Contact.query.filter_by(id=contact_id, user_id=current_user.id).first_or_404()
-    add_person_form = ContactPersonForm()
-    return render_template("contact_detail.html", contact=contact, add_person_form=add_person_form)
+    return render_template("contact_detail.html", contact=contact)
 
 
 @main.route("/contacts/<int:contact_id>/edit", methods=["GET", "POST"])
@@ -2751,6 +2765,20 @@ def edit_contact(contact_id):
         contact.notes = form.notes.data
         contact.updated_at = datetime.utcnow()
         
+        # Replace additional contacts if any were submitted in the form
+        has_additional = any(k.startswith('additional_contacts-') for k in request.form.keys())
+        if has_additional:
+            for p in list(contact.contact_people):
+                db.session.delete(p)
+            for key in list(request.form.keys()):
+                if key.startswith('additional_contacts-') and key.endswith('-full_name'):
+                    prefix = key.rsplit('-', 1)[0]
+                    role = request.form.get(prefix + '-role', '').strip()
+                    full_name = request.form.get(prefix + '-full_name', '').strip()
+                    email = request.form.get(prefix + '-email', '').strip()
+                    if role and full_name:
+                        db.session.add(ContactPerson(role=role, full_name=full_name, email=email or None, contact_id=contact.id))
+
         db.session.commit()
         flash('Contact updated successfully!', 'success')
         return redirect(url_for('main.contacts'))
