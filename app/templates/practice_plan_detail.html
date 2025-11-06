@@ -495,6 +495,30 @@
 
 {% block content %}
 <div class="container-fluid">
+    {% if '8U' in practice_plan.team.name %}
+    <style>
+    /* 8U-only mobile adjustments */
+    @media (max-width: 576px) {
+        /* Make long titles readable and compact */
+        .container-fluid h1 { 
+            font-size: 1.35rem !important; 
+            line-height: 1.25 !important; 
+            word-break: break-word; 
+            overflow-wrap: anywhere; 
+        }
+        /* Slightly tighten quick action buttons */
+        .btn-group-mobile .btn { 
+            padding: 0.6rem 0.8rem !important; 
+            font-size: 0.95rem !important; 
+        }
+        /* Reduce icon emphasis and card density a touch */
+        .practice-info-card i { font-size: 1.6rem !important; }
+        .practice-info-card { padding: 0.9rem 0.75rem !important; }
+        .focus-area-card { padding: 0.9rem !important; }
+        .time-badge { min-width: 60px; padding: 0.5rem 0.6rem; font-size: 0.9rem; }
+    }
+    </style>
+    {% endif %}
     <!-- Header with Breadcrumbs -->
     <div class="row mb-4">
         <div class="col-12">
@@ -518,7 +542,7 @@
             
             <!-- Header Section - Simplified -->
             <div class="mb-4">
-                <h1>{{ practice_plan.title }}</h1>
+                <h1 {% if '8U' in practice_plan.team.name %}style="word-break: break-word; overflow-wrap:anywhere;"{% endif %}>{{ practice_plan.title }}</h1>
                 
                 <!-- Action Buttons - Hidden on desktop, shown in sidebar -->
                 <div class="d-flex flex-wrap gap-2 justify-content-start btn-group-mobile d-lg-none">
