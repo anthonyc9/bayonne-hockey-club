@@ -2,6 +2,24 @@
 
 {% block title %}{{ title }} • Bayonne Hockey Club{% endblock %}
 
+{% block extra_css %}
+<style>
+@media (max-width: 576px) {
+    .card .card-title { 
+        overflow-wrap: anywhere; 
+        word-break: break-word; 
+    }
+    .card p { 
+        overflow-wrap: anywhere; 
+        word-break: break-word; 
+    }
+    .page-header .btn { 
+        width: 100%; 
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <section class="glass-panel">
     <header class="page-header">

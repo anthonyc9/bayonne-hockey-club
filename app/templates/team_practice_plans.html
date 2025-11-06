@@ -2,6 +2,26 @@
 
 {% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
 
+{% block extra_css %}
+<style>
+@media (max-width: 576px) {
+    .practice-card h6 { 
+        overflow-wrap: anywhere; 
+        word-break: break-word; 
+    }
+    .practice-card .badge { 
+        white-space: normal; 
+    }
+    .practice-card .card-body { 
+        padding: 0.875rem; 
+    }
+    .practice-card .dropdown { 
+        margin-left: 0.5rem; 
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="container-fluid">
     <!-- Header with Breadcrumbs -->
