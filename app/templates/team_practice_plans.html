@@ -2,26 +2,6 @@
 
 {% block title %}{{ title }} - Bayonne Hockey Club{% endblock %}
 
-{% block extra_css %}
-<style>
-@media (max-width: 576px) {
-    .practice-card h6 { 
-        overflow-wrap: anywhere; 
-        word-break: break-word; 
-    }
-    .practice-card .badge { 
-        white-space: normal; 
-    }
-    .practice-card .card-body { 
-        padding: 0.875rem; 
-    }
-    .practice-card .dropdown { 
-        margin-left: 0.5rem; 
-    }
-}
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="container-fluid">
     <!-- Header with Breadcrumbs -->
@@ -88,7 +68,7 @@
                                 <!-- Practice Header -->
                                 <div class="d-flex justify-content-between align-items-start mb-2">
                                     <div>
-                                        <h6 class="mb-1 fw-bold">{{ plan.title }}</h6>
+                                        <h6 class="mb-1 fw-bold" {% raw %}{% if '8U' in team.name %}{% endraw %}style="word-break: break-word; overflow-wrap:anywhere;"{% raw %}{% endif %}{% endraw %}>{{ plan.title }}</h6>
                                         <small class="text-muted">{{ plan.date.strftime('%A, %B %d, %Y') }}</small>
                                     </div>
                                     <div class="dropdown">

@@ -633,7 +633,7 @@
                                         <div class="col-md-10 col-sm-9">
                                             <h6 class="mb-3">{{ drill.drill_name }}</h6>
                                             {% if drill.description %}
-                                                <p class="mb-3 drill-description">{{ drill.description }}</p>
+                                                <p class="mb-3 drill-description" {% raw %}{% if '8U' in practice_plan.team.name %}{% endraw %}style="word-break: break-word; overflow-wrap:anywhere;"{% raw %}{% endif %}{% endraw %}>{{ drill.description }}</p>
                                             {% else %}
                                                 <p class="mb-3 text-muted fw-bold"><em>No description provided</em></p>
                                             {% endif %}
